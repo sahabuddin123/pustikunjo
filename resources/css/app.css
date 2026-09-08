@@ -1,0 +1,181 @@
+@import 'tailwindcss';
+ 
+@font-face {
+    font-family: 'Li Ador Noirrit';
+    src: url('/fonts/LiAdorNoirrit.ttf') format('truetype');
+    font-weight: 100 900;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Li Ador';
+    src: url('/fonts/LiAdorNoirrit.ttf') format('truetype');
+    font-weight: 100 900;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Le Ador';
+    src: url('/fonts/LiAdorNoirrit.ttf') format('truetype');
+    font-weight: 100 900;
+    font-style: normal;
+    font-display: swap;
+}
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+@source '../**/*.blade.php';
+@source '../**/*.js';
+@source '../**/*.jsx';
+
+@theme {
+    --font-sans: 'Li Ador Noirrit', 'Li Ador', 'Le Ador', 'Hind Siliguri', 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
+    --color-primary-50: #f0fdf4;
+    --color-primary-100: #dcfce7;
+    --color-primary-200: #bbf7d0;
+    --color-primary-500: #16a34a;
+    --color-primary-600: #0d6838;
+    --color-primary-700: #0a522c;
+    --color-primary-800: #07381e;
+    --color-accent-amber: #d97706;
+    --color-accent-rose: #e11d48;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+::-webkit-scrollbar-track {
+    background: #f1f5f9;
+}
+::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
+/* Smooth transitions */
+.smooth-transition {
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Badge pulse */
+@keyframes soft-pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.85; transform: scale(1.03); }
+}
+.animate-soft-pulse {
+    animation: soft-pulse 3s infinite ease-in-out;
+}
+
+@keyframes slideInLeft {
+    from { transform: translateX(-100%); }
+    to { transform: translateX(0); }
+}
+.animate-slide-in-left {
+    animation: slideInLeft 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes slideInRight {
+    from { transform: translateX(100%); }
+    to { transform: translateX(0); }
+}
+.animate-slide-in-right {
+    animation: slideInRight 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+.animate-fade-in {
+    animation: fadeIn 0.2s ease-out forwards;
+}
+
+/* ==========================================================================
+   Admin Panel Global Typography & Sizing Enhancements
+   ========================================================================== */
+.admin-panel {
+    font-size: 16px;
+    letter-spacing: 0.01em;
+}
+
+/* Scaling utility text classes inside Admin Panel for legibility */
+.admin-panel .text-xs {
+    font-size: 0.875rem !important; /* 14px */
+    line-height: 1.35rem !important;
+}
+
+.admin-panel .text-\[10px\],
+.admin-panel .text-\[11px\] {
+    font-size: 0.8125rem !important; /* 13px */
+    line-height: 1.25rem !important;
+}
+
+.admin-panel .text-sm {
+    font-size: 1.025rem !important; /* 16.4px */
+    line-height: 1.55rem !important;
+}
+
+.admin-panel .text-base {
+    font-size: 1.15rem !important; /* 18.4px */
+    line-height: 1.65rem !important;
+}
+
+.admin-panel .text-lg {
+    font-size: 1.35rem !important; /* 21.6px */
+    line-height: 1.85rem !important;
+}
+
+.admin-panel .text-xl {
+    font-size: 1.55rem !important; /* 24.8px */
+    line-height: 2rem !important;
+}
+
+.admin-panel .text-2xl {
+    font-size: 1.85rem !important; /* 29.6px */
+    line-height: 2.25rem !important;
+}
+
+/* Input fields, select dropdowns & textareas inside Admin Panel */
+.admin-panel input:not([type="checkbox"]):not([type="radio"]),
+.admin-panel select,
+.admin-panel textarea {
+    font-size: 0.975rem !important;
+    padding-top: 0.55rem;
+    padding-bottom: 0.55rem;
+}
+
+/* Form labels */
+.admin-panel label {
+    font-size: 0.925rem !important;
+    font-weight: 700 !important;
+    margin-bottom: 0.35rem;
+}
+
+/* Admin Tables */
+.admin-panel table th {
+    font-size: 0.875rem !important;
+    font-weight: 800 !important;
+    letter-spacing: 0.025em;
+    padding-top: 0.85rem !important;
+    padding-bottom: 0.85rem !important;
+}
+
+.admin-panel table td {
+    font-size: 0.95rem !important;
+    padding-top: 0.85rem !important;
+    padding-bottom: 0.85rem !important;
+}
+
+/* Buttons in Admin Panel */
+.admin-panel button:not([class*="p-1"]):not([class*="p-0"]),
+.admin-panel .btn {
+    font-size: 0.925rem !important;
+}
+
