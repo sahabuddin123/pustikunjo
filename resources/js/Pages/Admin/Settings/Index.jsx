@@ -198,7 +198,7 @@ export default function Index({
 
     return (
         <AdminLayout title="গ্লোবাল সেটিংস হাব (Global System Settings)">
-            <form onSubmit={handleSubmit} className="space-y-6 max-w-7xl pb-16">
+            <form onSubmit={handleSubmit} className="space-y-6 w-full pb-16">
                 {/* Header Actions */}
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-4 sm:p-5 rounded-2xl border border-gray-200/80 shadow-xs">
                     <div>

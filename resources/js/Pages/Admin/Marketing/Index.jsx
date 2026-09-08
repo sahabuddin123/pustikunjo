@@ -32,7 +32,7 @@ export default function Index({ integrations = {}, events = [], catalogFeedUrl =
 
     return (
         <AdminLayout title="মার্কেটিং ও ট্র্যাকিং ইন্টিগ্রেশন (Marketing)">
-            <div className="space-y-8 max-w-5xl">
+            <div className="space-y-8 w-full">
                 {/* Meta Commerce Catalog Feed Card */}
                 <div className="bg-gradient-to-r from-emerald-900 to-emerald-800 text-white p-6 rounded-2xl shadow-md space-y-4">
                     <div className="flex items-center justify-between">

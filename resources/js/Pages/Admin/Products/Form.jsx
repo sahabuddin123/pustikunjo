@@ -96,7 +96,7 @@ export default function Form({ product = null, categories = [] }) {
 
     return (
         <AdminLayout title={isEdit ? `পণ্য সম্পাদনা: ${product.name}` : 'নতুন পণ্য যোগ করুন'}>
-            <form onSubmit={handleSubmit} className="space-y-8 max-w-5xl">
+            <form onSubmit={handleSubmit} className="space-y-8 w-full">
                 {/* Header Actions */}
                 <div className="flex items-center justify-between">
                     <Link

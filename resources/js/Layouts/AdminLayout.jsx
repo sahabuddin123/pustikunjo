@@ -49,7 +49,7 @@ export default function AdminLayout({ children, title = 'Admin Panel' }) {
     };
 
     return (
-        <div className="admin-panel min-h-screen bg-gray-50 flex flex-col md:flex-row text-gray-800 font-sans">
+        <div className="admin-panel min-h-screen bg-gray-50 flex flex-col md:flex-row text-gray-800 font-sans w-full">
             <Head title={`${title} — পুষ্টি কুঞ্জ এডমিন`} />
 
             {/* Sidebar */}
@@ -118,9 +118,9 @@ export default function AdminLayout({ children, title = 'Admin Panel' }) {
             </aside>
 
             {/* Main Content Area */}
-            <div className="flex-1 flex flex-col min-w-0">
+            <div className="flex-1 flex flex-col min-w-0 w-full">
                 {/* Topbar */}
-                <header className="min-h-18 py-3 bg-white border-b border-gray-200 px-6 sm:px-8 flex items-center justify-between sticky top-0 z-20 shadow-2xs">
+                <header className="min-h-18 py-3 bg-white border-b border-gray-200 px-6 sm:px-8 flex items-center justify-between sticky top-0 z-20 shadow-2xs w-full">
                     <h1 className="text-xl sm:text-2xl font-black text-gray-900">{title}</h1>
                     <div className="flex items-center gap-4">
                         <span className="text-sm text-gray-500 font-semibold hidden sm:inline">
@@ -152,7 +152,7 @@ export default function AdminLayout({ children, title = 'Admin Panel' }) {
                 )}
 
                 {/* Content */}
-                <main className="p-4 sm:p-6 lg:p-8 flex-1">
+                <main className="p-4 sm:p-6 lg:p-8 flex-1 w-full min-w-0">
                     {children}
                 </main>
             </div>

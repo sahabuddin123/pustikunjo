@@ -446,7 +446,7 @@ export default function Builder({ page = null, products = [], categories = [] })
 
     return (
         <AdminLayout title={isEdit ? `হোমপেজ ও পেজ বিল্ডার: ${page.title}` : 'নতুন পেজ তৈরি'}>
-            <form onSubmit={handleSubmit} className="space-y-6 max-w-7xl">
+            <form onSubmit={handleSubmit} className="space-y-6 w-full">
                 {/* Header Actions */}
                 <div className="bg-white p-4 sm:p-5 rounded-2xl border border-gray-200/80 shadow-xs flex flex-col sm:flex-row items-center justify-between gap-4">
                     <div className="flex items-center gap-3 w-full sm:w-auto">

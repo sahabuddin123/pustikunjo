@@ -35,7 +35,7 @@ export default function Index({ theme = {}, header = {}, footer = {} }) {
 
     return (
         <AdminLayout title="অ্যাপিয়ারেন্স ও থিম সেটিংস (Appearance)">
-            <div className="space-y-6 max-w-5xl">
+            <div className="space-y-6 w-full">
                 {/* Tabs */}
                 <div className="flex gap-2 border-b border-gray-200 pb-3">
                     <button

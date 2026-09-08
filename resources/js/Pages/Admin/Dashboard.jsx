@@ -77,7 +77,7 @@ export default function Dashboard({
 
     return (
         <AdminLayout title="এডমিন কন্ট্রোল ড্যাশবোর্ড">
-            <div className="space-y-7 max-w-7xl">
+            <div className="space-y-7 w-full">
                 {/* 1. Header Banner & Quick Actions */}
                 <div className="bg-gradient-to-r from-[#042013] via-[#07381E] to-[#0A4D2A] text-white p-6 sm:p-7 rounded-3xl shadow-lg border border-emerald-900/50 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 relative overflow-hidden">
                     {/* Background Decorative Pattern */}

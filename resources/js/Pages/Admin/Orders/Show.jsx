@@ -141,7 +141,7 @@ export default function Show({ order, fraudAnalysis = {}, steadfastConfigured = 
 
     return (
         <AdminLayout title={`অর্ডার বিবরণ: ${order.order_number}`}>
-            <div className="space-y-6 max-w-6xl pb-16">
+            <div className="space-y-6 w-full pb-16">
                 {/* Header Toolbar */}
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-4 rounded-2xl border border-gray-200/80 shadow-xs">
                     <Link

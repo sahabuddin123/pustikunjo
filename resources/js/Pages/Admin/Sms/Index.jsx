@@ -38,7 +38,7 @@ export default function Index({ smsConfig = {}, triggers = {}, logs = { data: []
 
     return (
         <AdminLayout title="এসএমএস গেটওয়ে ও অটোমেশন (SMS Module)">
-            <div className="space-y-6 max-w-5xl">
+            <div className="space-y-6 w-full">
                 {/* Tabs */}
                 <div className="flex gap-2 border-b border-gray-200 pb-3">
                     <button
