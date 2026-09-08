@@ -162,16 +162,18 @@ php artisan view:cache --quiet
 php artisan event:cache --quiet
 echo -e "   ✓ রুট, ভিউ ও কনফিগ প্রডাকশন ক্যাশে রূপান্তর সম্পন্ন।"
 
-# Set Proper Permissions
+# Set Proper Permissions (Support for aaPanel www, Ubuntu www-data, Nginx, Apache)
 echo -e "   ফাইল ও ফোল্ডার পারমিশন ঠিক করা হচ্ছে..."
 mkdir -p storage/framework/cache/data storage/framework/sessions storage/framework/views storage/logs bootstrap/cache
-chmod -R 775 storage bootstrap/cache database 2>/dev/null || true
-chmod 664 database/database.sqlite 2>/dev/null || true
+chmod -R 777 storage bootstrap/cache database 2>/dev/null || true
+chmod 666 database/database.sqlite 2>/dev/null || true
 
 # If running as root or with sudo, set web server ownership
 if [ "$(id -u)" -eq 0 ]; then
     WEB_USER="www-data"
-    if id "nginx" &>/dev/null; then
+    if id "www" &>/dev/null; then
+        WEB_USER="www"
+    elif id "nginx" &>/dev/null; then
         WEB_USER="nginx"
     elif id "apache" &>/dev/null; then
         WEB_USER="apache"
