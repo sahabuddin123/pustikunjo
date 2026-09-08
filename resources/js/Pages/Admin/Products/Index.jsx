@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, router } from '@inertiajs/react';
 import AdminLayout from '@/Layouts/AdminLayout';
-import { Plus, Search, Edit, Trash2, Eye, Filter } from 'lucide-react';
+import { Plus, Search, Edit, Trash2, Eye, Filter, FolderTree } from 'lucide-react';
 
 export default function Index({ products, categories = [], filters = {} }) {
     const [searchTerm, setSearchTerm] = useState(filters.q || '');
@@ -13,7 +13,7 @@ export default function Index({ products, categories = [], filters = {} }) {
     };
 
     const handleDelete = (id, name) => {
-        if (confirm(`আপনি কি নিশ্চিত "${name}" পণ্যটি মুছে ফেলতে চান?`)) {
+        if (confirm(`আপনি কি নিশ্চিত যে "${name}" পণ্যটি মুছে ফেলতে চান?`)) {
             router.delete(`/admin/products/${id}`);
         }
     };
@@ -22,7 +22,7 @@ export default function Index({ products, categories = [], filters = {} }) {
 
     return (
         <AdminLayout title="পণ্য তালিকা (Products)">
-            <div className="space-y-6">
+            <div className="space-y-6 w-full">
                 {/* Top Action Bar */}
                 <div className="bg-white p-5 rounded-2xl border border-gray-200/80 shadow-xs flex flex-col sm:flex-row items-center justify-between gap-4">
                     <form onSubmit={handleSearch} className="flex items-center gap-3 w-full sm:w-auto">
@@ -51,13 +51,22 @@ export default function Index({ products, categories = [], filters = {} }) {
                         </select>
                     </form>
 
-                    <Link
-                        href="/admin/products/create"
-                        className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-sm flex items-center justify-center gap-2 shadow-xs transition-colors"
-                    >
-                        <Plus className="w-4 h-4" />
-                        <span>নতুন পণ্য যোগ করুন</span>
-                    </Link>
+                    <div className="flex items-center gap-2.5 w-full sm:w-auto">
+                        <Link
+                            href="/admin/categories"
+                            className="px-4 py-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold text-sm flex items-center justify-center gap-2 transition-colors"
+                        >
+                            <FolderTree className="w-4 h-4 text-emerald-700" />
+                            <span>ক্যাটাগরি সমূহ</span>
+                        </Link>
+                        <Link
+                            href="/admin/products/create"
+                            className="px-5 py-2.5 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-sm flex items-center justify-center gap-2 shadow-xs transition-colors"
+                        >
+                            <Plus className="w-4 h-4" />
+                            <span>নতুন পণ্য যোগ করুন</span>
+                        </Link>
+                    </div>
                 </div>
 
                 {/* Table */}

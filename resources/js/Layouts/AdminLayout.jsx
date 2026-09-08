@@ -20,7 +20,8 @@ import {
     ExternalLink,
     Leaf,
     CheckCircle2,
-    AlertCircle
+    AlertCircle,
+    Tag
 } from 'lucide-react';
 
 export default function AdminLayout({ children, title = 'Admin Panel' }) {
@@ -30,8 +31,10 @@ export default function AdminLayout({ children, title = 'Admin Panel' }) {
     const navItems = [
         { label: 'Dashboard', url: '/admin/dashboard', icon: LayoutDashboard },
         { label: 'হোমপেজ বিল্ডার (Home)', url: '/admin/homepage-builder', icon: Layout },
-        { label: 'Products', url: '/admin/products', icon: Package },
-        { label: 'Orders', url: '/admin/orders', icon: ShoppingCart },
+        { label: 'Products (পণ্য)', url: '/admin/products', icon: Package },
+        { label: 'Categories (ক্যাটাগরি)', url: '/admin/categories', icon: FolderTree },
+        { label: 'Orders (অর্ডারসমূহ)', url: '/admin/orders', icon: ShoppingCart },
+        { label: 'Coupons (কুপন)', url: '/admin/coupons', icon: Tag },
         { label: 'অভিযোগ (Complaints)', url: '/admin/complaints', icon: MessageSquareWarning },
         { label: 'Customers', url: '/admin/customers', icon: Users },
         { label: 'Pages (Builder)', url: '/admin/pages', icon: FileText },

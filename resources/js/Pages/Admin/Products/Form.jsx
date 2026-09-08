@@ -2,11 +2,49 @@ import React, { useState } from 'react';
 import { useForm, Link } from '@inertiajs/react';
 import AdminLayout from '@/Layouts/AdminLayout';
 import MediaPickerModal from '@/Components/Admin/MediaPickerModal';
-import { ArrowLeft, Save, Plus, Trash2, Image, Sparkles, Layers, DollarSign, Upload } from 'lucide-react';
+import { ArrowLeft, Save, Plus, Trash2, Image, Sparkles, Layers, DollarSign, Upload, FolderTree, ExternalLink } from 'lucide-react';
 
 export default function Form({ product = null, categories = [] }) {
     const isEdit = Boolean(product);
     const [isMediaModalOpen, setIsMediaModalOpen] = useState(false);
+    const [localCategories, setLocalCategories] = useState(categories || []);
+    const [showQuickCategoryModal, setShowQuickCategoryModal] = useState(false);
+    const [newCategoryName, setNewCategoryName] = useState('');
+    const [isSavingCategory, setIsSavingCategory] = useState(false);
+    const [categoryError, setCategoryError] = useState('');
+
+    const handleCreateCategory = async (e) => {
+        if (e) e.preventDefault();
+        if (!newCategoryName.trim()) return;
+        setIsSavingCategory(true);
+        setCategoryError('');
+        try {
+            const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+            const res = await fetch('/admin/categories', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': token || '',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: JSON.stringify({ name: newCategoryName.trim() })
+            });
+            const data = await res.json();
+            if (res.ok && data.category) {
+                setLocalCategories((prev) => [...prev, data.category]);
+                form.setData('category_id', data.category.id);
+                setNewCategoryName('');
+                setShowQuickCategoryModal(false);
+            } else {
+                setCategoryError(data.message || 'ক্যাটাগরি তৈরি করতে সমস্যা হয়েছে');
+            }
+        } catch (err) {
+            setCategoryError('ক্যাটাগরি সংরক্ষণ করতে সমস্যা হয়েছে।');
+        } finally {
+            setIsSavingCategory(false);
+        }
+    };
 
     const form = useForm({
         name: product?.name || '',
@@ -437,16 +475,41 @@ export default function Form({ product = null, categories = [] }) {
                             </h2>
 
                             <div>
-                                <label className="text-xs font-bold text-gray-700 block mb-1">
-                                    ক্যাটাগরি
-                                </label>
+                                <div className="flex items-center justify-between mb-1.5">
+                                    <label className="text-xs font-bold text-gray-700 block">
+                                        ক্যাটাগরি
+                                    </label>
+                                    <div className="flex items-center gap-2">
+                                        <button
+                                            type="button"
+                                            onClick={() => {
+                                                setCategoryError('');
+                                                setShowQuickCategoryModal(true);
+                                            }}
+                                            className="text-xs font-bold text-emerald-700 hover:text-emerald-800 flex items-center gap-1 cursor-pointer bg-emerald-50 hover:bg-emerald-100 px-2 py-0.5 rounded-md transition-colors"
+                                        >
+                                            <Plus className="w-3.5 h-3.5" />
+                                            <span>নতুন ক্যাটাগরি</span>
+                                        </button>
+                                        <span className="text-gray-300">|</span>
+                                        <Link
+                                            href="/admin/categories"
+                                            target="_blank"
+                                            className="text-xs text-gray-500 hover:text-gray-800 underline flex items-center gap-0.5"
+                                            title="ক্যাটাগরি তালিকা ও ম্যানেজমেন্ট পেজ খুলুন"
+                                        >
+                                            <span>ম্যানেজ</span>
+                                            <ExternalLink className="w-3 h-3" />
+                                        </Link>
+                                    </div>
+                                </div>
                                 <select
                                     value={form.data.category_id}
                                     onChange={(e) => form.setData('category_id', e.target.value)}
-                                    className="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm"
+                                    className="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600"
                                 >
                                     <option value="">নির্বাচন করুন</option>
-                                    {categories.map((c) => (
+                                    {localCategories.map((c) => (
                                         <option key={c.id} value={c.id}>{c.name}</option>
                                     ))}
                                 </select>
@@ -548,6 +611,64 @@ export default function Form({ product = null, categories = [] }) {
                     </div>
                 </div>
             </form>
+
+            {/* Quick Add Category Modal */}
+            {showQuickCategoryModal && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs">
+                    <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4 border border-gray-100 animate-scale-up">
+                        <div className="flex items-center justify-between border-b border-gray-100 pb-3">
+                            <h3 className="font-bold text-base text-gray-900 flex items-center gap-2">
+                                <FolderTree className="w-4 h-4 text-emerald-700" />
+                                <span>নতুন ক্যাটাগরি যোগ করুন</span>
+                            </h3>
+                            <button
+                                type="button"
+                                onClick={() => setShowQuickCategoryModal(false)}
+                                className="text-gray-400 hover:text-gray-600 text-xl leading-none cursor-pointer"
+                            >
+                                &times;
+                            </button>
+                        </div>
+                        {categoryError && (
+                            <div className="p-2.5 bg-rose-50 text-rose-800 border border-rose-200 rounded-xl text-xs font-semibold">
+                                {categoryError}
+                            </div>
+                        )}
+                        <form onSubmit={handleCreateCategory} className="space-y-4">
+                            <div>
+                                <label className="text-xs font-bold text-gray-700 block mb-1">
+                                    ক্যাটাগরির নাম *
+                                </label>
+                                <input
+                                    type="text"
+                                    required
+                                    placeholder="যেমন: মসলা ও রান্নার উপাদান, মধু, ড্রাই ফ্রুটস..."
+                                    value={newCategoryName}
+                                    onChange={(e) => setNewCategoryName(e.target.value)}
+                                    className="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600"
+                                    autoFocus
+                                />
+                            </div>
+                            <div className="flex items-center justify-end gap-2 pt-2 border-t border-gray-100">
+                                <button
+                                    type="button"
+                                    onClick={() => setShowQuickCategoryModal(false)}
+                                    className="px-4 py-2 rounded-xl border border-gray-300 text-xs font-semibold text-gray-700 hover:bg-gray-50 cursor-pointer"
+                                >
+                                    বাতিল
+                                </button>
+                                <button
+                                    type="submit"
+                                    disabled={isSavingCategory || !newCategoryName.trim()}
+                                    className="px-4 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold flex items-center gap-1.5 transition-colors disabled:opacity-50 cursor-pointer"
+                                >
+                                    {isSavingCategory ? 'সংরক্ষণ হচ্ছে...' : 'সংরক্ষণ করুন'}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
         </AdminLayout>
     );
 }

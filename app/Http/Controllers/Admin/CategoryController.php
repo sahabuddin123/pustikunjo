@@ -25,15 +25,33 @@ class CategoryController extends Controller
             'slug' => 'nullable|string|unique:categories,slug',
             'image' => 'nullable|string',
             'description' => 'nullable|string',
-            'sort_order' => 'integer',
-            'is_featured' => 'boolean',
+            'sort_order' => 'nullable|integer',
+            'is_featured' => 'nullable|boolean',
+            'is_active' => 'nullable|boolean',
         ]);
 
         if (empty($validated['slug'])) {
-            $validated['slug'] = Str::slug($validated['name']);
+            $slug = Str::slug($validated['name']);
+            $validated['slug'] = !empty($slug) ? $slug : 'cat-' . time();
         }
 
-        Category::create($validated);
+        $originalSlug = $validated['slug'];
+        $count = 1;
+        while (Category::where('slug', $validated['slug'])->exists()) {
+            $validated['slug'] = "{$originalSlug}-" . $count++;
+        }
+
+        $validated['is_active'] = $request->boolean('is_active', true);
+
+        $category = Category::create($validated);
+
+        if ($request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'ক্যাটাগরি সফলভাবে তৈরি হয়েছে!',
+                'category' => $category,
+            ]);
+        }
 
         return back()->with('success', 'ক্যাটাগরি তৈরি হয়েছে!');
     }
