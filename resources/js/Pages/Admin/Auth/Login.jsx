@@ -4,8 +4,8 @@ import { Leaf, Lock, Mail, ArrowRight } from 'lucide-react';
 
 export default function Login() {
     const { data, setData, post, processing, errors } = useForm({
-        email: 'admin@pustikunjo.com.bd',
-        password: 'password',
+        email: '',
+        password: '',
         remember: true,
     });
 
@@ -40,6 +40,7 @@ export default function Login() {
                             <input
                                 type="email"
                                 required
+                                placeholder="আপনার ইমেইল লিখুন"
                                 value={data.email}
                                 onChange={(e) => setData('email', e.target.value)}
                                 className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-emerald-600"
@@ -59,6 +60,7 @@ export default function Login() {
                             <input
                                 type="password"
                                 required
+                                placeholder="পাসওয়ার্ড লিখুন"
                                 value={data.password}
                                 onChange={(e) => setData('password', e.target.value)}
                                 className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-emerald-600"
@@ -85,16 +87,12 @@ export default function Login() {
                     <button
                         type="submit"
                         disabled={processing}
-                        className="w-full py-3 px-4 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-sm flex items-center justify-center gap-2 shadow-md transition-all"
+                        className="w-full py-3 px-4 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-sm flex items-center justify-center gap-2 shadow-md transition-all cursor-pointer"
                     >
                         <span>লগইন করুন</span>
                         <ArrowRight className="w-4 h-4" />
                     </button>
                 </form>
-
-                <div className="p-3 bg-emerald-50 rounded-xl text-center text-xs text-emerald-800 font-medium">
-                    ডেমো ক্রেডেনশিয়াল: <span className="font-bold">admin@pustikunjo.com.bd</span> / <span className="font-bold">password</span>
-                </div>
             </div>
         </div>
     );
