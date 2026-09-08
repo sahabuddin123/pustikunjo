@@ -73,9 +73,39 @@ else
     echo -e "${GREEN}   ✓ SQLite ডাটাবেস ফাইল বিদ্যমান।${NC}"
 fi
 
-# 4. Composer Dependencies
+# 4. Handle Conflicting PHP Extensions (e.g. Swow / Swoole bug in CLI)
 echo -e "\n${BLUE}📦 [4/8] Composer প্রডাকশন ডিপেনডেন্সি ইন্সটল ও অপ্টিমাইজেশন...${NC}"
-composer install --no-dev --prefer-dist --optimize-autoloader --no-interaction --quiet
+
+# Check and disable swow extension if present (swow-v1.4.1 has a known core-dump bug in composer)
+if php -m 2>/dev/null | grep -qi "swow"; then
+    echo -e "${YELLOW}   ⚠️ PHP 'swow' এক্সটেনশন পাওয়া গেছে (এটি Composer কে ক্র্যাশ করায়)।${NC}"
+    echo -e "${YELLOW}   স্বয়ংক্রিয়ভাবে swow নিষ্ক্রিয় করার চেষ্টা চলছে...${NC}"
+
+    # Search and disable swow ini files in common directories
+    for dir in /etc/php /www/server/php; do
+        if [ -d "$dir" ]; then
+            find "$dir" -type f -name "*swow*.ini" 2>/dev/null | while read -r inifile; do
+                if [ -f "$inifile" ]; then
+                    mv "$inifile" "${inifile}.disabled" 2>/dev/null || true
+                    echo -e "${GREEN}   ✓ নিষ্ক্রিয় করা হয়েছে: $inifile${NC}"
+                fi
+            done
+        fi
+    done
+
+    # Check loaded php.ini and comment out swow
+    for inipath in $(php --ini 2>/dev/null | grep -oE '/[^ ]+\.ini'); do
+        if [ -f "$inipath" ] && grep -qiE '^[ ]*extension[ ]*=[ ]*.*swow' "$inipath"; then
+            sed -i -E 's/^([ ]*extension[ ]*=[ ]*.*swow.*)/;\1/gi' "$inipath" 2>/dev/null || true
+            echo -e "${GREEN}   ✓ swow কমেন্ট করা হয়েছে: $inipath${NC}"
+        fi
+    done
+fi
+
+# Run Composer Install with memory limit
+echo -e "   প্যাকেজসমূহ ডাউনলোড ও অপ্টিমাইজ হচ্ছে..."
+COMPOSER_BIN=$(command -v composer || echo "composer")
+php -d memory_limit=2G "$COMPOSER_BIN" install --no-dev --prefer-dist --optimize-autoloader --no-interaction
 echo -e "${GREEN}   ✓ Composer প্যাকেজ সফলভাবে ইন্সটল হয়েছে।${NC}"
 
 # 5. Application Key Generation
