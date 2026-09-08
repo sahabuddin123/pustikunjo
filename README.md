@@ -30,9 +30,31 @@
 - **Database:** SQLite / MySQL
 - **Tooling:** Vite, Composer, NPM
 
+## 🚀 লাইভ সার্ভার অটো ডিপ্লয়মেন্ট (1-Click Live Server Deploy)
+
+লাইভ সার্ভারে (VPS / Ubuntu / Nginx / Apache) প্রজেক্টটি ডিপ্লয় করতে টার্মিনালে শুধু নিচের কমান্ডগুলো চালান:
+
+```bash
+git clone https://github.com/sahabuddin123/pustikunjo.git
+cd pustikunjo
+chmod +x deploy.sh
+./deploy.sh
+```
+
+> **`deploy.sh` যা যা স্বয়ংক্রিয়ভাবে সম্পন্ন করবে:**
+> - `.env` তৈরি ও অপ্টিমাইজেশন
+> - `APP_KEY` জেনারেশন
+> - SQLite / Database ফাইল প্রস্তুতকরণ
+> - Composer প্রডাকশন ডিপেনডেন্সি ইন্সটল
+> - Frontend অ্যাসেট বিল্ড (`npm run build`)
+> - ডাটাবেস মাইগ্রেশন ও ডিফল্ট ডাটা সিডিং (`migrate & seed`)
+> - পাবলিক স্টোরেজ সিম্বলিক লিঙ্ক তৈরি (`storage:link`)
+> - ক্যাশ অপ্টিমাইজেশন (`config`, `route`, `view` ক্যাশিং)
+> - ফোল্ডার পারমিশন (`775` ও `www-data` ওনারশিপ)
+
 ---
 
-## 🚀 লোকাল সেটআপ নির্দেশিকা (Local Setup)
+## 💻 লোকাল সেটআপ নির্দেশিকা (Local Setup)
 
 ```bash
 # ১. ডিপেনডেন্সি ইন্সটল
