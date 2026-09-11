@@ -133,17 +133,14 @@ export default function ProductDetail({ product, relatedProducts = [], shippingZ
     const whatsapp = siteConfig?.whatsapp || '01700000000';
     const cleanWhatsapp = whatsapp.replace(/[^0-9]/g, '');
 
-    // Product Images
-    const rawImages = (product.images && product.images.length > 0)
-        ? product.images
-        : [product.primary_image || 'https://images.unsplash.com/photo-1615485290382-441e4d049cb5?w=900&auto=format&fit=crop&q=85'];
+    // Product Images: Only use actual product images from admin / database
+    const rawImages = (product.images && Array.isArray(product.images) && product.images.length > 0)
+        ? product.images.filter(Boolean)
+        : (product.primary_image ? [product.primary_image] : []);
 
-    // Gallery images (ensure at least 2 or 3 images for the thumbnail strip)
-    const galleryImages = rawImages.length >= 2 ? rawImages : [
-        rawImages[0],
-        'https://images.unsplash.com/photo-1543362906-acfc16c67564?w=900&auto=format&fit=crop&q=85',
-        'https://images.unsplash.com/photo-1599940824399-b87987ceb72a?w=900&auto=format&fit=crop&q=85'
-    ];
+    const galleryImages = rawImages.length > 0
+        ? rawImages
+        : ['/images/placeholder.png'];
 
     // Track Meta Pixel ViewContent
     useEffect(() => {
@@ -352,28 +349,30 @@ export default function ProductDetail({ product, relatedProducts = [], shippingZ
                 <div className="bg-white rounded-2xl border border-gray-200/80 shadow-xs p-6 sm:p-8">
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start">
                         {/* Left Column: Image Gallery with Interactive Zoom */}
-                        <div className="lg:col-span-6 flex flex-col-reverse sm:flex-row gap-4 items-start">
-                            {/* Vertical Thumbnails */}
-                            <div className="flex sm:flex-col gap-3 w-full sm:w-20 shrink-0 overflow-x-auto sm:overflow-visible pb-2 sm:pb-0">
-                                {galleryImages.map((img, idx) => (
-                                    <button
-                                        key={idx}
-                                        onClick={() => setActiveImageIndex(idx)}
-                                        className={`w-16 h-16 sm:w-20 sm:h-20 rounded-lg overflow-hidden border-2 transition-all p-1 bg-white cursor-pointer shrink-0 ${
-                                            activeImageIndex === idx
-                                                ? 'border-emerald-600 shadow-xs scale-102 ring-2 ring-emerald-600/20'
-                                                : 'border-gray-200 opacity-70 hover:opacity-100 hover:border-gray-300'
-                                        }`}
-                                        title={`ছবি ${idx + 1}`}
-                                    >
-                                        <img
-                                            src={img}
-                                            alt={`Thumbnail ${idx + 1}`}
-                                            className="w-full h-full object-cover rounded-md"
-                                        />
-                                    </button>
-                                ))}
-                            </div>
+                        <div className={`lg:col-span-6 flex ${galleryImages.length > 1 ? 'flex-col-reverse sm:flex-row' : 'flex-col'} gap-4 items-start`}>
+                            {/* Vertical Thumbnails (only when multiple images exist) */}
+                            {galleryImages.length > 1 && (
+                                <div className="flex sm:flex-col gap-3 w-full sm:w-20 shrink-0 overflow-x-auto sm:overflow-visible pb-2 sm:pb-0">
+                                    {galleryImages.map((img, idx) => (
+                                        <button
+                                            key={idx}
+                                            onClick={() => setActiveImageIndex(idx)}
+                                            className={`w-16 h-16 sm:w-20 sm:h-20 rounded-lg overflow-hidden border-2 transition-all p-1 bg-white cursor-pointer shrink-0 ${
+                                                activeImageIndex === idx
+                                                    ? 'border-emerald-600 shadow-xs scale-102 ring-2 ring-emerald-600/20'
+                                                    : 'border-gray-200 opacity-70 hover:opacity-100 hover:border-gray-300'
+                                            }`}
+                                            title={`ছবি ${idx + 1}`}
+                                        >
+                                            <img
+                                                src={img}
+                                                alt={`Thumbnail ${idx + 1}`}
+                                                className="w-full h-full object-cover rounded-md"
+                                            />
+                                        </button>
+                                    ))}
+                                </div>
+                            )}
 
                             {/* Main Image Container with Interactive Mouse Zoom & Click-to-Expand */}
                             <div className="relative aspect-square w-full rounded-xl overflow-hidden bg-white border border-gray-200/90 flex items-center justify-center select-none shadow-2xs group">

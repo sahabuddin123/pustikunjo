@@ -35,6 +35,39 @@ import {
     PhoneCall
 } from 'lucide-react';
 
+const DEFAULT_VIDEO_ITEMS = [
+    {
+        poster: '/images/product_videos/video_poster_1.jpg',
+        videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-woman-smiling-at-the-camera-in-a-park-41315-large.mp4',
+        promoBanner: '/images/product_videos/promo_banner_1.jpg',
+        thumb: '/images/product_videos/thumb_1.png',
+        title: 'Spray Dried Beetr...',
+        fullTitle: 'Spray Dried Beetroot Powder',
+        price: 'Tk 1,150.00',
+        productUrl: '/product/beetroot-powder'
+    },
+    {
+        poster: '/images/product_videos/video_poster_2.jpg',
+        videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-young-woman-talking-on-a-video-call-41712-large.mp4',
+        promoBanner: '/images/product_videos/promo_banner_2.jpg',
+        thumb: '/images/product_videos/thumb_2.png',
+        title: 'Pure Herbal Methi Mix',
+        fullTitle: 'Pure Herbal Methi Mix',
+        price: 'Tk 880.00',
+        productUrl: '/product/methi-mix'
+    },
+    {
+        poster: '/images/product_videos/video_poster_3.jpg',
+        videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-woman-recording-a-vlog-with-her-phone-41314-large.mp4',
+        promoBanner: '/images/product_videos/promo_banner_3.jpg',
+        thumb: '/images/product_videos/thumb_3.png',
+        title: 'Rosella Tea...',
+        fullTitle: 'Organic Rosella Herbal Tea',
+        price: 'Tk 950.00',
+        productUrl: '/product/rosella-tea'
+    }
+];
+
 const AVAILABLE_BLOCKS = [
     {
         type: 'hero',
@@ -63,58 +96,25 @@ const AVAILABLE_BLOCKS = [
     },
     {
         type: 'product_grid',
-        label: 'পণ্য গ্রিড শোকেস (Product Showcase)',
-        description: 'বেস্ট সেলার বা সমস্ত পণ্য তালিকা',
+        label: 'প্রোডাক্ট গ্রিড (Product Grid)',
+        description: 'বেস্ট সেলার বা নির্দিষ্ট ক্যাটাগরির পণ্য গ্রিড',
         icon: Layout,
         defaultData: {
             heading: 'BEST SELLER',
-            subheading: '',
             limit: 3,
             columns: 3,
-            source: 'featured',
             view_all_url: '/shop',
             show_bottom_button: false
         }
     },
     {
         type: 'product_videos',
-        label: 'প্রোডাক্ট ভিডিও ও প্রমো কার্ড (Product Videos)',
-        description: '৩টি ভার্টিক্যাল রিল ভিডিও এবং প্রোডাক্ট প্রমো কার্ড গ্রিড',
+        label: 'প্রোডাক্ট ভিডিও ও ৩টি স্কয়ার প্রমো কার্ড (Product Videos & Promo Cards)',
+        description: '৩টি ভার্টিক্যাল রিল ভিডিও এবং ৩টি স্কয়ার প্রোডাক্ট প্রমো ব্যানার',
         icon: Video,
         defaultData: {
             heading: 'Product Videos',
-            items: [
-                {
-                    poster: '/images/product_videos/video_poster_1.jpg',
-                    videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-woman-smiling-at-the-camera-in-a-park-41315-large.mp4',
-                    promoBanner: '/images/product_videos/promo_banner_1.jpg',
-                    thumb: '/images/product_videos/thumb_1.png',
-                    title: 'Spray Dried Beetr...',
-                    fullTitle: 'Spray Dried Beetroot Powder',
-                    price: 'Tk 1,150.00',
-                    productUrl: '/product/beetroot-powder'
-                },
-                {
-                    poster: '/images/product_videos/video_poster_2.jpg',
-                    videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-young-woman-talking-on-a-video-call-41712-large.mp4',
-                    promoBanner: '/images/product_videos/promo_banner_2.jpg',
-                    thumb: '/images/product_videos/thumb_2.png',
-                    title: 'Desi Ghee',
-                    fullTitle: 'Desi Ghee / Pure Herbal Methimix',
-                    price: 'Tk 680.00',
-                    productUrl: '/product/methimix'
-                },
-                {
-                    poster: '/images/product_videos/video_poster_3.jpg',
-                    videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-woman-recording-a-vlog-with-her-phone-41314-large.mp4',
-                    promoBanner: '/images/product_videos/promo_banner_3.jpg',
-                    thumb: '/images/product_videos/thumb_3.png',
-                    title: 'Spray Dried Beetr...',
-                    fullTitle: 'Premium Organic Superfood',
-                    price: 'Tk 1,150.00',
-                    productUrl: '/product/chia-seeds'
-                }
-            ]
+            items: DEFAULT_VIDEO_ITEMS
         }
     },
     {
@@ -351,32 +351,40 @@ export default function Builder({ page = null, products = [], categories = [] })
 
     // Product Videos Items Helper
     const updateVideoItem = (itemIdx, field, val) => {
-        const items = [...(activeBlock?.data?.items || [
-            { poster: '/images/product_videos/video_poster_1.jpg', videoUrl: '', promoBanner: '/images/product_videos/promo_banner_1.jpg', thumb: '/images/product_videos/thumb_1.png', title: 'Spray Dried Beetr...', price: 'Tk 1,150.00', productUrl: '/product/beetroot-powder' },
-            { poster: '/images/product_videos/video_poster_2.jpg', videoUrl: '', promoBanner: '/images/product_videos/promo_banner_2.jpg', thumb: '/images/product_videos/thumb_2.png', title: 'Desi Ghee', price: 'Tk 680.00', productUrl: '/product/methimix' },
-            { poster: '/images/product_videos/video_poster_3.jpg', videoUrl: '', promoBanner: '/images/product_videos/promo_banner_3.jpg', thumb: '/images/product_videos/thumb_3.png', title: 'Spray Dried Beetr...', price: 'Tk 1,150.00', productUrl: '/product/chia-seeds' },
-        ])];
+        const rawItems = (activeBlock?.data?.items && activeBlock.data.items.length > 0)
+            ? activeBlock.data.items
+            : DEFAULT_VIDEO_ITEMS;
+        const items = rawItems.map((item) => ({ ...item }));
         if (!items[itemIdx]) return;
         items[itemIdx][field] = val;
         updateBlockData('items', items);
     };
 
     const addVideoItem = () => {
-        const items = [...(activeBlock?.data?.items || [])];
-        items.push({
-            poster: 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=600&auto=format&fit=crop&q=85',
-            videoUrl: '',
-            promoBanner: 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=600&auto=format&fit=crop&q=85',
-            thumb: '',
-            title: 'নতুন পণ্য',
-            price: 'Tk 1,000.00',
-            productUrl: '/shop'
-        });
+        const rawItems = (activeBlock?.data?.items && activeBlock.data.items.length > 0)
+            ? activeBlock.data.items
+            : DEFAULT_VIDEO_ITEMS;
+        const items = [
+            ...rawItems.map((item) => ({ ...item })),
+            {
+                poster: '/images/product_videos/video_poster_1.jpg',
+                videoUrl: '',
+                promoBanner: '/images/product_videos/promo_banner_1.jpg',
+                thumb: '/images/product_videos/thumb_1.png',
+                title: 'নতুন পণ্য',
+                fullTitle: 'নতুন পুষ্টি পণ্য',
+                price: 'Tk 1,000.00',
+                productUrl: '/shop'
+            }
+        ];
         updateBlockData('items', items);
     };
 
     const removeVideoItem = (itemIdx) => {
-        const items = (activeBlock?.data?.items || []).filter((_, i) => i !== itemIdx);
+        const rawItems = (activeBlock?.data?.items && activeBlock.data.items.length > 0)
+            ? activeBlock.data.items
+            : DEFAULT_VIDEO_ITEMS;
+        const items = rawItems.filter((_, i) => i !== itemIdx);
         updateBlockData('items', items);
     };
 
@@ -884,120 +892,172 @@ export default function Builder({ page = null, products = [], categories = [] })
                                 {/* ========================================== */}
                                 {/* 3. PRODUCT VIDEOS & PROMO CARDS */}
                                 {/* ========================================== */}
-                                {activeBlock.type === 'product_videos' && (
-                                    <div className="space-y-4">
-                                        <div>
-                                            <label className="text-xs font-bold text-gray-700 block mb-1">
-                                                সেকশনের শিরোনাম
-                                            </label>
-                                            <input
-                                                type="text"
-                                                value={activeBlock.data.heading || 'Product Videos'}
-                                                onChange={(e) => updateBlockData('heading', e.target.value)}
-                                                className="w-full px-3 py-2 rounded-xl border border-gray-300 text-sm font-bold"
-                                            />
-                                        </div>
+                                {activeBlock.type === 'product_videos' && (() => {
+                                    const videoItems = (activeBlock.data?.items && activeBlock.data.items.length > 0)
+                                        ? activeBlock.data.items
+                                        : DEFAULT_VIDEO_ITEMS;
 
-                                        <div className="flex items-center justify-between pt-2">
-                                            <h3 className="font-bold text-gray-900 text-sm">
-                                                ভিডিও ও প্রমো কার্ডসমূহ (Video Reels & Promo Cards)
-                                            </h3>
-                                            <button
-                                                type="button"
-                                                onClick={addVideoItem}
-                                                className="px-3 py-1 bg-emerald-50 text-emerald-800 rounded-lg text-xs font-bold flex items-center gap-1 hover:bg-emerald-100 cursor-pointer"
-                                            >
-                                                <Plus className="w-3.5 h-3.5" />
-                                                <span>নতুন কলাম যোগ করুন</span>
-                                            </button>
-                                        </div>
-
-                                        <div className="space-y-4">
-                                            {(activeBlock.data.items || []).map((item, vIdx) => (
-                                                <div key={vIdx} className="p-4 rounded-xl border border-gray-200 bg-gray-50/50 space-y-3">
-                                                    <div className="flex items-center justify-between border-b border-gray-200/60 pb-2">
-                                                        <span className="font-bold text-xs text-emerald-800">
-                                                            কলাম #{vIdx + 1}: {item.title || item.fullTitle || 'পণ্য'}
-                                                        </span>
-                                                        <button
-                                                            type="button"
-                                                            onClick={() => removeVideoItem(vIdx)}
-                                                            className="text-rose-500 hover:text-rose-700 text-xs flex items-center gap-1 cursor-pointer"
-                                                        >
-                                                            <Trash2 className="w-3.5 h-3.5" /> মুছে ফেলুন
-                                                        </button>
-                                                    </div>
-
-                                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                                        <ImagePickerField
-                                                            label="ভার্টিক্যাল ভিডিও পোস্টার URL"
-                                                            value={item.poster || ''}
-                                                            onChange={(val) => updateVideoItem(vIdx, 'poster', val)}
-                                                            placeholder="পোস্টার ইমেজ URL"
-                                                        />
-                                                        <div>
-                                                            <label className="text-xs sm:text-sm font-bold text-gray-800 block mb-1">ভিডিও MP4 / স্ট্রিম URL</label>
-                                                            <input
-                                                                type="text"
-                                                                value={item.videoUrl || ''}
-                                                                onChange={(e) => updateVideoItem(vIdx, 'videoUrl', e.target.value)}
-                                                                placeholder="https://assets.mixkit.co/...mp4"
-                                                                className="w-full px-3.5 py-2 rounded-xl border border-gray-300 text-xs sm:text-sm bg-white font-mono"
-                                                            />
-                                                        </div>
-                                                    </div>
-
-                                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                                        <ImagePickerField
-                                                            label="স্কয়ার প্রমো ব্যানার ইমেজ URL"
-                                                            value={item.promoBanner || ''}
-                                                            onChange={(val) => updateVideoItem(vIdx, 'promoBanner', val)}
-                                                            placeholder="প্রমো ব্যানার URL"
-                                                        />
-                                                        <ImagePickerField
-                                                            label="ছোট জার থাম্বনেইল URL"
-                                                            value={item.thumb || ''}
-                                                            onChange={(val) => updateVideoItem(vIdx, 'thumb', val)}
-                                                            placeholder="থাম্বনেইল URL"
-                                                        />
-                                                    </div>
-
-                                                    <div className="grid grid-cols-3 gap-2">
-                                                        <div>
-                                                            <label className="text-[11px] font-bold text-gray-700 block mb-0.5">প্রদর্শিত নাম</label>
-                                                            <input
-                                                                type="text"
-                                                                value={item.title || ''}
-                                                                onChange={(e) => updateVideoItem(vIdx, 'title', e.target.value)}
-                                                                className="w-full px-2.5 py-1.5 rounded-lg border border-gray-300 text-xs bg-white"
-                                                            />
-                                                        </div>
-                                                        <div>
-                                                            <label className="text-[11px] font-bold text-gray-700 block mb-0.5">মূল্য (Price Text)</label>
-                                                            <input
-                                                                type="text"
-                                                                value={item.price || ''}
-                                                                onChange={(e) => updateVideoItem(vIdx, 'price', e.target.value)}
-                                                                placeholder="Tk 1,150.00"
-                                                                className="w-full px-2.5 py-1.5 rounded-lg border border-gray-300 text-xs bg-white"
-                                                            />
-                                                        </div>
-                                                        <div>
-                                                            <label className="text-[11px] font-bold text-gray-700 block mb-0.5">টার্গেট লিঙ্ক URL</label>
-                                                            <input
-                                                                type="text"
-                                                                value={item.productUrl || ''}
-                                                                onChange={(e) => updateVideoItem(vIdx, 'productUrl', e.target.value)}
-                                                                placeholder="/product/beetroot-powder"
-                                                                className="w-full px-2.5 py-1.5 rounded-lg border border-gray-300 text-xs bg-white"
-                                                            />
-                                                        </div>
-                                                    </div>
+                                    return (
+                                        <div className="space-y-5">
+                                            {/* Informational Guidance Notice */}
+                                            <div className="p-3.5 bg-emerald-50 border border-emerald-200 rounded-xl text-xs text-emerald-950 flex items-start gap-2.5">
+                                                <Sparkles className="w-4 h-4 text-emerald-700 shrink-0 mt-0.5" />
+                                                <div className="space-y-1">
+                                                    <p className="font-bold text-emerald-900">
+                                                        ৩টি স্কয়ার প্রমো ব্যানার কার্ড এবং ভিডিও রিল এডিটর:
+                                                    </p>
+                                                    <p className="text-emerald-800 leading-relaxed">
+                                                        এই সেকশন থেকে আপনি হোমপেজে ভিডিওর নিচের ৩টি স্কয়ার ব্যানার কার্ডের ছবি, প্রোডাক্টের নাম, মূল্য, লিংক এবং উপরের ভিডিও রিলগুলো পরিবর্তন করতে পারবেন।
+                                                    </p>
                                                 </div>
-                                            ))}
+                                            </div>
+
+                                            <div>
+                                                <label className="text-xs font-bold text-gray-700 block mb-1">
+                                                    সেকশনের শিরোনাম (Section Heading)
+                                                </label>
+                                                <input
+                                                    type="text"
+                                                    value={activeBlock.data.heading || 'Product Videos'}
+                                                    onChange={(e) => updateBlockData('heading', e.target.value)}
+                                                    className="w-full px-3 py-2 rounded-xl border border-gray-300 text-sm font-bold bg-white"
+                                                />
+                                            </div>
+
+                                            <div className="flex items-center justify-between pt-2">
+                                                <h3 className="font-bold text-gray-900 text-sm flex items-center gap-1.5">
+                                                    <span>প্রমো কার্ড ও ভিডিও রিল কলামসমূহ ({videoItems.length} টি)</span>
+                                                </h3>
+                                                <button
+                                                    type="button"
+                                                    onClick={addVideoItem}
+                                                    className="px-3 py-1.5 bg-emerald-50 text-emerald-800 rounded-lg text-xs font-bold flex items-center gap-1 hover:bg-emerald-100 cursor-pointer transition-colors"
+                                                >
+                                                    <Plus className="w-3.5 h-3.5" />
+                                                    <span>নতুন কলাম যোগ করুন</span>
+                                                </button>
+                                            </div>
+
+                                            <div className="space-y-5">
+                                                {videoItems.map((item, vIdx) => (
+                                                    <div key={vIdx} className="p-4 sm:p-5 rounded-2xl border-2 border-emerald-100 bg-white shadow-xs space-y-4">
+                                                        {/* Header of Column */}
+                                                        <div className="flex items-center justify-between border-b border-gray-100 pb-2.5">
+                                                            <div className="flex items-center gap-2">
+                                                                <span className="w-6 h-6 rounded-full bg-[#0B3E25] text-white text-xs font-black flex items-center justify-center">
+                                                                    {vIdx + 1}
+                                                                </span>
+                                                                <span className="font-bold text-sm text-gray-900">
+                                                                    {item.title || item.fullTitle || `কলাম #${vIdx + 1}`}
+                                                                </span>
+                                                            </div>
+                                                            {videoItems.length > 1 && (
+                                                                <button
+                                                                    type="button"
+                                                                    onClick={() => removeVideoItem(vIdx)}
+                                                                    className="text-rose-500 hover:text-rose-700 text-xs flex items-center gap-1 cursor-pointer font-medium"
+                                                                >
+                                                                    <Trash2 className="w-3.5 h-3.5" /> মুছে ফেলুন
+                                                                </button>
+                                                            )}
+                                                        </div>
+
+                                                        {/* 1. SQUARE PROMO BANNER & PRODUCT STRIP (The primary section requested) */}
+                                                        <div className="p-3.5 rounded-xl bg-amber-50/60 border border-amber-200/80 space-y-3">
+                                                            <div className="flex items-center gap-1.5 text-xs font-bold text-amber-900 border-b border-amber-200/60 pb-1.5">
+                                                                <Images className="w-3.5 h-3.5 text-amber-700" />
+                                                                <span>১. স্কয়ার প্রমো ব্যানার ও প্রোডাক্ট বক্স (হোমপেজে কার্ড)</span>
+                                                            </div>
+
+                                                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                                                <ImagePickerField
+                                                                    label="স্কয়ার প্রমো ব্যানার ছবি (Square Banner Image)"
+                                                                    value={item.promoBanner || ''}
+                                                                    onChange={(val) => updateVideoItem(vIdx, 'promoBanner', val)}
+                                                                    placeholder="/images/product_videos/promo_banner_1.jpg"
+                                                                />
+                                                                <ImagePickerField
+                                                                    label="ছোট প্রোডাক্ট থাম্বনেইল আইকন (Small Thumb)"
+                                                                    value={item.thumb || ''}
+                                                                    onChange={(val) => updateVideoItem(vIdx, 'thumb', val)}
+                                                                    placeholder="/images/product_videos/thumb_1.png"
+                                                                />
+                                                            </div>
+
+                                                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                                                                <div>
+                                                                    <label className="text-xs font-bold text-gray-700 block mb-1">
+                                                                        প্রোডাক্টের নাম (Title)
+                                                                    </label>
+                                                                    <input
+                                                                        type="text"
+                                                                        value={item.title || ''}
+                                                                        onChange={(e) => updateVideoItem(vIdx, 'title', e.target.value)}
+                                                                        placeholder="Spray Dried Beetr..."
+                                                                        className="w-full px-3 py-2 rounded-lg border border-gray-300 text-xs sm:text-sm bg-white font-medium"
+                                                                    />
+                                                                </div>
+                                                                <div>
+                                                                    <label className="text-xs font-bold text-gray-700 block mb-1">
+                                                                        মূল্য (Price Text)
+                                                                    </label>
+                                                                    <input
+                                                                        type="text"
+                                                                        value={item.price || ''}
+                                                                        onChange={(e) => updateVideoItem(vIdx, 'price', e.target.value)}
+                                                                        placeholder="Tk 1,150.00"
+                                                                        className="w-full px-3 py-2 rounded-lg border border-gray-300 text-xs sm:text-sm bg-white font-bold text-emerald-800"
+                                                                    />
+                                                                </div>
+                                                                <div>
+                                                                    <label className="text-xs font-bold text-gray-700 block mb-1">
+                                                                        টার্গেট লিংক (Product Page URL)
+                                                                    </label>
+                                                                    <input
+                                                                        type="text"
+                                                                        value={item.productUrl || ''}
+                                                                        onChange={(e) => updateVideoItem(vIdx, 'productUrl', e.target.value)}
+                                                                        placeholder="/product/beetroot-powder"
+                                                                        className="w-full px-3 py-2 rounded-lg border border-gray-300 text-xs sm:text-sm bg-white font-mono"
+                                                                    />
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        {/* 2. VERTICAL VIDEO REEL */}
+                                                        <div className="p-3.5 rounded-xl bg-gray-50 border border-gray-200 space-y-3">
+                                                            <div className="flex items-center gap-1.5 text-xs font-bold text-gray-700 border-b border-gray-200 pb-1.5">
+                                                                <Video className="w-3.5 h-3.5 text-gray-600" />
+                                                                <span>২. উপরের ভার্টিক্যাল ভিডিও রিল (Vertical Video Reel)</span>
+                                                            </div>
+
+                                                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                                                <ImagePickerField
+                                                                    label="ভিডিও পোস্টার ছবি (Video Poster Image)"
+                                                                    value={item.poster || ''}
+                                                                    onChange={(val) => updateVideoItem(vIdx, 'poster', val)}
+                                                                    placeholder="/images/product_videos/video_poster_1.jpg"
+                                                                />
+                                                                <div>
+                                                                    <label className="text-xs font-bold text-gray-700 block mb-1">
+                                                                        ভিডিও MP4 / স্ট্রিম লিংক URL
+                                                                    </label>
+                                                                    <input
+                                                                        type="text"
+                                                                        value={item.videoUrl || ''}
+                                                                        onChange={(e) => updateVideoItem(vIdx, 'videoUrl', e.target.value)}
+                                                                        placeholder="https://...mp4"
+                                                                        className="w-full px-3 py-2 rounded-xl border border-gray-300 text-xs sm:text-sm bg-white font-mono"
+                                                                    />
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                            </div>
                                         </div>
-                                    </div>
-                                )}
+                                    );
+                                })()}
 
                                 {/* ========================================== */}
                                 {/* 4. CERTIFICATIONS (Award-winning & Certified) */}

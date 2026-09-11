@@ -255,13 +255,51 @@ class DatabaseSeeder extends Seeder
                     'show_bottom_button' => false,
                 ]
             ],
-            // 4. Product Videos
+            // 4. Product Videos & Promo Cards
             [
                 'id' => 'b_product_videos_3',
                 'type' => 'product_videos',
                 'is_hidden' => false,
                 'data' => [
                     'heading' => 'Product Videos',
+                    'items' => [
+                        [
+                            'id' => 1,
+                            'poster' => '/images/product_videos/video_poster_1.jpg',
+                            'videoUrl' => 'https://assets.mixkit.co/videos/preview/mixkit-woman-smiling-at-the-camera-in-a-park-41315-large.mp4',
+                            'promoBanner' => '/images/product_videos/promo_banner_1.jpg',
+                            'thumb' => '/images/product_videos/thumb_1.png',
+                            'title' => 'Spray Dried Beetr...',
+                            'fullTitle' => 'Spray Dried Beetroot Powder',
+                            'price' => 'Tk 1,150.00',
+                            'productUrl' => '/product/beetroot-powder',
+                            'alt' => 'Spray Dried Beetroot Powder Video Review & Promo',
+                        ],
+                        [
+                            'id' => 2,
+                            'poster' => '/images/product_videos/video_poster_2.jpg',
+                            'videoUrl' => 'https://assets.mixkit.co/videos/preview/mixkit-young-woman-talking-on-a-video-call-41712-large.mp4',
+                            'promoBanner' => '/images/product_videos/promo_banner_2.jpg',
+                            'thumb' => '/images/product_videos/thumb_2.png',
+                            'title' => 'Pure Herbal Methi Mix',
+                            'fullTitle' => 'Pure Herbal Methi Mix',
+                            'price' => 'Tk 880.00',
+                            'productUrl' => '/product/methi-mix',
+                            'alt' => 'Pure Herbal Methi Mix Video Review & Promo',
+                        ],
+                        [
+                            'id' => 3,
+                            'poster' => '/images/product_videos/video_poster_3.jpg',
+                            'videoUrl' => 'https://assets.mixkit.co/videos/preview/mixkit-woman-recording-a-vlog-with-her-phone-41314-large.mp4',
+                            'promoBanner' => '/images/product_videos/promo_banner_3.jpg',
+                            'thumb' => '/images/product_videos/thumb_3.png',
+                            'title' => 'Rosella Tea...',
+                            'fullTitle' => 'Organic Rosella Herbal Tea',
+                            'price' => 'Tk 950.00',
+                            'productUrl' => '/product/rosella-tea',
+                            'alt' => 'Organic Rosella Tea Video Review & Promo',
+                        ],
+                    ],
                 ]
             ],
             // 5. All Products Section
