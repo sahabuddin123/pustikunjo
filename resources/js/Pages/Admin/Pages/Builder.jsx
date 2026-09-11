@@ -68,6 +68,27 @@ const DEFAULT_VIDEO_ITEMS = [
     }
 ];
 
+const DEFAULT_CERT_ITEMS = [
+    {
+        image: '/images/certificates/rosella-tea-report.png',
+        title: 'রোজেলা চা ল্যাব টেস্ট রিপোর্ট',
+        subtitle: 'Waffen Research Lab (ISO/IEC 17025:2017)',
+        alt: 'Rosella Tea Lab Test Report'
+    },
+    {
+        image: '/images/certificates/beetroot-powder-report.png',
+        title: 'বিটরুট পাউডার ল্যাব টেস্ট রিপোর্ট',
+        subtitle: 'Waffen Research Lab (ISO/IEC 17025:2017)',
+        alt: 'Beetroot Powder Lab Test Report'
+    },
+    {
+        image: '/images/certificates/methi-mix-report.png',
+        title: 'মেথি মিক্স ল্যাব টেস্ট রিপোর্ট',
+        subtitle: 'Waffen Research Lab (ISO/IEC 17025:2017)',
+        alt: 'Methi Mix Powder Lab Test Report'
+    }
+];
+
 const AVAILABLE_BLOCKS = [
     {
         type: 'hero',
@@ -119,18 +140,13 @@ const AVAILABLE_BLOCKS = [
     },
     {
         type: 'certifications',
-        label: 'অ্যাওয়ার্ড ও সার্টিফিকেশন (Award-winning & Certified)',
-        description: 'BSTI, BCSIR ল্যাব টেস্ট ও কোয়ালিটি সিল',
+        label: 'ল্যাব টেস্ট ও সার্টিফিকেশন (Lab Tests & Certifications)',
+        description: 'ISO/IEC ১৭০২৫ আন্তর্জাতিক ল্যাব টেস্ট রিপোর্ট ও সার্টিফিকেশন',
         icon: Shield,
         defaultData: {
             heading: 'Award-winning & Certified',
-            subheading: 'BSTI, BCSIR & Kuet Lab test',
-            items: [
-                { image: '/images/certifications/bsti_logo_1.png', alt: 'BSTI Certified' },
-                { image: '/images/certifications/bcsir_logo_2.png', alt: 'BCSIR Tested' },
-                { image: '/images/certifications/bcsir_logo_3.png', alt: 'Science Lab Certified' },
-                { image: '/images/certifications/bsti_logo_4.png', alt: 'BSTI Quality Tested' }
-            ]
+            subheading: 'ISO/IEC 17025:2017 আন্তর্জাতিক মান অনুযায়ী এক্রেডিটেড ওয়াফেন রিসার্চ ল্যাব রিপোর্ট',
+            items: DEFAULT_CERT_ITEMS
         }
     },
     {
@@ -388,27 +404,38 @@ export default function Builder({ page = null, products = [], categories = [] })
         updateBlockData('items', items);
     };
 
-    // Certification Logos Helper
+    // Certification & Lab Test Reports Helper
     const updateCertLogo = (logoIdx, field, val) => {
-        const logos = [...(activeBlock?.data?.items || [
-            { image: '/images/certifications/bsti_logo_1.png', alt: 'BSTI Certified' },
-            { image: '/images/certifications/bcsir_logo_2.png', alt: 'BCSIR Tested' },
-            { image: '/images/certifications/bcsir_logo_3.png', alt: 'Science Lab Certified' },
-            { image: '/images/certifications/bsti_logo_4.png', alt: 'BSTI Quality Tested' }
-        ])];
+        const rawLogos = (activeBlock?.data?.items && activeBlock.data.items.length > 0)
+            ? activeBlock.data.items
+            : DEFAULT_CERT_ITEMS;
+        const logos = rawLogos.map((item) => ({ ...item }));
         if (!logos[logoIdx]) return;
         logos[logoIdx][field] = val;
         updateBlockData('items', logos);
     };
 
     const addCertLogo = () => {
-        const logos = [...(activeBlock?.data?.items || [])];
-        logos.push({ image: '/images/certifications/bsti_logo_1.png', alt: 'নতুন সার্টিফিকেশন' });
+        const rawLogos = (activeBlock?.data?.items && activeBlock.data.items.length > 0)
+            ? activeBlock.data.items
+            : DEFAULT_CERT_ITEMS;
+        const logos = [
+            ...rawLogos.map((item) => ({ ...item })),
+            {
+                image: '/images/certificates/rosella-tea-report.png',
+                title: 'নতুন ল্যাব রিপোর্ট',
+                subtitle: 'Waffen Research Lab (ISO 17025)',
+                alt: 'Lab Certificate'
+            }
+        ];
         updateBlockData('items', logos);
     };
 
     const removeCertLogo = (logoIdx) => {
-        const logos = (activeBlock?.data?.items || []).filter((_, i) => i !== logoIdx);
+        const rawLogos = (activeBlock?.data?.items && activeBlock.data.items.length > 0)
+            ? activeBlock.data.items
+            : DEFAULT_CERT_ITEMS;
+        const logos = rawLogos.filter((_, i) => i !== logoIdx);
         updateBlockData('items', logos);
     };
 
@@ -1062,81 +1089,125 @@ export default function Builder({ page = null, products = [], categories = [] })
                                 {/* ========================================== */}
                                 {/* 4. CERTIFICATIONS (Award-winning & Certified) */}
                                 {/* ========================================== */}
-                                {activeBlock.type === 'certifications' && (
-                                    <div className="space-y-4">
-                                        <div className="grid grid-cols-2 gap-3">
-                                            <div>
-                                                <label className="text-xs font-bold text-gray-700 block mb-1">
-                                                    শিরোনাম (Heading)
-                                                </label>
-                                                <input
-                                                    type="text"
-                                                    value={activeBlock.data.heading || 'Award-winning & Certified'}
-                                                    onChange={(e) => updateBlockData('heading', e.target.value)}
-                                                    className="w-full px-3 py-2 rounded-xl border border-gray-300 text-sm font-bold"
-                                                />
-                                            </div>
-                                            <div>
-                                                <label className="text-xs font-bold text-gray-700 block mb-1">
-                                                    সাবটাইটেল (Italic Subtitle)
-                                                </label>
-                                                <input
-                                                    type="text"
-                                                    value={activeBlock.data.subheading || 'BSTI, BCSIR & Kuet Lab test'}
-                                                    onChange={(e) => updateBlockData('subheading', e.target.value)}
-                                                    className="w-full px-3 py-2 rounded-xl border border-gray-300 text-sm"
-                                                />
-                                            </div>
-                                        </div>
+                                {activeBlock.type === 'certifications' && (() => {
+                                    const certItems = (activeBlock.data?.items && activeBlock.data.items.length > 0)
+                                        ? activeBlock.data.items
+                                        : DEFAULT_CERT_ITEMS;
 
-                                        <div className="flex items-center justify-between pt-2">
-                                            <h3 className="font-bold text-gray-900 text-sm">
-                                                সার্টিফিকেশন লোগোসমূহ (Logos)
-                                            </h3>
-                                            <button
-                                                type="button"
-                                                onClick={addCertLogo}
-                                                className="px-3 py-1 bg-emerald-50 text-emerald-800 rounded-lg text-xs font-bold flex items-center gap-1 hover:bg-emerald-100 cursor-pointer"
-                                            >
-                                                <Plus className="w-3.5 h-3.5" />
-                                                <span>লোগো যোগ করুন</span>
-                                            </button>
-                                        </div>
+                                    return (
+                                        <div className="space-y-5">
+                                            {/* Informational Guidance Notice */}
+                                            <div className="p-3.5 bg-emerald-50 border border-emerald-200 rounded-xl text-xs text-emerald-950 flex items-start gap-2.5">
+                                                <Shield className="w-4 h-4 text-emerald-700 shrink-0 mt-0.5" />
+                                                <div className="space-y-1">
+                                                    <p className="font-bold text-emerald-900">
+                                                        ল্যাব টেস্ট সার্টিফিকেট ও এক্রেডিটেশন এডিটর:
+                                                    </p>
+                                                    <p className="text-emerald-800 leading-relaxed">
+                                                        এখানে আপনি প্রোডাক্টের অফিসিয়াল ল্যাব টেস্ট রিপোর্ট/সার্টিফিকেট ছবি আপলোড করতে পারবেন। ওয়েবসাইটে এগুলো সুন্দর প্রিভিউ কার্ড আকারে প্রদর্শিত হবে এবং গ্রাহক ক্লিক করে সম্পূর্ণ রিপোর্ট ফুলস্ক্রিনে বড় করে দেখতে পারবেন।
+                                                    </p>
+                                                </div>
+                                            </div>
 
-                                        <div className="space-y-2.5">
-                                            {(activeBlock.data.items || []).map((logo, lIdx) => (
-                                                <div key={lIdx} className="p-3.5 rounded-xl border border-gray-200 bg-gray-50/50 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-                                                    <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                                <div>
+                                                    <label className="text-xs font-bold text-gray-700 block mb-1">
+                                                        সেকশনের শিরোনাম (Heading)
+                                                    </label>
+                                                    <input
+                                                        type="text"
+                                                        value={activeBlock.data.heading || 'Award-winning & Certified'}
+                                                        onChange={(e) => updateBlockData('heading', e.target.value)}
+                                                        className="w-full px-3 py-2 rounded-xl border border-gray-300 text-sm font-bold bg-white"
+                                                    />
+                                                </div>
+                                                <div>
+                                                    <label className="text-xs font-bold text-gray-700 block mb-1">
+                                                        সাবটাইটেল (Subtitle Description)
+                                                    </label>
+                                                    <input
+                                                        type="text"
+                                                        value={activeBlock.data.subheading || 'ISO/IEC 17025:2017 আন্তর্জাতিক মান অনুযায়ী এক্রেডিটেড ওয়াফেন রিসার্চ ল্যাব রিপোর্ট'}
+                                                        onChange={(e) => updateBlockData('subheading', e.target.value)}
+                                                        className="w-full px-3 py-2 rounded-xl border border-gray-300 text-sm bg-white"
+                                                    />
+                                                </div>
+                                            </div>
+
+                                            <div className="flex items-center justify-between pt-2">
+                                                <h3 className="font-bold text-gray-900 text-sm flex items-center gap-1.5">
+                                                    <span>সার্টিফিকেট ও ল্যাব রিপোর্টসমূহ ({certItems.length} টি)</span>
+                                                </h3>
+                                                <button
+                                                    type="button"
+                                                    onClick={addCertLogo}
+                                                    className="px-3 py-1.5 bg-emerald-50 text-emerald-800 rounded-lg text-xs font-bold flex items-center gap-1 hover:bg-emerald-100 cursor-pointer transition-colors"
+                                                >
+                                                    <Plus className="w-3.5 h-3.5" />
+                                                    <span>নতুন সার্টিফিকেট যোগ করুন</span>
+                                                </button>
+                                            </div>
+
+                                            <div className="space-y-4">
+                                                {certItems.map((cert, cIdx) => (
+                                                    <div key={cIdx} className="p-4 rounded-2xl border-2 border-emerald-100 bg-white shadow-xs space-y-3.5">
+                                                        <div className="flex items-center justify-between border-b border-gray-100 pb-2">
+                                                            <span className="font-bold text-xs text-emerald-800 flex items-center gap-1.5">
+                                                                <span className="w-5 h-5 rounded-full bg-[#0B3E25] text-white text-[11px] font-black flex items-center justify-center">
+                                                                    {cIdx + 1}
+                                                                </span>
+                                                                <span>{cert.title || `সার্টিফিকেট #${cIdx + 1}`}</span>
+                                                            </span>
+                                                            {certItems.length > 1 && (
+                                                                <button
+                                                                    type="button"
+                                                                    onClick={() => removeCertLogo(cIdx)}
+                                                                    className="text-rose-500 hover:text-rose-700 text-xs flex items-center gap-1 cursor-pointer font-medium"
+                                                                >
+                                                                    <Trash2 className="w-3.5 h-3.5" /> মুছে ফেলুন
+                                                                </button>
+                                                            )}
+                                                        </div>
+
                                                         <ImagePickerField
-                                                            label="লোগো ইমেজ URL"
-                                                            value={logo.image || ''}
-                                                            onChange={(val) => updateCertLogo(lIdx, 'image', val)}
-                                                            placeholder="লোগো ইমেজ URL"
+                                                            label="সার্টিফিকেট / ল্যাব রিপোর্ট ইমেজ URL"
+                                                            value={cert.image || ''}
+                                                            onChange={(val) => updateCertLogo(cIdx, 'image', val)}
+                                                            placeholder="/images/certificates/rosella-tea-report.png"
                                                         />
-                                                        <div>
-                                                            <label className="text-xs sm:text-sm font-bold text-gray-800 block mb-1">Alt টেক্সট / বিবরণ</label>
-                                                            <input
-                                                                type="text"
-                                                                value={logo.alt || ''}
-                                                                onChange={(e) => updateCertLogo(lIdx, 'alt', e.target.value)}
-                                                                placeholder="যেমন: BSTI Certified"
-                                                                className="w-full px-3.5 py-2 rounded-xl border border-gray-300 text-xs sm:text-sm bg-white"
-                                                            />
+
+                                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                                            <div>
+                                                                <label className="text-xs font-bold text-gray-700 block mb-1">
+                                                                    সার্টিফিকেট শিরোনাম (যেমন: রোজেলা চা ল্যাব টেস্ট রিপোর্ট)
+                                                                </label>
+                                                                <input
+                                                                    type="text"
+                                                                    value={cert.title || ''}
+                                                                    onChange={(e) => updateCertLogo(cIdx, 'title', e.target.value)}
+                                                                    placeholder="রোজেলা চা ল্যাব টেস্ট রিপোর্ট"
+                                                                    className="w-full px-3 py-2 rounded-lg border border-gray-300 text-xs sm:text-sm bg-white font-medium"
+                                                                />
+                                                            </div>
+                                                            <div>
+                                                                <label className="text-xs font-bold text-gray-700 block mb-1">
+                                                                    ল্যাব বা প্রতিষ্ঠানের নাম (যেমন: Waffen Research Lab)
+                                                                </label>
+                                                                <input
+                                                                    type="text"
+                                                                    value={cert.subtitle || ''}
+                                                                    onChange={(e) => updateCertLogo(cIdx, 'subtitle', e.target.value)}
+                                                                    placeholder="Waffen Research Lab (ISO/IEC 17025:2017)"
+                                                                    className="w-full px-3 py-2 rounded-lg border border-gray-300 text-xs sm:text-sm bg-white"
+                                                                />
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => removeCertLogo(lIdx)}
-                                                        className="text-rose-500 hover:text-rose-700 p-2 rounded-xl hover:bg-rose-50 cursor-pointer self-end sm:self-center shrink-0"
-                                                        title="মুছে ফেলুন"
-                                                    >
-                                                        <Trash2 className="w-5 h-5" />
-                                                    </button>
-                                                </div>
-                                            ))}
+                                                ))}
+                                            </div>
                                         </div>
-                                    </div>
-                                )}
+                                    );
+                                })()}
 
                                 {/* ========================================== */}
                                 {/* 5. WHY PUSTI KUNJO / STEP CARDS */}
