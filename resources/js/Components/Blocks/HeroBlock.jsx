@@ -87,9 +87,9 @@ export default function HeroBlock({ data = {} }) {
 
     return (
         <section className="w-full bg-white overflow-hidden select-none">
-            {/* 100% Full Width Clean Image Slider - Perfectly Proportioned */}
+            {/* 100% Full Width Clean Image Slider - Exact 1920x650 Aspect Ratio */}
             <div
-                className="group relative w-full aspect-[16/9] sm:aspect-[2.2/1] md:aspect-[2.6/1] lg:aspect-[2.95/1] max-h-[500px] overflow-hidden bg-[#0B3E25]"
+                className="group relative w-full aspect-[1920/650] overflow-hidden bg-[#0B3E25]"
                 onMouseEnter={() => setIsPaused(true)}
                 onMouseLeave={() => setIsPaused(false)}
                 onTouchStart={handleTouchStart}
