@@ -51,19 +51,13 @@ export default function Header() {
                         </button>
                     </div>
 
-                    {/* Left: Brand Logo */}
-                    <Link href="/" className="flex items-center gap-2.5 shrink-0">
-                        <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-white text-[#0B3E25] flex items-center justify-center shadow-xs">
-                            <Leaf className="w-5 h-5 fill-current text-[#0B3E25]" />
-                        </div>
-                        <div>
-                            <div className="text-lg sm:text-xl font-black tracking-tight text-white leading-none">
-                                {siteConfig?.name || 'পুষ্টি কুঞ্জ'}
-                            </div>
-                            <span className="text-[9px] sm:text-[10px] font-semibold text-emerald-300 uppercase tracking-widest block mt-0.5">
-                                {siteConfig?.tagline || 'Purity Begins here'}
-                            </span>
-                        </div>
+                    {/* Left: Brand Official Logo */}
+                    <Link href="/" className="flex items-center shrink-0 hover:opacity-95 transition-opacity py-1">
+                        <img
+                            src="/images/logo-white.png"
+                            alt={siteConfig?.name || 'Pusti Kunjo (পুষ্টি কুঞ্জ)'}
+                            className="h-9 sm:h-11 md:h-12 w-auto object-contain"
+                        />
                     </Link>
 
                     {/* Center: Large White Pill Search Bar */}
@@ -74,11 +68,11 @@ export default function Header() {
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
                                 placeholder="পণ্য খুঁজুন (বিটরুট, মেথিমিক্স, চিয়া সিড)..."
-                                className="w-full pl-5 pr-12 py-2 rounded-full bg-white text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-400 text-sm shadow-inner"
+                                className="w-full pl-5 pr-12 py-2 rounded-full bg-white text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#D99A26]/50 focus:border-[#D99A26] text-sm shadow-inner"
                             />
                             <button
                                 type="submit"
-                                className="absolute right-1 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-[#0B3E25] hover:bg-[#072F1C] text-white flex items-center justify-center transition-colors shadow-xs"
+                                className="absolute right-1 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-[#0B3E25] hover:bg-[#D99A26] text-white flex items-center justify-center transition-colors shadow-xs cursor-pointer"
                                 title="অনুসন্ধান"
                             >
                                 <Search className="w-4 h-4" />
@@ -91,7 +85,7 @@ export default function Header() {
                         {/* Mobile Search Toggle */}
                         <button
                             onClick={() => setIsMobileSearchOpen(!isMobileSearchOpen)}
-                            className="lg:hidden p-2 rounded-lg text-emerald-100 hover:text-white"
+                            className="lg:hidden p-2 rounded-lg text-emerald-100 hover:text-[#E5A93B]"
                             aria-label="অনুসন্ধান"
                         >
                             <Search className="w-5 h-5" />
@@ -100,9 +94,9 @@ export default function Header() {
                         {/* Order Tracking (Desktop) */}
                         <Link
                             href="/track-order"
-                            className="hidden sm:flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-white/95 hover:text-white hover:bg-white/10 transition-colors text-sm font-medium"
+                            className="hidden sm:flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-white/95 hover:text-white hover:bg-white/10 transition-colors text-sm font-medium group"
                         >
-                            <Truck className="w-4 h-4 text-emerald-300" />
+                            <Truck className="w-4 h-4 text-[#E5A93B] group-hover:scale-110 transition-transform" />
                             <span>অর্ডার ট্র্যাক</span>
                         </Link>
 
@@ -116,7 +110,7 @@ export default function Header() {
                             <div className="relative">
                                 <ShoppingCart className="w-4 h-4 text-white" />
                                 {cartCount > 0 && (
-                                    <span className="absolute -top-2 -right-2.5 bg-[#c52d2f] text-white text-[10px] font-black w-4 h-4 rounded-full flex items-center justify-center shadow-xs">
+                                    <span className="absolute -top-2 -right-2.5 bg-gradient-to-r from-[#D99A26] to-[#E5A93B] text-white text-[10px] font-black w-4.5 h-4.5 rounded-full flex items-center justify-center shadow-xs border border-[#0B3E25]">
                                         {cartCount}
                                     </span>
                                 )}
@@ -130,7 +124,7 @@ export default function Header() {
                         {isLoggedIn ? (
                             <Link
                                 href="/my-account"
-                                className="relative flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-700/80 hover:bg-emerald-600/90 border border-emerald-500/40 text-white transition-all shadow-xs cursor-pointer group"
+                                className="relative flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-700/80 hover:bg-[#D99A26] border border-emerald-500/40 text-white transition-all shadow-xs cursor-pointer group"
                                 title="আমার অ্যাকাউন্ট / ড্যাশবোর্ড"
                                 aria-label="আমার ড্যাশবোর্ড"
                             >
@@ -167,7 +161,7 @@ export default function Header() {
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
                                 placeholder="পণ্য খুঁজুন (বিটরুট, মেথিমিক্স, চিয়া সিড)..."
-                                className="w-full pl-4 pr-10 py-2 rounded-full bg-white text-gray-800 placeholder-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400"
+                                className="w-full pl-4 pr-10 py-2 rounded-full bg-white text-gray-800 placeholder-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-[#D99A26]/50"
                                 autoFocus
                             />
                             <button
@@ -189,10 +183,10 @@ export default function Header() {
                             <Link
                                 key={idx}
                                 href={item.url}
-                                className="text-white/95 hover:text-[#CCF381] transition-colors py-1 relative group"
+                                className="text-white/95 hover:text-[#E5A93B] transition-colors py-1 relative group"
                             >
                                 <span>{item.label}</span>
-                                <span className="absolute inset-x-0 -bottom-1 h-0.5 bg-[#CCF381] transform scale-x-0 group-hover:scale-x-100 transition-transform origin-center" />
+                                <span className="absolute inset-x-0 -bottom-1 h-0.5 bg-[#E5A93B] transform scale-x-0 group-hover:scale-x-100 transition-transform origin-center" />
                             </Link>
                         ))}
                     </nav>

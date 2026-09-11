@@ -40,9 +40,9 @@ export default function Footer() {
                             href={`https://wa.me/880${cleanWhatsapp}`}
                             target="_blank"
                             rel="noreferrer"
-                            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#092B19] hover:bg-[#072013] border border-emerald-700/60 text-emerald-300 hover:text-white font-bold text-sm sm:text-base shadow-md transition-all cursor-pointer"
+                            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#092B19] hover:bg-[#072013] border border-[#D99A26]/50 text-[#E5A93B] hover:text-white font-bold text-sm sm:text-base shadow-md transition-all cursor-pointer"
                         >
-                            <MessageCircle className="w-4 h-4 fill-current text-emerald-400" />
+                            <MessageCircle className="w-4 h-4 fill-current text-[#E5A93B]" />
                             <span>WhatsApp</span>
                         </a>
                     </div>
@@ -58,18 +58,12 @@ export default function Footer() {
                         
                         {/* Col 1: Brand Info & Social Icons */}
                         <div className="space-y-4">
-                            <div className="flex items-center gap-2.5">
-                                <div className="w-9 h-9 rounded-xl bg-white text-[#0B3E25] flex items-center justify-center shadow-xs">
-                                    <Leaf className="w-5 h-5 fill-current text-[#0B3E25]" />
-                                </div>
-                                <div>
-                                    <span className="text-xl font-black tracking-tight text-white block">
-                                        {siteConfig?.name || 'পুষ্টি কুঞ্জ'}
-                                    </span>
-                                    <span className="text-[10px] font-semibold text-emerald-400 uppercase tracking-widest block">
-                                        {siteConfig?.tagline || 'BACK TO NATURE'}
-                                    </span>
-                                </div>
+                            <div className="flex items-center mb-1">
+                                <img
+                                    src="/images/logo-white.png"
+                                    alt="পুষ্টি কুঞ্জ"
+                                    className="h-10 w-auto object-contain"
+                                />
                             </div>
 
                             <p className="text-xs sm:text-sm text-gray-300 leading-relaxed">
@@ -101,32 +95,32 @@ export default function Footer() {
 
                         {/* Col 2: Quick Links */}
                         <div>
-                            <h4 className="text-sm font-bold text-white uppercase tracking-wider mb-4 border-b border-emerald-800/60 pb-1.5 inline-block">
+                            <h4 className="text-sm font-bold text-white uppercase tracking-wider mb-4 border-b-2 border-[#D99A26] pb-1.5 inline-block">
                                 Quick Links
                             </h4>
                             <ul className="space-y-2 text-xs sm:text-sm font-normal">
                                 <li>
-                                    <Link href="/shop" className="text-gray-300 hover:text-white transition-colors">
+                                    <Link href="/shop" className="text-gray-300 hover:text-[#E5A93B] transition-colors">
                                         All Products
                                     </Link>
                                 </li>
                                 <li>
-                                    <Link href="/consultation" className="text-gray-300 hover:text-white transition-colors">
+                                    <Link href="/consultation" className="text-gray-300 hover:text-[#E5A93B] transition-colors">
                                         Hakim Consultation
                                     </Link>
                                 </li>
                                 <li>
-                                    <Link href="/faq" className="text-gray-300 hover:text-white transition-colors">
+                                    <Link href="/faq" className="text-gray-300 hover:text-[#E5A93B] transition-colors">
                                         FAQ
                                     </Link>
                                 </li>
                                 <li>
-                                    <Link href="/checkout" className="text-gray-300 hover:text-white transition-colors">
+                                    <Link href="/checkout" className="text-gray-300 hover:text-[#E5A93B] transition-colors">
                                         Cart
                                     </Link>
                                 </li>
                                 <li>
-                                    <Link href="/blog" className="text-gray-300 hover:text-white transition-colors">
+                                    <Link href="/blog" className="text-gray-300 hover:text-[#E5A93B] transition-colors">
                                         Blog
                                     </Link>
                                 </li>
@@ -135,32 +129,32 @@ export default function Footer() {
 
                         {/* Col 3: Useful Links */}
                         <div>
-                            <h4 className="text-sm font-bold text-white uppercase tracking-wider mb-4 border-b border-emerald-800/60 pb-1.5 inline-block">
+                            <h4 className="text-sm font-bold text-white uppercase tracking-wider mb-4 border-b-2 border-[#D99A26] pb-1.5 inline-block">
                                 Useful Links
                             </h4>
                             <ul className="space-y-2 text-xs sm:text-sm font-normal">
                                 <li>
-                                    <Link href="/about-us" className="text-gray-300 hover:text-white transition-colors">
+                                    <Link href="/about-us" className="text-gray-300 hover:text-[#E5A93B] transition-colors">
                                         About Us
                                     </Link>
                                 </li>
                                 <li>
-                                    <Link href="/privacy-policy" className="text-gray-300 hover:text-white transition-colors">
+                                    <Link href="/privacy-policy" className="text-gray-300 hover:text-[#E5A93B] transition-colors">
                                         Privacy Policy
                                     </Link>
                                 </li>
                                 <li>
-                                    <Link href="/privacy-policy" className="text-gray-300 hover:text-white transition-colors">
+                                    <Link href="/privacy-policy" className="text-gray-300 hover:text-[#E5A93B] transition-colors">
                                         Cookie Policy
                                     </Link>
                                 </li>
                                 <li>
-                                    <Link href="/terms" className="text-gray-300 hover:text-white transition-colors">
+                                    <Link href="/terms" className="text-gray-300 hover:text-[#E5A93B] transition-colors">
                                         Terms and Conditions
                                     </Link>
                                 </li>
                                 <li>
-                                    <Link href="/refund-policy" className="text-gray-300 hover:text-white transition-colors">
+                                    <Link href="/refund-policy" className="text-gray-300 hover:text-[#E5A93B] transition-colors">
                                         Return and Refund
                                     </Link>
                                 </li>
@@ -169,33 +163,33 @@ export default function Footer() {
 
                         {/* Col 4: Help Center */}
                         <div>
-                            <h4 className="text-sm font-bold text-white uppercase tracking-wider mb-4 border-b border-emerald-800/60 pb-1.5 inline-block">
+                            <h4 className="text-sm font-bold text-white uppercase tracking-wider mb-4 border-b-2 border-[#D99A26] pb-1.5 inline-block">
                                 Help Center
                             </h4>
                             <ul className="space-y-2 text-xs sm:text-sm font-normal">
                                 <li>
-                                    <Link href="/track-order" className="text-gray-300 hover:text-white transition-colors">
+                                    <Link href="/track-order" className="text-gray-300 hover:text-[#E5A93B] transition-colors">
                                         Order Tracking
                                     </Link>
                                 </li>
                                 <li>
-                                    <Link href="/contact" className="text-gray-300 hover:text-white transition-colors">
+                                    <Link href="/contact" className="text-gray-300 hover:text-[#E5A93B] transition-colors">
                                         Contact Us
                                     </Link>
                                 </li>
                                 <li>
-                                    <Link href="/how-to-order" className="text-gray-300 hover:text-white transition-colors">
+                                    <Link href="/how-to-order" className="text-gray-300 hover:text-[#E5A93B] transition-colors">
                                         How to Order (অর্ডার নির্দেশিকা)
                                     </Link>
                                 </li>
                                 <li>
-                                    <Link href="/complaint" className="text-emerald-400 font-semibold hover:text-white transition-colors flex items-center gap-1.5">
+                                    <Link href="/complaint" className="text-[#E5A93B] font-semibold hover:text-white transition-colors flex items-center gap-1.5">
                                         <span>Complaint (অভিযোগ)</span>
-                                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                                        <span className="w-1.5 h-1.5 rounded-full bg-[#E5A93B]"></span>
                                     </Link>
                                 </li>
                                 <li>
-                                    <Link href="/refund-policy" className="text-gray-300 hover:text-white transition-colors">
+                                    <Link href="/refund-policy" className="text-gray-300 hover:text-[#E5A93B] transition-colors">
                                         Product Returns
                                     </Link>
                                 </li>
@@ -204,23 +198,23 @@ export default function Footer() {
 
                         {/* Col 5: Contact */}
                         <div className="space-y-3">
-                            <h4 className="text-sm font-bold text-white uppercase tracking-wider mb-4 border-b border-emerald-800/60 pb-1.5 inline-block">
+                            <h4 className="text-sm font-bold text-white uppercase tracking-wider mb-4 border-b-2 border-[#D99A26] pb-1.5 inline-block">
                                 Contact
                             </h4>
                             <div className="space-y-2.5 text-xs sm:text-sm text-gray-300">
                                 <div className="flex items-center gap-2">
-                                    <Phone className="w-4 h-4 text-emerald-400 shrink-0" />
-                                    <a href={`tel:${cleanPhone}`} className="hover:text-white">
+                                    <Phone className="w-4 h-4 text-[#E5A93B] shrink-0" />
+                                    <a href={`tel:${cleanPhone}`} className="hover:text-[#E5A93B] transition-colors">
                                         {phone}
                                     </a>
                                 </div>
                                 <div className="flex items-start gap-2">
-                                    <MapPin className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                                    <MapPin className="w-4 h-4 text-[#E5A93B] shrink-0 mt-0.5" />
                                     <span>{siteConfig?.address || 'লেভেল-৫, নূর টাওয়ার, ১১০ বীর উত্তম সি আর দত্ত রোড, ঢাকা ১২০৫'}</span>
                                 </div>
                                 <div className="flex items-center gap-2">
-                                    <Mail className="w-4 h-4 text-emerald-400 shrink-0" />
-                                    <a href={`mailto:${siteConfig?.email || 'info@pustikunjo.com.bd'}`} className="hover:text-white">
+                                    <Mail className="w-4 h-4 text-[#E5A93B] shrink-0" />
+                                    <a href={`mailto:${siteConfig?.email || 'info@pustikunjo.com.bd'}`} className="hover:text-[#E5A93B] transition-colors">
                                         {siteConfig?.email || 'info@pustikunjo.com.bd'}
                                     </a>
                                 </div>
@@ -234,8 +228,8 @@ export default function Footer() {
                         <div>
                             {copyright}
                         </div>
-                        <div className="flex items-center gap-1.5 text-emerald-400/90 font-medium">
-                            <ShieldCheck className="w-4 h-4" />
+                        <div className="flex items-center gap-1.5 text-[#E5A93B] font-medium">
+                            <ShieldCheck className="w-4 h-4 text-[#E5A93B]" />
                             <span>১০০% খাঁটি ও গুণমান নিশ্চিত স্বাস্থ্যপণ্য</span>
                         </div>
                     </div>

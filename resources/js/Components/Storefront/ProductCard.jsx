@@ -31,7 +31,14 @@ export default function ProductCard({ product }) {
     };
 
     return (
-        <div className="group bg-white rounded-xl border border-gray-100 shadow-[0_2px_10px_rgba(0,0,0,0.04)] hover:shadow-lg transition-all duration-300 flex flex-col justify-between overflow-hidden p-4 sm:p-5 text-center">
+        <div className="group bg-white rounded-2xl border border-gray-100 hover:border-[#D4AF37]/60 shadow-[0_2px_10px_rgba(0,0,0,0.04)] hover:shadow-xl transition-all duration-300 flex flex-col justify-between overflow-hidden p-4 sm:p-5 text-center relative">
+            {/* Optional Gold Discount Badge */}
+            {hasDiscount && (
+                <div className="absolute top-3 right-3 z-10 bg-gradient-to-r from-[#D99A26] to-[#E5A93B] text-white text-[10px] sm:text-[11px] font-black px-2.5 py-0.5 rounded-full shadow-xs">
+                    ছাড় ৳{(originalPrice - price).toLocaleString()}
+                </div>
+            )}
+
             {/* Product Image on clean white background */}
             <Link
                 href={`/product/${product.slug}`}
@@ -50,7 +57,7 @@ export default function ProductCard({ product }) {
                 <div>
                     <Link
                         href={`/product/${product.slug}`}
-                        className="block font-medium text-gray-800 hover:text-emerald-800 transition-colors text-sm sm:text-base leading-snug line-clamp-2 min-h-[2.5rem] mb-2"
+                        className="block font-semibold text-gray-800 hover:text-[#0B3E25] transition-colors text-sm sm:text-base leading-snug line-clamp-2 min-h-[2.5rem] mb-2"
                         title={product.name}
                     >
                         {product.name}
@@ -60,7 +67,7 @@ export default function ProductCard({ product }) {
                 <div>
                     {/* Price with optional discount */}
                     <div className="flex items-center justify-center gap-2 mb-3">
-                        <span className="text-base sm:text-lg font-bold text-gray-900">
+                        <span className="text-base sm:text-lg font-black text-[#0B3E25]">
                             ৳ {price.toLocaleString()}
                         </span>
                         {hasDiscount && (
@@ -70,11 +77,11 @@ export default function ProductCard({ product }) {
                         )}
                     </div>
 
-                    {/* Green Pill CTA Button matching reference */}
+                    {/* Green Pill CTA Button with Gold Accent matching reference */}
                     <button
                         onClick={handleInstantBuy}
                         type="button"
-                        className="w-full sm:w-auto min-w-[140px] px-6 py-2.5 rounded-md sm:rounded-full bg-[#0B3E25] hover:bg-[#072F1C] text-white text-sm sm:text-base font-semibold transition-all shadow-xs hover:shadow-md cursor-pointer inline-flex items-center justify-center gap-1.5 mx-auto"
+                        className="w-full sm:w-auto min-w-[140px] px-6 py-2.5 rounded-full bg-[#0B3E25] hover:bg-[#D99A26] border border-[#D4AF37]/50 hover:border-[#D99A26] text-white text-sm sm:text-base font-bold transition-all duration-200 shadow-xs hover:shadow-md cursor-pointer inline-flex items-center justify-center gap-1.5 mx-auto"
                         title="অর্ডার করুন"
                     >
                         <span>অর্ডার করুন</span>

@@ -145,6 +145,9 @@ if [ "$USERS_COUNT" = "0" ]; then
     echo -e "${GREEN}   ✓ ডাটাবেস সিডিং সম্পন্ন হয়েছে!${NC}"
 else
     echo -e "${GREEN}   ✓ ডাটাবেস ইতিমধ্যে সিড করা আছে (মোট ইউজার: ${USERS_COUNT})।${NC}"
+    echo -e "${BLUE}   ৩টি প্রডাক্ট ও স্লাইডার ব্যানার নিশ্চিত করা হচ্ছে...${NC}"
+    php artisan db:seed --class=UpdateThreeProductsSeeder --force
+    echo -e "${GREEN}   ✓ ৩টি প্রডাক্ট ও স্লাইডার ব্যানার সিঙ্ক সম্পন্ন।${NC}"
 fi
 
 # 8. Storage Link, Caching & Permissions

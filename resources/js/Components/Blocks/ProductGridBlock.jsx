@@ -45,11 +45,11 @@ export default function ProductGridBlock({ data = {}, products = [] }) {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 {/* Section Header matching home_dektop.jpg */}
                 <div className="relative flex items-center justify-between mb-8 sm:mb-10">
-                    {/* Centered Heading with green accent underline */}
+                    {/* Centered Heading with green & gold accent underline */}
                     <div className="w-full text-center">
                         <h2 className="text-xl sm:text-2xl font-black text-gray-900 tracking-wider uppercase inline-block relative">
                             {heading}
-                            <span className="block w-10 sm:w-12 h-1 bg-[#0B3E25] mx-auto mt-2 rounded-full" />
+                            <span className="block w-14 h-1 bg-gradient-to-r from-[#0B3E25] via-[#E5A93B] to-[#0B3E25] mx-auto mt-2.5 rounded-full shadow-2xs" />
                         </h2>
                         {subheading && (
                             <p className="text-xs sm:text-sm text-gray-500 mt-1">
@@ -62,7 +62,7 @@ export default function ProductGridBlock({ data = {}, products = [] }) {
                     <div className="absolute right-0 top-1/2 -translate-y-1/2">
                         <Link
                             href={viewAllUrl}
-                            className="text-xs sm:text-sm font-semibold text-gray-600 hover:text-emerald-800 transition-colors"
+                            className="text-xs sm:text-sm font-bold text-gray-600 hover:text-[#D99A26] transition-colors"
                         >
                             View All
                         </Link>
@@ -83,7 +83,7 @@ export default function ProductGridBlock({ data = {}, products = [] }) {
                     <div className="text-center mt-10 sm:mt-12">
                         <Link
                             href={viewAllUrl}
-                            className="inline-flex items-center justify-center px-8 py-2.5 rounded-md bg-[#0B3E25] hover:bg-[#072F1C] text-white text-xs sm:text-sm font-bold shadow-xs hover:shadow-md transition-all"
+                            className="inline-flex items-center justify-center px-8 py-2.5 rounded-full bg-[#0B3E25] hover:bg-[#D99A26] border border-[#D4AF37]/50 hover:border-[#D99A26] text-white text-xs sm:text-sm font-bold shadow-xs hover:shadow-md transition-all duration-200"
                         >
                             সব পণ্য দেখুন
                         </Link>

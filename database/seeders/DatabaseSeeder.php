@@ -28,6 +28,9 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
+        // 2. Call the dedicated 3 Products & Banners Seeder
+        $this->call(UpdateThreeProductsSeeder::class);
+
         // 2. Categories (ONLY the genuine categories for Pusti Kunjo's 3 products)
         $catPowders = Category::updateOrCreate(['slug' => 'organic-powders'], [
             'name' => 'ভেষজ ও পুষ্টিকর পাউডার',

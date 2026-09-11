@@ -12,7 +12,7 @@ export default function PromoBannerBlock({ data }) {
     return (
         <section className="py-8 sm:py-12 bg-[#F8FAF8]">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="relative rounded-3xl overflow-hidden bg-gradient-to-r from-emerald-900 to-emerald-800 text-white shadow-xl">
+                <div className="relative rounded-3xl overflow-hidden bg-gradient-to-r from-[#062313] via-[#0B3E25] to-[#0F4D2F] border border-[#D4AF37]/30 text-white shadow-xl">
                     {/* Background Image Layer */}
                     <div className="absolute right-0 top-0 bottom-0 w-full lg:w-1/2 opacity-30 lg:opacity-60 overflow-hidden mix-blend-overlay">
                         <img
@@ -23,8 +23,8 @@ export default function PromoBannerBlock({ data }) {
                     </div>
 
                     <div className="relative z-10 p-8 sm:p-12 lg:p-16 max-w-2xl space-y-5">
-                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-400 text-emerald-950 text-xs font-bold uppercase tracking-wider">
-                            <Gift className="w-3.5 h-3.5" /> স্পেশাল অফার
+                        <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-gradient-to-r from-[#D99A26] to-[#E5A93B] text-white text-xs font-black uppercase tracking-wider shadow-xs">
+                            <Gift className="w-3.5 h-3.5 text-white" /> স্পেশাল অফার
                         </div>
 
                         <h2 className="text-2xl sm:text-4xl font-black leading-tight text-white">
@@ -38,7 +38,7 @@ export default function PromoBannerBlock({ data }) {
                         <div className="pt-2">
                             <Link
                                 href={ctaUrl}
-                                className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-white hover:bg-emerald-50 text-emerald-900 font-bold text-sm shadow-md transition-all transform hover:-translate-y-0.5"
+                                className="inline-flex items-center gap-2 px-7 py-3 rounded-xl bg-gradient-to-r from-[#D99A26] to-[#E5A93B] hover:from-[#C6891D] hover:to-[#D99A26] text-white font-black text-sm shadow-md shadow-[#D99A26]/30 transition-all transform hover:-translate-y-0.5"
                             >
                                 <span>{ctaLabel}</span>
                                 <ArrowRight className="w-4 h-4" />

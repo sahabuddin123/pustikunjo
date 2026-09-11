@@ -15,14 +15,14 @@ export default function CategoryGridBlock({ data, categories = [] }) {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex items-center justify-between mb-6 pb-2 border-b border-gray-200">
                     <div className="flex items-center gap-2">
-                        <span className="w-2.5 h-6 bg-emerald-700 rounded-full inline-block" />
+                        <span className="w-2.5 h-6 bg-gradient-to-b from-[#D99A26] to-[#0B3E25] rounded-full inline-block" />
                         <h2 className="text-xl sm:text-2xl font-black text-gray-900 tracking-tight">
                             {heading}
                         </h2>
                     </div>
                     <Link
                         href="/shop"
-                        className="text-xs sm:text-sm font-bold text-emerald-800 hover:text-emerald-900 flex items-center gap-1 group"
+                        className="text-xs sm:text-sm font-bold text-[#0B3E25] hover:text-[#D99A26] flex items-center gap-1 group transition-colors"
                     >
                         <span>সকল পণ্য দেখুন</span>
                         <ArrowRight className="w-4 h-4 transform group-hover:translate-x-1 transition-transform" />
@@ -34,19 +34,19 @@ export default function CategoryGridBlock({ data, categories = [] }) {
                         <Link
                             key={cat.id}
                             href={`/category/${cat.slug}`}
-                            className="group relative rounded-2xl sm:rounded-3xl overflow-hidden bg-white border border-gray-200/90 shadow-2xs hover:shadow-lg hover:border-emerald-300 transition-all duration-300 flex flex-col p-4 sm:p-6 items-center text-center"
+                            className="group relative rounded-2xl sm:rounded-3xl overflow-hidden bg-white border border-gray-200/90 shadow-2xs hover:shadow-lg hover:border-[#D4AF37]/70 transition-all duration-300 flex flex-col p-4 sm:p-6 items-center text-center"
                         >
-                            <div className="w-20 h-20 sm:w-28 sm:h-28 rounded-2xl overflow-hidden bg-emerald-50 mb-3 sm:mb-4 border border-emerald-100 shadow-inner group-hover:scale-105 transition-transform duration-300">
+                            <div className="w-20 h-20 sm:w-28 sm:h-28 rounded-2xl overflow-hidden bg-emerald-50 mb-3 sm:mb-4 border border-emerald-100 shadow-inner group-hover:scale-105 group-hover:border-[#D4AF37]/50 transition-transform duration-300">
                                 <img
                                     src={cat.image || 'https://images.unsplash.com/photo-1615485290382-441e4d049cb5?w=500&auto=format&fit=crop&q=80'}
                                     alt={cat.name}
                                     className="w-full h-full object-cover"
                                 />
                             </div>
-                            <h3 className="font-bold text-gray-900 group-hover:text-emerald-800 text-sm sm:text-base transition-colors line-clamp-1">
+                            <h3 className="font-bold text-gray-900 group-hover:text-[#0B3E25] text-sm sm:text-base transition-colors line-clamp-1">
                                 {cat.name}
                             </h3>
-                            <span className="text-xs font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full mt-2">
+                            <span className="text-xs font-bold text-[#0B3E25] bg-[#FEF9EE] border border-[#E5A93B]/40 group-hover:bg-[#0B3E25] group-hover:text-[#E5A93B] px-3 py-0.5 rounded-full mt-2 transition-all">
                                 {cat.products_count !== undefined ? `${cat.products_count} টি পণ্য` : 'পণ্য দেখুন'}
                             </span>
                         </Link>

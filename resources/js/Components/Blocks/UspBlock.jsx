@@ -29,13 +29,13 @@ export default function UspBlock({ data }) {
                         return (
                             <div
                                 key={idx}
-                                className="flex items-center gap-2.5 sm:gap-3.5 p-3 sm:p-4 rounded-2xl bg-white border border-gray-200/90 shadow-2xs hover:border-emerald-300 hover:shadow-xs transition-all duration-300 group"
+                                className="flex items-center gap-2.5 sm:gap-3.5 p-3 sm:p-4 rounded-2xl bg-white border border-gray-200/90 shadow-2xs hover:border-[#D4AF37]/60 hover:shadow-md transition-all duration-300 group"
                             >
-                                <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center shrink-0 group-hover:bg-emerald-700 group-hover:text-white transition-colors duration-300">
+                                <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-[#FEF9EE] text-[#0B3E25] border border-[#E5A93B]/30 flex items-center justify-center shrink-0 group-hover:bg-[#0B3E25] group-hover:text-[#E5A93B] group-hover:border-[#0B3E25] transition-all duration-300">
                                     <IconComponent className="w-4 h-4 sm:w-5 sm:h-5" />
                                 </div>
                                 <div className="text-left min-w-0">
-                                    <h3 className="font-bold text-gray-900 text-xs sm:text-sm md:text-base leading-tight truncate">
+                                    <h3 className="font-bold text-gray-900 group-hover:text-[#0B3E25] text-xs sm:text-sm md:text-base leading-tight truncate transition-colors">
                                         {item.title}
                                     </h3>
                                     {item.text && (

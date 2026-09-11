@@ -5,27 +5,27 @@ import { X, Leaf, ChevronRight, ShoppingBag, Sparkles } from 'lucide-react';
 const FALLBACK_PRODUCTS = [
     {
         id: 1,
-        name: 'বিটরুট পাউডার (Beetroot Powder)',
-        slug: 'beetroot-powder',
-        price: '450.00',
-        sale_price: '390.00',
-        primary_image: 'https://images.unsplash.com/photo-1615485290382-441e4d049cb5?w=900&auto=format&fit=crop&q=85',
+        name: 'রোজেলা চা (Rosella Tea)',
+        slug: 'rosella-tea',
+        price: '950.00',
+        sale_price: '850.00',
+        primary_image: '/images/products/rosella-tea.jpg',
     },
     {
         id: 2,
-        name: 'মেথিমিক্স (Methimix)',
-        slug: 'methimix',
-        price: '380.00',
-        sale_price: '330.00',
-        primary_image: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=900&auto=format&fit=crop&q=85',
+        name: 'স্প্রে ড্রাইড বিটরুট পাউডার (Beetroot Powder)',
+        slug: 'beetroot-powder',
+        price: '1050.00',
+        sale_price: '950.00',
+        primary_image: '/images/products/beetroot-powder.jpg',
     },
     {
         id: 3,
-        name: 'প্রিমিয়াম চিয়া সিড (Organic Chia Seeds)',
-        slug: 'chia-seeds',
-        price: '550.00',
-        sale_price: '490.00',
-        primary_image: 'https://images.unsplash.com/photo-1543362906-acfc16c67564?w=900&auto=format&fit=crop&q=85',
+        name: 'মেথি মিক্স (Methi Mix)',
+        slug: 'methi-mix',
+        price: '880.00',
+        sale_price: '780.00',
+        primary_image: '/images/products/methi-mix.jpg',
     },
 ];
 
@@ -60,18 +60,12 @@ export default function MobileNavDrawer({ isOpen, onClose }) {
                     {/* 1. Header: Deep Green with Brand Logo & Close Button */}
                     <div className="bg-[#0B3E25] text-white px-4 py-3.5 flex items-center justify-between shadow-xs">
                         {/* Brand Logo */}
-                        <Link href="/" onClick={onClose} className="flex items-center gap-2.5">
-                            <div className="w-9 h-9 rounded-xl bg-white text-[#0B3E25] flex items-center justify-center shadow-xs">
-                                <Leaf className="w-5 h-5 fill-current text-[#0B3E25]" />
-                            </div>
-                            <div>
-                                <span className="text-lg font-black tracking-tight text-white block leading-none">
-                                    {siteConfig?.name || 'পুষ্টি কুঞ্জ'}
-                                </span>
-                                <span className="text-[9px] font-bold text-emerald-300 uppercase tracking-widest block mt-0.5">
-                                    {siteConfig?.tagline || 'Purity Begins here'}
-                                </span>
-                            </div>
+                        <Link href="/" onClick={onClose} className="flex items-center">
+                            <img
+                                src="/images/logo-white.png"
+                                alt="পুষ্টি কুঞ্জ"
+                                className="h-9 w-auto object-contain"
+                            />
                         </Link>
 
                         {/* Circular Close Button */}
@@ -92,7 +86,7 @@ export default function MobileNavDrawer({ isOpen, onClose }) {
                                 {header?.mobile_drawer_title || 'All Products (সকল পণ্য)'}
                             </h3>
                         </div>
-                        <span className="text-xs font-bold text-[#D48828] bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200">
+                        <span className="text-xs font-bold text-[#D99A26] bg-[#FEF9EE] px-2.5 py-0.5 rounded-full border border-[#E5A93B]/40 shadow-2xs">
                             {products.length}টি পণ্য
                         </span>
                     </div>
@@ -113,7 +107,7 @@ export default function MobileNavDrawer({ isOpen, onClose }) {
                                 >
                                     <div className="flex items-center gap-3 min-w-0 flex-1 pr-2">
                                         {/* Product Round Image Thumbnail */}
-                                        <div className="w-11 h-11 rounded-full p-1 bg-[#FAF6EE] border border-[#F2ECE0] flex items-center justify-center shrink-0 overflow-hidden shadow-2xs group-hover:scale-105 group-hover:border-emerald-300 transition-all">
+                                        <div className="w-11 h-11 rounded-full p-1 bg-[#FAF6EE] border border-[#F2ECE0] flex items-center justify-center shrink-0 overflow-hidden shadow-2xs group-hover:scale-105 group-hover:border-[#D4AF37] transition-all">
                                             <img
                                                 src={imgSrc}
                                                 alt={product.name}
@@ -168,7 +162,7 @@ export default function MobileNavDrawer({ isOpen, onClose }) {
                         <Link
                             href="/shop"
                             onClick={onClose}
-                            className="block w-full py-2.5 rounded-lg border-2 border-[#D48828] text-[#D48828] hover:bg-[#D48828] hover:text-white font-bold text-base text-center transition-all duration-200 shadow-2xs"
+                            className="block w-full py-2.5 rounded-xl bg-[#0B3E25] hover:bg-[#062313] border-2 border-[#D99A26] text-white hover:text-[#E5A93B] font-bold text-base text-center transition-all duration-200 shadow-sm"
                         >
                             সব পণ্য দেখুন (All Products)
                         </Link>

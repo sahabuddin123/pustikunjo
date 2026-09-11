@@ -39,8 +39,50 @@
     --color-primary-600: #0d6838;
     --color-primary-700: #0a522c;
     --color-primary-800: #07381e;
+    --color-brand-green: #0B3E25;
+    --color-brand-green-dark: #062313;
+    --color-brand-green-surface: #0F4D2F;
+    --color-brand-green-light: #166534;
+    --color-brand-gold: #D4AF37;
+    --color-brand-gold-warm: #D99A26;
+    --color-brand-gold-bright: #E5A93B;
+    --color-brand-gold-hover: #C6891D;
+    --color-brand-gold-light: #FEF3C7;
+    --color-brand-cream: #FCFDF9;
     --color-accent-amber: #d97706;
     --color-accent-rose: #e11d48;
+}
+
+/* Gold & Green Brand Utilities */
+.gold-gradient-btn {
+    background: linear-gradient(135deg, #D99A26 0%, #E5A93B 50%, #C6891D 100%);
+    color: #ffffff;
+    box-shadow: 0 4px 14px 0 rgba(217, 154, 38, 0.35);
+    transition: all 0.3s ease;
+}
+.gold-gradient-btn:hover {
+    background: linear-gradient(135deg, #C6891D 0%, #D99A26 50%, #B47E16 100%);
+    box-shadow: 0 6px 20px 0 rgba(217, 154, 38, 0.45);
+    transform: translateY(-1px);
+}
+
+.gold-text {
+    color: #E5A93B;
+}
+
+.gold-border {
+    border-color: rgba(212, 175, 55, 0.45);
+}
+
+.gold-badge {
+    background: rgba(217, 154, 38, 0.12);
+    border: 1px solid rgba(229, 169, 59, 0.45);
+    color: #D99A26;
+}
+
+.green-gold-card {
+    background: linear-gradient(145deg, #0B3E25 0%, #062313 100%);
+    border: 1px solid rgba(212, 175, 55, 0.25);
 }
 
 /* Custom Scrollbar */

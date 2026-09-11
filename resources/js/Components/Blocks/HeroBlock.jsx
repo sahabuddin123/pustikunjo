@@ -4,19 +4,19 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 const DEFAULT_SLIDES = [
     {
-        image: 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=1920&auto=format&fit=crop&q=85',
-        url: '/shop',
-        alt: 'পুষ্টি কুঞ্জ — ১০০% খাঁটি ও প্রাকৃতিক পুষ্টি পণ্য',
+        image: '/images/banners/rosella-tea-banner.jpg',
+        url: '/product/rosella-tea',
+        alt: 'পুষ্টি কুঞ্জ রোজেলা চা — ১০০% খাঁটি ও প্রাকৃতিক হারবাল চা',
     },
     {
-        image: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=1920&auto=format&fit=crop&q=85',
-        url: '/product/chia-seeds',
-        alt: 'প্রিমিয়াম অর্গানিক চিয়া সিড',
-    },
-    {
-        image: 'https://images.unsplash.com/photo-1615485290382-441e4d049cb5?w=1920&auto=format&fit=crop&q=85',
+        image: '/images/banners/beetroot-powder-banner.jpg',
         url: '/product/beetroot-powder',
-        alt: 'খাঁটি বিটরুট পাউডার',
+        alt: 'স্প্রে ড্রাইড বিটরুট পাউডার — ১০০% অর্গানিক সুপারফুড',
+    },
+    {
+        image: '/images/banners/methi-mix-banner.jpg',
+        url: '/product/methi-mix',
+        alt: 'মেথি মিক্স — প্রাকৃতিক হজম ও সুগার নিয়ন্ত্রণ',
     },
 ];
 
@@ -87,9 +87,9 @@ export default function HeroBlock({ data = {} }) {
 
     return (
         <section className="w-full bg-white overflow-hidden select-none">
-            {/* 100% Full Width Clean Image Slider - NO Text Overlay */}
+            {/* 100% Full Width Clean Image Slider - Perfectly Proportioned */}
             <div
-                className="group relative w-full h-[280px] sm:h-[380px] md:h-[480px] lg:h-[560px] xl:h-[620px] overflow-hidden bg-gray-100"
+                className="group relative w-full aspect-[16/9] sm:aspect-[2.2/1] md:aspect-[2.6/1] lg:aspect-[2.95/1] max-h-[500px] overflow-hidden bg-[#0B3E25]"
                 onMouseEnter={() => setIsPaused(true)}
                 onMouseLeave={() => setIsPaused(false)}
                 onTouchStart={handleTouchStart}
@@ -129,7 +129,7 @@ export default function HeroBlock({ data = {} }) {
                         <button
                             onClick={prevSlide}
                             type="button"
-                            className="absolute left-3 sm:left-6 top-1/2 -translate-y-1/2 z-20 w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-black/30 hover:bg-black/60 text-white backdrop-blur-xs flex items-center justify-center transition-all opacity-0 group-hover:opacity-100 focus:opacity-100 cursor-pointer shadow-md"
+                            className="absolute left-3 sm:left-6 top-1/2 -translate-y-1/2 z-20 w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-black/40 hover:bg-[#0B3E25] hover:text-[#E5A93B] text-white backdrop-blur-xs flex items-center justify-center transition-all opacity-0 group-hover:opacity-100 focus:opacity-100 cursor-pointer shadow-md"
                             aria-label="পূর্ববর্তী ব্যানার"
                         >
                             <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6" />
@@ -138,7 +138,7 @@ export default function HeroBlock({ data = {} }) {
                         <button
                             onClick={nextSlide}
                             type="button"
-                            className="absolute right-3 sm:right-6 top-1/2 -translate-y-1/2 z-20 w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-black/30 hover:bg-black/60 text-white backdrop-blur-xs flex items-center justify-center transition-all opacity-0 group-hover:opacity-100 focus:opacity-100 cursor-pointer shadow-md"
+                            className="absolute right-3 sm:right-6 top-1/2 -translate-y-1/2 z-20 w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-black/40 hover:bg-[#0B3E25] hover:text-[#E5A93B] text-white backdrop-blur-xs flex items-center justify-center transition-all opacity-0 group-hover:opacity-100 focus:opacity-100 cursor-pointer shadow-md"
                             aria-label="পরবর্তী ব্যানার"
                         >
                             <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6" />
@@ -156,7 +156,7 @@ export default function HeroBlock({ data = {} }) {
                                     type="button"
                                     className={`transition-all duration-300 rounded-full cursor-pointer ${
                                         i === current
-                                            ? 'w-7 sm:w-9 h-2 sm:h-2.5 bg-[#D48828] shadow-xs'
+                                            ? 'w-7 sm:w-9 h-2 sm:h-2.5 bg-gradient-to-r from-[#D99A26] to-[#E5A93B] shadow-sm'
                                             : 'w-2 sm:w-2.5 h-2 sm:h-2.5 bg-white/70 hover:bg-white'
                                     }`}
                                     aria-label={`স্লাইড ${i + 1}`}
