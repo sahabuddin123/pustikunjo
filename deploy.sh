@@ -167,8 +167,8 @@ echo -e "   ✓ রুট, ভিউ ও কনফিগ প্রডাকশ�
 
 # Set Proper Permissions (Support for aaPanel www, Ubuntu www-data, Nginx, Apache)
 echo -e "   ফাইল ও ফোল্ডার পারমিশন ঠিক করা হচ্ছে..."
-mkdir -p storage/framework/cache/data storage/framework/sessions storage/framework/views storage/logs bootstrap/cache
-chmod -R 777 storage bootstrap/cache database 2>/dev/null || true
+mkdir -p storage/framework/cache/data storage/framework/sessions storage/framework/views storage/logs bootstrap/cache public/uploads public/images/banners public/images/products
+chmod -R 777 storage bootstrap/cache database public/uploads public/images 2>/dev/null || true
 chmod 666 database/database.sqlite 2>/dev/null || true
 
 # If running as root or with sudo, set web server ownership
@@ -181,7 +181,7 @@ if [ "$(id -u)" -eq 0 ]; then
     elif id "apache" &>/dev/null; then
         WEB_USER="apache"
     fi
-    chown -R ${WEB_USER}:${WEB_USER} storage bootstrap/cache database 2>/dev/null || true
+    chown -R ${WEB_USER}:${WEB_USER} storage bootstrap/cache database public/uploads public/images 2>/dev/null || true
     echo -e "   ✓ ওনারশিপ ${WEB_USER}-এ সেট করা হয়েছে।"
 fi
 
