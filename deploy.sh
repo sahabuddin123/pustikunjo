@@ -4,8 +4,7 @@
 # Pusti Kunjo (পুষ্টি কুঞ্জ) - Production Auto-Deployment & Setup Script
 # ==============================================================================
 # Usage on live server:
-#   git clone https://github.com/sahabuddin123/pustikunjo.git
-#   cd pustikunjo
+#   git pull origin main
 #   chmod +x deploy.sh
 #   ./deploy.sh
 # ==============================================================================
@@ -27,15 +26,28 @@ echo "    🌿 Pusti Kunjo (পুষ্টি কুঞ্জ) - Live Server Au
 echo "===================================================================="
 echo -e "${NC}"
 
-# 1. Dependency checks
+# 1. Dependency checks & PHP Binary Detection
 echo -e "${BLUE}🔍 [1/8] সার্ভার ডিপেনডেন্সি ও প্রয়োজনীয় সফটওয়্যার যাচাই করা হচ্ছে...${NC}"
 
-if ! command -v php &> /dev/null; then
+# Auto-detect best PHP binary (prefer aaPanel compiled PHP if available, then specific versions, then default)
+if [ -x "/www/server/php/83/bin/php" ]; then
+    PHP_BIN="/www/server/php/83/bin/php"
+elif [ -x "/www/server/php/82/bin/php" ]; then
+    PHP_BIN="/www/server/php/82/bin/php"
+elif [ -x "/www/server/php/84/bin/php" ]; then
+    PHP_BIN="/www/server/php/84/bin/php"
+elif command -v php8.3 &> /dev/null; then
+    PHP_BIN="$(command -v php8.3)"
+elif command -v php8.2 &> /dev/null; then
+    PHP_BIN="$(command -v php8.2)"
+elif command -v php &> /dev/null; then
+    PHP_BIN="$(command -v php)"
+else
     echo -e "${RED}❌ PHP পাওয়া যায়নি! অনুগ্রহ করে PHP 8.2 বা তার পরবর্তী ভার্সন ইন্সটল করুন।${NC}"
     exit 1
 fi
-PHP_VERSION=$(php -r 'echo PHP_VERSION;')
-echo -e "   ✓ PHP Version: ${GREEN}${PHP_VERSION}${NC}"
+PHP_VERSION=$("$PHP_BIN" -r 'echo PHP_VERSION;')
+echo -e "   ✓ PHP Binary: ${GREEN}${PHP_BIN}${NC} (v${PHP_VERSION})"
 
 if ! command -v composer &> /dev/null; then
     echo -e "${RED}❌ Composer পাওয়া যায়নি! অনুগ্রহ করে Composer ইন্সটল করুন।${NC}"
@@ -76,12 +88,11 @@ fi
 # 4. Handle Conflicting PHP Extensions (e.g. Swow / Swoole bug in CLI)
 echo -e "\n${BLUE}📦 [4/8] Composer প্রডাকশন ডিপেনডেন্সি ইন্সটল ও অপ্টিমাইজেশন...${NC}"
 
-# Check and disable swow extension if present (swow-v1.4.1 has a known core-dump bug in composer)
-if php -m 2>/dev/null | grep -qi "swow"; then
+# Check and disable swow extension if present
+if "$PHP_BIN" -m 2>/dev/null | grep -qi "swow"; then
     echo -e "${YELLOW}   ⚠️ PHP 'swow' এক্সটেনশন পাওয়া গেছে (এটি Composer কে ক্র্যাশ করায়)।${NC}"
     echo -e "${YELLOW}   স্বয়ংক্রিয়ভাবে swow নিষ্ক্রিয় করার চেষ্টা চলছে...${NC}"
 
-    # Search and disable swow ini files in common directories
     for dir in /etc/php /www/server/php; do
         if [ -d "$dir" ]; then
             find "$dir" -type f -name "*swow*.ini" 2>/dev/null | while read -r inifile; do
@@ -93,8 +104,7 @@ if php -m 2>/dev/null | grep -qi "swow"; then
         fi
     done
 
-    # Check loaded php.ini and comment out swow
-    for inipath in $(php --ini 2>/dev/null | grep -oE '/[^ ]+\.ini'); do
+    for inipath in $("$PHP_BIN" --ini 2>/dev/null | grep -oE '/[^ ]+\.ini'); do
         if [ -f "$inipath" ] && grep -qiE '^[ ]*extension[ ]*=[ ]*.*swow' "$inipath"; then
             sed -i -E 's/^([ ]*extension[ ]*=[ ]*.*swow.*)/;\1/gi' "$inipath" 2>/dev/null || true
             echo -e "${GREEN}   ✓ swow কমেন্ট করা হয়েছে: $inipath${NC}"
@@ -105,7 +115,7 @@ fi
 # Run Composer Install with memory limit
 echo -e "   প্যাকেজসমূহ ডাউনলোড ও অপ্টিমাইজ হচ্ছে..."
 COMPOSER_BIN=$(command -v composer || echo "composer")
-php -d memory_limit=2G "$COMPOSER_BIN" install --no-dev --prefer-dist --optimize-autoloader --no-interaction
+"$PHP_BIN" -d memory_limit=2G "$COMPOSER_BIN" install --no-dev --prefer-dist --optimize-autoloader --no-interaction
 echo -e "${GREEN}   ✓ Composer প্যাকেজ সফলভাবে ইন্সটল হয়েছে।${NC}"
 
 # 5. Application Key Generation
@@ -113,7 +123,7 @@ echo -e "\n${BLUE}🔑 [5/8] Application Encryption Key যাচাই...${NC}"
 APP_KEY_VAL=$(grep -E "^APP_KEY=" .env | cut -d '=' -f2)
 if [ -z "$APP_KEY_VAL" ] || [ "$APP_KEY_VAL" = "" ]; then
     echo -e "${YELLOW}   নতুন APP_KEY তৈরি করা হচ্ছে...${NC}"
-    php artisan key:generate --force
+    "$PHP_BIN" artisan key:generate --force
     echo -e "${GREEN}   ✓ APP_KEY তৈরি হয়েছে।${NC}"
 else
     echo -e "${GREEN}   ✓ APP_KEY ইতিমধ্যে সেট করা আছে।${NC}"
@@ -132,40 +142,38 @@ else
     echo -e "${YELLOW}   Node.js নেই, পূর্বের বিল্ড করা public/build অ্যাসেট ব্যবহৃত হবে।${NC}"
 fi
 
-# 7. Database Migration & Seed
-echo -e "\n${BLUE}🔄 [7/8] ডাটাবেস মাইগ্রেশন ও ডিফল্ট ডাটা সিডিং...${NC}"
-php artisan migrate --force
+# 7. Database Migration (Safe - Never overwrites admin data)
+echo -e "\n${BLUE}🔄 [7/8] ডাটাবেস মাইগ্রেশন যাচাই...${NC}"
+"$PHP_BIN" artisan migrate --force
 
-# Seed if users table is empty or first setup
-USERS_COUNT=$(php -r "require 'vendor/autoload.php'; \$app = require_once 'bootstrap/app.php'; \$app->make(\Illuminate\Contracts\Console\Kernel::class)->bootstrap(); echo \App\Models\User::count();" 2>/dev/null || echo "0")
+# Seed ONLY if database is completely blank (First time setup only)
+USERS_COUNT=$("$PHP_BIN" -r "require 'vendor/autoload.php'; \$app = require_once 'bootstrap/app.php'; \$app->make(\Illuminate\Contracts\Console\Kernel::class)->bootstrap(); echo \App\Models\User::count();" 2>/dev/null || echo "0")
 
 if [ "$USERS_COUNT" = "0" ]; then
     echo -e "${YELLOW}   প্রথমবারের মতো ডাটাবেস সিড করা হচ্ছে (পণ্য, ক্যাটাগরি, এডমিন ইউজার, পেজ)...${NC}"
-    php artisan db:seed --force
-    echo -e "${GREEN}   ✓ ডাটাবেস সিডিং সম্পন্ন হয়েছে!${NC}"
+    "$PHP_BIN" artisan db:seed --force
+    echo -e "${GREEN}   ✓ প্রাথমিক ডাটাবেস সিডিং সম্পন্ন হয়েছে!${NC}"
 else
-    echo -e "${GREEN}   ✓ ডাটাবেস ইতিমধ্যে সিড করা আছে (মোট ইউজার: ${USERS_COUNT})।${NC}"
-    echo -e "${BLUE}   ৩টি প্রডাক্ট ও স্লাইডার ব্যানার নিশ্চিত করা হচ্ছে...${NC}"
-    php artisan db:seed --class=UpdateThreeProductsSeeder --force
-    echo -e "${GREEN}   ✓ ৩টি প্রডাক্ট ও স্লাইডার ব্যানার সিঙ্ক সম্পন্ন।${NC}"
+    echo -e "${GREEN}   ✓ ডাটাবেস ইতিমধ্যে সক্রিয় ও কনফিগার করা আছে (মোট ইউজার: ${USERS_COUNT})।${NC}"
+    echo -e "${GREEN}   ✓ এডমিন প্যানেলের কোনো কাস্টম ডাটা ওভাররাইট করা হয়নি (সম্পূর্ণ নিরাপদ)।${NC}"
 fi
 
 # 8. Storage Link, Caching & Permissions
 echo -e "\n${BLUE}⚡ [8/8] স্টোরেজ লিঙ্ক, ক্যাশিং অপ্টিমাইজেশন ও পারমিশন সেট...${NC}"
 
 # Storage Link
-php artisan storage:link --force 2>/dev/null || true
+"$PHP_BIN" artisan storage:link --force 2>/dev/null || true
 echo -e "   ✓ Storage লিঙ্ক তৈরি হয়েছে।"
 
 # Clear & Cache Configurations
-php artisan optimize:clear --quiet
-php artisan config:cache --quiet
-php artisan route:cache --quiet
-php artisan view:cache --quiet
-php artisan event:cache --quiet
+"$PHP_BIN" artisan optimize:clear --quiet
+"$PHP_BIN" artisan config:cache --quiet
+"$PHP_BIN" artisan route:cache --quiet
+"$PHP_BIN" artisan view:cache --quiet
+"$PHP_BIN" artisan event:cache --quiet
 echo -e "   ✓ রুট, ভিউ ও কনফিগ প্রডাকশন ক্যাশে রূপান্তর সম্পন্ন।"
 
-# Set Proper Permissions (Support for aaPanel www, Ubuntu www-data, Nginx, Apache)
+# Set Proper Permissions
 echo -e "   ফাইল ও ফোল্ডার পারমিশন ঠিক করা হচ্ছে..."
 mkdir -p storage/framework/cache/data storage/framework/sessions storage/framework/views storage/logs bootstrap/cache public/uploads public/images/banners public/images/products
 chmod -R 777 storage bootstrap/cache database public/uploads public/images 2>/dev/null || true
@@ -191,5 +199,4 @@ echo "====================================================================${NC}"
 echo -e "🌐 ওয়েবসাইট ভিজিট করুন: ${BOLD}http://your-server-domain-or-ip${NC}"
 echo -e "🔐 এডমিন প্যানেল URL:   ${BOLD}http://your-server-domain-or-ip/admin/login${NC}"
 echo -e "👤 এডমিন ইমেইল:        ${BOLD}admin@pustikunjo.com.bd${NC}"
-echo -e "🔑 এডমিন পাসওয়ার্ড:    ${BOLD}password${NC}"
 echo -e "====================================================================\n"
