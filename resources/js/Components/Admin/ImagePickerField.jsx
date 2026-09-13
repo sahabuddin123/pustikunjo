@@ -59,11 +59,11 @@ export default function ImagePickerField({
             {/* Thumbnail Preview if URL exists */}
             {value && (
                 <div className="mt-2 flex items-center gap-3 p-2 bg-gray-50 rounded-xl border border-gray-200/80 max-w-md">
-                    <div className="w-14 h-14 rounded-lg bg-gray-200 overflow-hidden shrink-0 border border-gray-300">
+                    <div className="w-24 h-14 rounded-lg bg-[#0B3E25] overflow-hidden shrink-0 border border-emerald-800 flex items-center justify-center p-1.5 shadow-inner">
                         <img
                             src={value}
                             alt="Preview"
-                            className="w-full h-full object-cover"
+                            className="max-w-full max-h-full object-contain"
                             onError={(e) => {
                                 e.target.style.display = 'none';
                             }}

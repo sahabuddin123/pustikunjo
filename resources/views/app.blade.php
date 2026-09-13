@@ -21,7 +21,11 @@
     @endphp
 
     @if($appFavicon)
-        <link rel="icon" type="image/x-icon" href="{{ $appFavicon }}">
+        <link rel="icon" href="{{ $appFavicon }}">
+        <link rel="shortcut icon" href="{{ $appFavicon }}">
+        <link rel="apple-touch-icon" href="{{ $appFavicon }}">
+    @else
+        <link rel="icon" type="image/x-icon" href="/favicon.ico">
     @endif
 
     <!-- Dynamic Theme CSS Variables & Local Font -->

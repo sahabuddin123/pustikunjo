@@ -59,11 +59,13 @@ export default function Footer() {
                         {/* Col 1: Brand Info & Social Icons */}
                         <div className="space-y-4">
                             <div className="flex items-center mb-1">
-                                <img
-                                    src="/images/logo-white.png"
-                                    alt="পুষ্টি কুঞ্জ"
-                                    className="h-10 w-auto object-contain"
-                                />
+                                <Link href="/" className="inline-block hover:opacity-95 transition-opacity">
+                                    <img
+                                        src={siteConfig?.logo || "/images/logo-white.png"}
+                                        alt={siteConfig?.name || "পুষ্টি কুঞ্জ"}
+                                        className="h-10 sm:h-11 w-auto object-contain max-w-[200px]"
+                                    />
+                                </Link>
                             </div>
 
                             <p className="text-xs sm:text-sm text-gray-300 leading-relaxed">

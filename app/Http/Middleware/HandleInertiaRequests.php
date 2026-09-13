@@ -31,12 +31,22 @@ class HandleInertiaRequests extends Middleware
     /**
      * Define the props that are shared by default.
      *
-     * @see https://inertiajs.com/shared-data
-     *
      * @return array<string, mixed>
      */
     public function share(Request $request): array
     {
+        $generalSettings = SiteSetting::get('general_settings', []);
+        $appearanceSettings = SiteSetting::get('appearance_settings', []);
+        $contactSettings = SiteSetting::get('contact_settings', []);
+
+        $siteLogo = !empty($generalSettings['logo'])
+            ? $generalSettings['logo']
+            : (!empty($appearanceSettings['logo_url']) ? $appearanceSettings['logo_url'] : '/images/logo-white.png');
+
+        $siteFavicon = !empty($generalSettings['favicon'])
+            ? $generalSettings['favicon']
+            : (!empty($appearanceSettings['favicon_url']) ? $appearanceSettings['favicon_url'] : '/favicon.ico');
+
         return [
             ...parent::share($request),
             'auth' => [
@@ -51,16 +61,16 @@ class HandleInertiaRequests extends Middleware
                 'customer_identifier' => $request->session()->get('customer_identifier'),
             ],
             'siteConfig' => [
-                'name' => SiteSetting::get('general_settings')['site_name'] ?? SiteSetting::get('site_name', 'Pusti Kunjo'),
-                'tagline' => SiteSetting::get('general_settings')['tagline'] ?? SiteSetting::get('site_tagline', 'Purity Begins here'),
-                'logo' => SiteSetting::get('general_settings')['logo'] ?? '',
-                'favicon' => SiteSetting::get('general_settings')['favicon'] ?? '',
-                'phone' => SiteSetting::get('contact_settings')['phone'] ?? SiteSetting::get('contact_phone', '01700-000000'),
-                'whatsapp' => SiteSetting::get('contact_settings')['whatsapp'] ?? SiteSetting::get('contact_whatsapp', '01700000000'),
-                'email' => SiteSetting::get('contact_settings')['email'] ?? SiteSetting::get('general_settings')['email'] ?? SiteSetting::get('contact_email', 'info@pustikunjo.com.bd'),
-                'address' => SiteSetting::get('contact_settings')['address'] ?? 'ঢাকা, বাংলাদেশ',
-                'currency' => SiteSetting::get('general_settings')['currency'] ?? 'BDT',
-                'currency_symbol' => SiteSetting::get('general_settings')['currency_symbol'] ?? '৳',
+                'name' => $generalSettings['site_name'] ?? SiteSetting::get('site_name', 'Pusti Kunjo'),
+                'tagline' => $generalSettings['tagline'] ?? SiteSetting::get('site_tagline', 'Purity Begins here'),
+                'logo' => $siteLogo,
+                'favicon' => $siteFavicon,
+                'phone' => $contactSettings['phone'] ?? SiteSetting::get('contact_phone', '01700-000000'),
+                'whatsapp' => $contactSettings['whatsapp'] ?? SiteSetting::get('contact_whatsapp', '01700000000'),
+                'email' => $contactSettings['email'] ?? ($generalSettings['email'] ?? SiteSetting::get('contact_email', 'info@pustikunjo.com.bd')),
+                'address' => $contactSettings['address'] ?? 'ঢাকা, বাংলাদেশ',
+                'currency' => $generalSettings['currency'] ?? 'BDT',
+                'currency_symbol' => $generalSettings['currency_symbol'] ?? '৳',
             ],
             'theme' => array_merge([
                 'primary_color' => '#0d6838',

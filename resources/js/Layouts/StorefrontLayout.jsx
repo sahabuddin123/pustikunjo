@@ -44,6 +44,9 @@ function StorefrontContent({ children, meta = {} }) {
             <Head>
                 <title>{meta.title ? `${meta.title} — ${siteConfig?.name || 'পুষ্টি কুঞ্জ'}` : `${siteConfig?.name || 'পুষ্টি কুঞ্জ'} — খাঁটি ও প্রাকৃতিক স্বাস্থ্য পণ্য`}</title>
                 <meta name="description" content={meta.description || 'পুষ্টি কুঞ্জ বাংলাদেশের শীর্ষস্থানীয় অর্গানিক ও প্রাকৃতিক স্বাস্থ্য পণ্য ব্র্যান্ড।'} />
+                {siteConfig?.favicon && <link rel="icon" href={siteConfig.favicon} />}
+                {siteConfig?.favicon && <link rel="shortcut icon" href={siteConfig.favicon} />}
+                {siteConfig?.favicon && <link rel="apple-touch-icon" href={siteConfig.favicon} />}
                 {meta.ogImage && <meta property="og:image" content={meta.ogImage} />}
                 <meta property="og:title" content={meta.title || siteConfig?.name} />
                 <meta property="og:description" content={meta.description || '১০০% প্রাকৃতিক ও খাঁটি খাদ্য উপাদান।'} />

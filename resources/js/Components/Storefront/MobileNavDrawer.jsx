@@ -62,9 +62,9 @@ export default function MobileNavDrawer({ isOpen, onClose }) {
                         {/* Brand Logo */}
                         <Link href="/" onClick={onClose} className="flex items-center">
                             <img
-                                src="/images/logo-white.png"
-                                alt="পুষ্টি কুঞ্জ"
-                                className="h-9 w-auto object-contain"
+                                src={siteConfig?.logo || "/images/logo-white.png"}
+                                alt={siteConfig?.name || "পুষ্টি কুঞ্জ"}
+                                className="h-9 w-auto object-contain max-w-[160px]"
                             />
                         </Link>
 

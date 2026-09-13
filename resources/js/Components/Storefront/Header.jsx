@@ -54,9 +54,9 @@ export default function Header() {
                     {/* Left: Brand Official Logo */}
                     <Link href="/" className="flex items-center shrink-0 hover:opacity-95 transition-opacity py-1">
                         <img
-                            src="/images/logo-white.png"
+                            src={siteConfig?.logo || "/images/logo-white.png"}
                             alt={siteConfig?.name || 'Pusti Kunjo (পুষ্টি কুঞ্জ)'}
-                            className="h-9 sm:h-11 md:h-12 w-auto object-contain"
+                            className="h-9 sm:h-11 md:h-12 w-auto object-contain max-w-[180px] sm:max-w-[220px]"
                         />
                     </Link>
 
