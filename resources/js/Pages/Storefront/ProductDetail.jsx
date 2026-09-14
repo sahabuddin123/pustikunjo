@@ -108,6 +108,10 @@ export default function ProductDetail({ product, relatedProducts = [], shippingZ
     ];
     const defaultZone = defaultShippingZones[0]?.name || 'ঢাকার ভিতরে';
 
+    const isCodEnabled = bkashSettings?.cod_enabled !== false;
+    const isBkashEnabled = Boolean(bkashSettings?.manual_enabled);
+    const defaultPaymentMethod = isCodEnabled ? 'cod' : (isBkashEnabled ? 'bkash_manual' : 'cod');
+
     const checkoutForm = useForm({
         customer_name: '',
         customer_phone: '',
@@ -116,7 +120,7 @@ export default function ProductDetail({ product, relatedProducts = [], shippingZ
         shipping_address: '',
         shipping_area: defaultZone,
         order_notes: '',
-        payment_method: 'cod', // cod, bkash_manual
+        payment_method: defaultPaymentMethod, // cod, bkash_manual
         bkash_sender_number: '',
         bkash_trx_id: '',
         coupon_code: '',
@@ -1106,63 +1110,71 @@ export default function ProductDetail({ product, relatedProducts = [], shippingZ
                                     </div>
                                 </div>
 
-                                {/* Payment Method Selection */}
-                                <div>
-                                    <label className="text-xs font-bold text-gray-700 block mb-1.5">
-                                        পেমেন্ট মেথড:
-                                    </label>
-                                    <div className="grid grid-cols-2 gap-2.5">
-                                        {/* COD */}
-                                        <button
-                                            type="button"
-                                            onClick={() => checkoutForm.setData('payment_method', 'cod')}
-                                            className={`p-2.5 rounded-xl border-2 text-left transition-all cursor-pointer ${
-                                                checkoutForm.data.payment_method === 'cod'
-                                                    ? 'border-emerald-600 bg-emerald-50/60 ring-1 ring-emerald-600/30'
-                                                    : 'border-gray-200 hover:border-gray-300 bg-white'
-                                            }`}
-                                        >
-                                            <div className="flex items-center justify-between">
-                                                <span className="text-xs font-bold text-gray-900 flex items-center gap-1.5">
-                                                    <Truck className="w-3.5 h-3.5 text-emerald-700" />
-                                                    ক্যাশ অন ডেলিভারি
-                                                </span>
-                                                <div className={`w-4 h-4 rounded-full border flex items-center justify-center ${
-                                                    checkoutForm.data.payment_method === 'cod' ? 'border-emerald-600 bg-emerald-600 text-white' : 'border-gray-300'
-                                                }`}>
-                                                    {checkoutForm.data.payment_method === 'cod' && <Check className="w-2.5 h-2.5" />}
-                                                </div>
-                                            </div>
-                                            <p className="text-[10px] text-gray-500 mt-1">পণ্য হাতে পেয়ে মূল্য দিন</p>
-                                        </button>
+                                 {/* Payment Method Selection */}
+                                 <div>
+                                     {(isCodEnabled || isBkashEnabled) && (
+                                         <>
+                                             <label className="text-xs font-bold text-gray-700 block mb-1.5">
+                                                 পেমেন্ট মেথড:
+                                             </label>
+                                             <div className={`grid ${isCodEnabled && isBkashEnabled ? 'grid-cols-2' : 'grid-cols-1'} gap-2.5`}>
+                                                 {/* COD */}
+                                                 {isCodEnabled && (
+                                                     <button
+                                                         type="button"
+                                                         onClick={() => checkoutForm.setData('payment_method', 'cod')}
+                                                         className={`p-2.5 rounded-xl border-2 text-left transition-all cursor-pointer ${
+                                                             checkoutForm.data.payment_method === 'cod'
+                                                                 ? 'border-emerald-600 bg-emerald-50/60 ring-1 ring-emerald-600/30'
+                                                                 : 'border-gray-200 hover:border-gray-300 bg-white'
+                                                         }`}
+                                                     >
+                                                         <div className="flex items-center justify-between">
+                                                             <span className="text-xs font-bold text-gray-900 flex items-center gap-1.5">
+                                                                 <Truck className="w-3.5 h-3.5 text-emerald-700" />
+                                                                 ক্যাশ অন ডেলিভারি
+                                                             </span>
+                                                             <div className={`w-4 h-4 rounded-full border flex items-center justify-center ${
+                                                                 checkoutForm.data.payment_method === 'cod' ? 'border-emerald-600 bg-emerald-600 text-white' : 'border-gray-300'
+                                                             }`}>
+                                                                 {checkoutForm.data.payment_method === 'cod' && <Check className="w-2.5 h-2.5" />}
+                                                             </div>
+                                                         </div>
+                                                         <p className="text-[10px] text-gray-500 mt-1">পণ্য হাতে পেয়ে মূল্য দিন</p>
+                                                     </button>
+                                                 )}
 
-                                        {/* bKash Manual */}
-                                        <button
-                                            type="button"
-                                            onClick={() => checkoutForm.setData('payment_method', 'bkash_manual')}
-                                            className={`p-2.5 rounded-xl border-2 text-left transition-all cursor-pointer ${
-                                                checkoutForm.data.payment_method === 'bkash_manual'
-                                                    ? 'border-emerald-600 bg-emerald-50/60 ring-1 ring-emerald-600/30'
-                                                    : 'border-gray-200 hover:border-gray-300 bg-white'
-                                            }`}
-                                        >
-                                            <div className="flex items-center justify-between">
-                                                <span className="text-xs font-bold text-pink-700 flex items-center gap-1.5">
-                                                    <CreditCard className="w-3.5 h-3.5" />
-                                                    বিকাশ পেমেন্ট
-                                                </span>
-                                                <div className={`w-4 h-4 rounded-full border flex items-center justify-center ${
-                                                    checkoutForm.data.payment_method === 'bkash_manual' ? 'border-emerald-600 bg-emerald-600 text-white' : 'border-gray-300'
-                                                }`}>
-                                                    {checkoutForm.data.payment_method === 'bkash_manual' && <Check className="w-2.5 h-2.5" />}
-                                                </div>
-                                            </div>
-                                            <p className="text-[10px] text-gray-500 mt-1">সেন্ড মানি / মার্চেন্ট</p>
-                                        </button>
-                                    </div>
+                                                 {/* bKash Manual */}
+                                                 {isBkashEnabled && (
+                                                     <button
+                                                         type="button"
+                                                         onClick={() => checkoutForm.setData('payment_method', 'bkash_manual')}
+                                                         className={`p-2.5 rounded-xl border-2 text-left transition-all cursor-pointer ${
+                                                             checkoutForm.data.payment_method === 'bkash_manual'
+                                                                 ? 'border-emerald-600 bg-emerald-50/60 ring-1 ring-emerald-600/30'
+                                                                 : 'border-gray-200 hover:border-gray-300 bg-white'
+                                                         }`}
+                                                     >
+                                                         <div className="flex items-center justify-between">
+                                                             <span className="text-xs font-bold text-pink-700 flex items-center gap-1.5">
+                                                                 <CreditCard className="w-3.5 h-3.5" />
+                                                                 বিকাশ পেমেন্ট
+                                                             </span>
+                                                             <div className={`w-4 h-4 rounded-full border flex items-center justify-center ${
+                                                                 checkoutForm.data.payment_method === 'bkash_manual' ? 'border-emerald-600 bg-emerald-600 text-white' : 'border-gray-300'
+                                                             }`}>
+                                                                 {checkoutForm.data.payment_method === 'bkash_manual' && <Check className="w-2.5 h-2.5" />}
+                                                             </div>
+                                                         </div>
+                                                         <p className="text-[10px] text-gray-500 mt-1">সেন্ড মানি / মার্চেন্ট</p>
+                                                     </button>
+                                                 )}
+                                             </div>
+                                         </>
+                                     )}
 
-                                    {/* bKash instructions if selected */}
-                                    {checkoutForm.data.payment_method === 'bkash_manual' && (
+                                 {/* bKash instructions if selected */}
+                                 {isBkashEnabled && checkoutForm.data.payment_method === 'bkash_manual' && (
                                         <div className="mt-3 p-3 rounded-xl bg-pink-50/80 border border-pink-200 text-xs space-y-2.5">
                                             <div className="flex items-center justify-between">
                                                 <span className="font-bold text-pink-900">

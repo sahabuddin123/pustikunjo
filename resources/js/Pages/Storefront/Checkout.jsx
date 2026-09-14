@@ -33,6 +33,11 @@ export default function Checkout({ shippingZones = [], bkashSettings = {}, meta 
     const shippingFee = Number(activeZone.fee);
     const grandTotal = Math.max(0, cartSubtotal + shippingFee - couponDiscount);
 
+    const isCodEnabled = bkashSettings?.cod_enabled !== false;
+    const isBkashManualEnabled = Boolean(bkashSettings?.manual_enabled);
+    const isBkashPgwEnabled = Boolean(bkashSettings?.pgw_enabled);
+    const defaultPaymentMethod = isCodEnabled ? 'cod' : (isBkashManualEnabled ? 'bkash_manual' : (isBkashPgwEnabled ? 'bkash_pgw' : 'cod'));
+
     const form = useForm({
         customer_name: '',
         customer_phone: '',
@@ -41,7 +46,7 @@ export default function Checkout({ shippingZones = [], bkashSettings = {}, meta 
         shipping_address: '',
         shipping_area: defaultZone,
         order_notes: '',
-        payment_method: 'cod', // cod, bkash_manual, bkash_pgw
+        payment_method: defaultPaymentMethod, // cod, bkash_manual, bkash_pgw
         bkash_sender_number: '',
         bkash_trx_id: '',
         coupon_code: '',
@@ -308,35 +313,37 @@ export default function Checkout({ shippingZones = [], bkashSettings = {}, meta 
 
                             <div className="space-y-3">
                                 {/* Option 1: Cash on Delivery */}
-                                <label className={`block p-4 rounded-2xl border-2 cursor-pointer transition-all ${
-                                    form.data.payment_method === 'cod'
-                                        ? 'border-emerald-600 bg-emerald-50/50 shadow-xs'
-                                        : 'border-gray-200 hover:border-gray-300'
-                                }`}>
-                                    <div className="flex items-center justify-between">
-                                        <div className="flex items-center gap-3">
-                                            <input
-                                                type="radio"
-                                                name="payment_method"
-                                                value="cod"
-                                                checked={form.data.payment_method === 'cod'}
-                                                onChange={(e) => form.setData('payment_method', e.target.value)}
-                                                className="w-4 h-4 text-emerald-600 focus:ring-emerald-500"
-                                            />
-                                            <div>
-                                                <span className="font-bold text-sm sm:text-base text-gray-900 block">
-                                                    ক্যাশ অন ডেলিভারি (Cash on Delivery)
-                                                </span>
-                                                <span className="text-xs text-gray-500">
-                                                    পণ্য হাতে পেয়ে মূল্য পরিশোধ করুন।
-                                                </span>
+                                {isCodEnabled && (
+                                    <label className={`block p-4 rounded-2xl border-2 cursor-pointer transition-all ${
+                                        form.data.payment_method === 'cod'
+                                            ? 'border-emerald-600 bg-emerald-50/50 shadow-xs'
+                                            : 'border-gray-200 hover:border-gray-300'
+                                    }`}>
+                                        <div className="flex items-center justify-between">
+                                            <div className="flex items-center gap-3">
+                                                <input
+                                                    type="radio"
+                                                    name="payment_method"
+                                                    value="cod"
+                                                    checked={form.data.payment_method === 'cod'}
+                                                    onChange={(e) => form.setData('payment_method', e.target.value)}
+                                                    className="w-4 h-4 text-emerald-600 focus:ring-emerald-500"
+                                                />
+                                                <div>
+                                                    <span className="font-bold text-sm sm:text-base text-gray-900 block">
+                                                        ক্যাশ অন ডেলিভারি (Cash on Delivery)
+                                                    </span>
+                                                    <span className="text-xs text-gray-500">
+                                                        পণ্য হাতে পেয়ে মূল্য পরিশোধ করুন।
+                                                    </span>
+                                                </div>
                                             </div>
+                                            <span className="text-xs font-bold px-2.5 py-1 rounded-md bg-emerald-100 text-emerald-800">
+                                                জনপ্রিয়
+                                            </span>
                                         </div>
-                                        <span className="text-xs font-bold px-2.5 py-1 rounded-md bg-emerald-100 text-emerald-800">
-                                            জনপ্রিয়
-                                        </span>
-                                    </div>
-                                </label>
+                                    </label>
+                                )}
 
                                 {/* Option 2: bKash Manual Send Money */}
                                 {bkashSettings.manual_enabled && (

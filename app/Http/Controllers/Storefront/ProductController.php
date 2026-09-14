@@ -58,11 +58,12 @@ class ProductController extends Controller
             'relatedProducts' => $relatedProducts,
             'shippingZones' => $shippingZones,
             'bkashSettings' => [
-                'manual_enabled' => $bkashSettings['manual_enabled'] ?? true,
+                'cod_enabled' => !isset($bkashSettings['cod_enabled']) || !empty($bkashSettings['cod_enabled']),
+                'manual_enabled' => !empty($bkashSettings['manual_enabled']),
                 'manual_type' => $bkashSettings['manual_type'] ?? 'merchant',
                 'manual_number' => $bkashSettings['manual_number'] ?? '01700000000',
                 'manual_instructions' => $bkashSettings['manual_instructions'] ?? 'অর্ডার কনফার্ম করতে {amount} টাকা {number} নম্বরে সেন্ড মানি করুন। সেন্ড মানি করার পর নিচে ট্রানজেকশন আইডি (TrxID) লিখুন।',
-                'pgw_enabled' => $bkashSettings['pgw_enabled'] ?? false,
+                'pgw_enabled' => !empty($bkashSettings['pgw_enabled']),
             ],
             'schemaJsonLd' => $schemaJsonLd,
             'meta' => [
