@@ -76,12 +76,15 @@ class SettingController extends Controller
             'medium_risk_threshold_cancels' => 1,
         ]);
 
-        $sms = SiteSetting::get('sms_settings', [
-            'provider' => 'ssl_wireless',
-            'api_key' => '',
-            'sender_id' => '',
-            'client_id' => '',
-        ]);
+        $smsSettings = SiteSetting::get('sms_settings', []);
+        $smsConfig = SiteSetting::get('sms_config', []);
+        $sms = array_merge([
+            'provider' => $smsConfig['provider'] ?? ($smsSettings['provider'] ?? 'mram'),
+            'api_key' => $smsConfig['mram_api_key'] ?? ($smsSettings['api_key'] ?? ''),
+            'sender_id' => $smsConfig['mram_sender_id'] ?? ($smsSettings['sender_id'] ?? '8809601017199'),
+            'base_url' => $smsConfig['mram_base_url'] ?? ($smsSettings['base_url'] ?? 'https://msg.mram.com.bd/smsapi'),
+            'client_id' => $smsSettings['client_id'] ?? '',
+        ], $smsSettings);
 
         $paymentBkash = SiteSetting::get('payment_bkash', [
             'cod_enabled' => true,
@@ -156,7 +159,25 @@ class SettingController extends Controller
             SiteSetting::set('fraud_settings', $request->input('fraudSettings'), 'fraud');
         }
         if ($request->has('sms')) {
-            SiteSetting::set('sms_settings', $request->input('sms'), 'sms');
+            $smsData = $request->input('sms');
+            SiteSetting::set('sms_settings', $smsData, 'sms');
+
+            $smsConfig = SiteSetting::get('sms_config', []);
+            if (($smsData['provider'] ?? '') === 'mram' || !empty($smsData['api_key'])) {
+                $smsConfig['provider'] = $smsData['provider'] ?? 'mram';
+                $smsConfig['mram_active'] = true;
+                $smsConfig['mram_is_default'] = ($smsData['provider'] ?? '') === 'mram';
+                if (!empty($smsData['api_key'])) {
+                    $smsConfig['mram_api_key'] = $smsData['api_key'];
+                }
+                if (!empty($smsData['sender_id'])) {
+                    $smsConfig['mram_sender_id'] = $smsData['sender_id'];
+                }
+                if (!empty($smsData['base_url'])) {
+                    $smsConfig['mram_base_url'] = $smsData['base_url'];
+                }
+                SiteSetting::set('sms_config', $smsConfig, 'sms');
+            }
         }
         if ($request->has('paymentBkash')) {
             SiteSetting::set('payment_bkash', $request->input('paymentBkash'), 'payment');

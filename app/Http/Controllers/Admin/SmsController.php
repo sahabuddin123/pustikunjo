@@ -21,8 +21,13 @@ class SmsController extends Controller
     public function index()
     {
         $smsConfig = SiteSetting::get('sms_config', [
-            'enabled' => false,
-            'provider' => 'ssl_wireless', // ssl_wireless, bulksmsbd, mdl, custom_http
+            'enabled' => true,
+            'provider' => 'mram', // mram, ssl_wireless, bulksmsbd, mdl, custom_http
+            'mram_api_key' => '',
+            'mram_sender_id' => '8809601017199',
+            'mram_base_url' => 'https://msg.mram.com.bd/smsapi',
+            'mram_active' => true,
+            'mram_is_default' => true,
             'ssl_api_token' => '',
             'ssl_sid' => '',
             'bulk_api_key' => '',
@@ -71,18 +76,39 @@ class SmsController extends Controller
         ]);
 
         $logs = SmsLog::latest()->paginate(20);
+        $mramBalance = $this->smsService->getMramBalance();
 
         return Inertia::render('Admin/Sms/Index', [
             'smsConfig' => $smsConfig,
             'triggers' => $triggers,
             'logs' => $logs,
+            'mramBalance' => $mramBalance,
         ]);
     }
 
     public function updateConfig(Request $request)
     {
         $config = $request->input('config', []);
+        $existing = SiteSetting::get('sms_config', []);
+
+        // Preserve api_key if submitted empty
+        if (empty($config['mram_api_key']) && !empty($existing['mram_api_key'])) {
+            $config['mram_api_key'] = $existing['mram_api_key'];
+        }
+
         SiteSetting::set('sms_config', $config, 'sms');
+
+        // Also sync to sms_settings for compatibility
+        SiteSetting::set('sms_settings', [
+            'provider' => $config['provider'] ?? 'mram',
+            'mram_api_key' => $config['mram_api_key'] ?? '',
+            'mram_sender_id' => $config['mram_sender_id'] ?? '8809601017199',
+            'mram_base_url' => $config['mram_base_url'] ?? 'https://msg.mram.com.bd/smsapi',
+            'mram_active' => !empty($config['mram_active']),
+            'mram_is_default' => !empty($config['mram_is_default']),
+            'api_key' => $config['mram_api_key'] ?? '',
+            'sender_id' => $config['mram_sender_id'] ?? '8809601017199',
+        ], 'sms');
 
         return back()->with('success', 'এসএমএস গেটওয়ে কনফিগারেশন আপডেট হয়েছে!');
     }

@@ -119,9 +119,10 @@ export default function Index({
             medium_risk_threshold_cancels: fraudSettings?.medium_risk_threshold_cancels || 1,
         },
         sms: {
-            provider: sms?.provider || 'ssl_wireless',
+            provider: sms?.provider || 'mram',
             api_key: sms?.api_key || '',
-            sender_id: sms?.sender_id || '',
+            sender_id: sms?.sender_id || '8809601017199',
+            base_url: sms?.base_url || 'https://msg.mram.com.bd/smsapi',
             client_id: sms?.client_id || '',
         },
         paymentBkash: {
@@ -1457,6 +1458,23 @@ export default function Index({
                             <p className="text-xs text-gray-500">অর্ডার নিশ্চিতকরণ ও স্ট্যাটাস আপডেটের জন্য এসএমএস গেটওয়ে কনফিগারেশন।</p>
                         </div>
 
+                        <div className="flex items-center justify-between bg-indigo-50/70 border border-indigo-100 p-3.5 rounded-xl">
+                            <div className="flex items-center gap-2.5">
+                                <MessageSquare className="w-5 h-5 text-indigo-600" />
+                                <div>
+                                    <span className="text-xs font-bold text-indigo-950 block">M-RAM Technologies SMS Hub</span>
+                                    <span className="text-[11px] text-indigo-700 block">লাইভ ব্যালেন্স, ডেলিভারি রিপোর্ট ও ডায়নামিক টেমপ্লেট দেখতে এসএমএস ম্যানেজারে যান।</span>
+                                </div>
+                            </div>
+                            <a
+                                href="/admin/sms"
+                                className="px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold transition-all shadow-xs flex items-center gap-1.5"
+                            >
+                                <span>এসএমএস হাব</span>
+                                <ExternalLink className="w-3.5 h-3.5" />
+                            </a>
+                        </div>
+
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div>
                                 <label className="text-xs font-bold text-gray-700 block mb-1">এসএমএস প্রোভাইডার</label>
@@ -1465,6 +1483,7 @@ export default function Index({
                                     onChange={(e) => form.setData('sms', { ...form.data.sms, provider: e.target.value })}
                                     className="w-full px-3.5 py-2 rounded-xl border border-gray-300 text-xs sm:text-sm font-semibold"
                                 >
+                                    <option value="mram">M-RAM TECHNOLOGIES (msg.mram.com.bd) [Recommended]</option>
                                     <option value="ssl_wireless">SSL Wireless SMS API</option>
                                     <option value="bulksmsbd">BulkSMSBD</option>
                                     <option value="custom">Generic HTTP API</option>
@@ -1477,32 +1496,37 @@ export default function Index({
                                     type="password"
                                     value={form.data.sms.api_key}
                                     onChange={(e) => form.setData('sms', { ...form.data.sms, api_key: e.target.value })}
-                                    placeholder="এসএমএস গেটওয়ে API Key"
+                                    placeholder={form.data.sms.provider === 'mram' ? 'যেমন: C40002956aa1a646106c41.09766335' : 'এসএমএস গেটওয়ে API Key'}
                                     className="w-full px-3.5 py-2 rounded-xl border border-gray-300 text-xs sm:text-sm font-mono"
                                 />
                             </div>
 
                             <div>
-                                <label className="text-xs font-bold text-gray-700 block mb-1">Sender ID / Masking Name</label>
+                                <label className="text-xs font-bold text-gray-700 block mb-1">Sender ID / Masking Number *</label>
                                 <input
                                     type="text"
                                     value={form.data.sms.sender_id}
                                     onChange={(e) => form.setData('sms', { ...form.data.sms, sender_id: e.target.value })}
-                                    placeholder="যেমন: PUSTIKUNJO"
-                                    className="w-full px-3.5 py-2 rounded-xl border border-gray-300 text-xs sm:text-sm uppercase font-mono"
+                                    placeholder={form.data.sms.provider === 'mram' ? '8809601017199' : 'যেমন: PUSTIKUNJO'}
+                                    className="w-full px-3.5 py-2 rounded-xl border border-gray-300 text-xs sm:text-sm font-mono"
                                 />
                             </div>
 
                             <div>
-                                <label className="text-xs font-bold text-gray-700 block mb-1">Client ID / SID (ঐচ্ছিক)</label>
+                                <label className="text-xs font-bold text-gray-700 block mb-1">HTTP API Base Endpoint</label>
                                 <input
                                     type="text"
-                                    value={form.data.sms.client_id}
-                                    onChange={(e) => form.setData('sms', { ...form.data.sms, client_id: e.target.value })}
-                                    placeholder="Client ID (প্রয়োজন হলে)"
+                                    value={form.data.sms.base_url || 'https://msg.mram.com.bd/smsapi'}
+                                    onChange={(e) => form.setData('sms', { ...form.data.sms, base_url: e.target.value })}
+                                    placeholder="https://msg.mram.com.bd/smsapi"
                                     className="w-full px-3.5 py-2 rounded-xl border border-gray-300 text-xs sm:text-sm font-mono"
                                 />
                             </div>
+                        </div>
+
+                        <div className="text-[11px] text-gray-500 bg-gray-50 p-3 rounded-xl border border-gray-100 flex items-center gap-2">
+                            <Shield className="w-4 h-4 text-emerald-600 shrink-0" />
+                            <span>M-RAM API দিয়ে বাংলা টেক্সট স্বয়ংক্রিয়ভাবে Unicode এবং ইংরেজি টেক্সট Plain Text মোডে পাঠানো হয়। ক্রেডেনশিয়াল সুরক্ষিতভাবে এনক্রিপ্ট থাকে।</span>
                         </div>
 
                         {/* Test SMS section */}

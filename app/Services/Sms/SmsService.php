@@ -77,12 +77,76 @@ class SmsService
         }
 
         $smsConfig = SiteSetting::get('sms_config', []);
-        $provider = $smsConfig['provider'] ?? 'custom_http';
+        $smsSettings = SiteSetting::get('sms_settings', []);
+        $provider = $smsConfig['provider'] ?? ($smsSettings['provider'] ?? 'mram');
+        if (!empty($smsConfig['mram_is_default']) || !empty($smsSettings['mram_is_default'])) {
+            $provider = 'mram';
+        }
+
         $status = 'sent';
         $responseRaw = '';
 
         try {
             switch ($provider) {
+                case 'mram':
+                    $mramApiKey = $smsConfig['mram_api_key'] ?? ($smsSettings['mram_api_key'] ?? ($smsSettings['api_key'] ?? ''));
+                    $mramSenderId = $smsConfig['mram_sender_id'] ?? ($smsSettings['mram_sender_id'] ?? ($smsSettings['sender_id'] ?? '8809601017199'));
+                    $mramBaseUrl = $smsConfig['mram_base_url'] ?? ($smsSettings['mram_base_url'] ?? 'https://msg.mram.com.bd/smsapi');
+
+                    // Auto-detect Unicode (Bangla) or Text (English)
+                    $hasUnicode = (bool) preg_match('/[^\x20-\x7E]/', $message);
+                    $contentType = $hasUnicode ? 'unicode' : 'text';
+
+                    // Bangladeshi phone format for contacts (must start with 88)
+                    $mramPhone = str_starts_with($cleanPhone, '88') ? $cleanPhone : '88' . $cleanPhone;
+
+                    $payload = [
+                        'api_key' => $mramApiKey,
+                        'type' => $contentType,
+                        'contacts' => $mramPhone,
+                        'senderid' => $mramSenderId,
+                        'msg' => $message,
+                        'label' => 'transactional',
+                    ];
+
+                    $response = Http::asForm()
+                        ->timeout(15)
+                        ->withoutVerifying()
+                        ->post($mramBaseUrl, $payload);
+
+                    $responseRaw = $response->body();
+
+                    // Check M-RAM Error codes (from documentation)
+                    $errorMap = [
+                        '1002' => 'Sender Id/Masking Not Found',
+                        '1003' => 'API Not Found',
+                        '1004' => 'SPAM Detected',
+                        '1005' => 'Internal Error',
+                        '1006' => 'Internal Error',
+                        '1007' => 'Balance Insufficient',
+                        '1008' => 'Message is empty',
+                        '1009' => 'Message Type Not Set (text/unicode)',
+                        '1010' => 'Invalid User & Password',
+                        '1011' => 'Invalid User Id',
+                        '1012' => 'Invalid Number',
+                        '1013' => 'API limit error',
+                        '1014' => 'No matching template',
+                        '1015' => 'SMS Content Validation Fails',
+                        '1016' => 'IP address not allowed!!',
+                        '1019' => 'Sms Purpose Missing',
+                    ];
+
+                    $trimmedResp = trim($responseRaw);
+                    if (isset($errorMap[$trimmedResp])) {
+                        $status = 'failed';
+                        $responseRaw = "M-RAM Error [{$trimmedResp}]: " . $errorMap[$trimmedResp];
+                    } elseif ($response->successful()) {
+                        $status = 'sent';
+                    } else {
+                        $status = 'failed';
+                    }
+                    break;
+
                 case 'ssl_wireless':
                     $response = Http::asForm()->post('https://smsplus.sslwireless.com/api/v3/send-sms', [
                         'api_token' => $smsConfig['ssl_api_token'] ?? '',
@@ -141,8 +205,49 @@ class SmsService
 
         return [
             'success' => $status === 'sent',
+            'provider' => $provider,
             'phone' => $cleanPhone,
             'response' => $responseRaw,
+        ];
+    }
+
+    /**
+     * Fetch M-RAM Account Credit Balance
+     */
+    public function getMramBalance(): array
+    {
+        $smsConfig = SiteSetting::get('sms_config', []);
+        $smsSettings = SiteSetting::get('sms_settings', []);
+        $apiKey = $smsConfig['mram_api_key'] ?? ($smsSettings['mram_api_key'] ?? ($smsSettings['api_key'] ?? ''));
+
+        if (empty($apiKey)) {
+            return [
+                'success' => false,
+                'balance' => '0.00',
+                'message' => 'M-RAM API Key কনফিগার করা হয়নি।',
+            ];
+        }
+
+        try {
+            $url = "https://msg.mram.com.bd/miscapi/{$apiKey}/getBalance";
+            $response = Http::timeout(10)->withoutVerifying()->get($url);
+
+            if ($response->successful()) {
+                $raw = trim($response->body());
+                return [
+                    'success' => true,
+                    'balance' => $raw,
+                    'message' => "ব্যালেন্স: {$raw}",
+                ];
+            }
+        } catch (\Exception $e) {
+            Log::error('M-RAM Balance exception: ' . $e->getMessage());
+        }
+
+        return [
+            'success' => false,
+            'balance' => '0.00',
+            'message' => 'ব্যালেন্স তথ্য পাওয়া যায়নি।',
         ];
     }
 }

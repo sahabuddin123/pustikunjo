@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { useForm } from '@inertiajs/react';
 import AdminLayout from '@/Layouts/AdminLayout';
-import { MessageSquare, Save, Send, ShieldCheck, CheckCircle2, XCircle, Clock } from 'lucide-react';
+import { MessageSquare, Save, Send, ShieldCheck, CheckCircle2, XCircle, Clock, Eye, EyeOff, Key, Radio, Wallet } from 'lucide-react';
 
-export default function Index({ smsConfig = {}, triggers = {}, logs = { data: [] } }) {
-    const [activeTab, setActiveTab] = useState('triggers'); // triggers, config, test, logs
+export default function Index({ smsConfig = {}, triggers = {}, logs = { data: [] }, mramBalance = {} }) {
+    const [activeTab, setActiveTab] = useState('config'); // default to config or triggers
+    const [showMramKey, setShowMramKey] = useState(false);
 
     const configForm = useForm({
         config: smsConfig,
@@ -175,21 +176,176 @@ export default function Index({ smsConfig = {}, triggers = {}, logs = { data: []
 
                             <div>
                                 <label className="text-xs font-bold text-gray-700 block mb-1">
-                                    এসএমএস প্রোভাইডার নির্বাচন করুন
+                                    ডিফল্ট এসএমএস প্রোভাইডার নির্বাচন
                                 </label>
                                 <select
-                                    value={configForm.data.config?.provider || 'custom_http'}
+                                    value={configForm.data.config?.provider || 'mram'}
                                     onChange={(e) => {
                                         const updated = { ...configForm.data.config, provider: e.target.value };
                                         configForm.setData('config', updated);
                                     }}
                                     className="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm font-semibold"
                                 >
+                                    <option value="mram">M-RAM TECHNOLOGIES (Official API)</option>
                                     <option value="ssl_wireless">SSL Wireless SMS Plus</option>
                                     <option value="bulksmsbd">BulkSMSBD</option>
                                     <option value="mdl">MDL / MiMi SMS</option>
                                     <option value="custom_http">Custom HTTP Gateway / Simulated</option>
                                 </select>
+                            </div>
+
+                            {/* M-RAM TECHNOLOGIES Official Gateway Card (User Reference Design) */}
+                            <div className="bg-white p-6 rounded-2xl border border-gray-200/90 shadow-xs space-y-6">
+                                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-gray-100">
+                                    <div>
+                                        <div className="flex items-center gap-2">
+                                            <h3 className="font-black text-base sm:text-lg text-gray-900 tracking-wide uppercase">
+                                                M-RAM TECHNOLOGIES
+                                            </h3>
+                                            <span className="text-xs text-gray-400 font-semibold">(MRAM)</span>
+                                            {mramBalance?.success && (
+                                                <span className="ml-2 px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                                    ব্যালেন্স: ৳ {mramBalance.balance}
+                                                </span>
+                                            )}
+                                        </div>
+                                        <p className="text-xs text-gray-500 mt-1">
+                                            Official M-RAM Technologies SMS API (msg.mram.com.bd) with masking 8809601017199.
+                                        </p>
+                                    </div>
+
+                                    <div className="flex items-center gap-4 self-start sm:self-auto">
+                                        {/* Active Toggle Switch */}
+                                        <div className="flex items-center gap-2.5">
+                                            <button
+                                                type="button"
+                                                onClick={() => {
+                                                    const current = configForm.data.config?.mram_active !== false;
+                                                    const updated = {
+                                                        ...configForm.data.config,
+                                                        mram_active: !current
+                                                    };
+                                                    configForm.setData('config', updated);
+                                                }}
+                                                className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out ${
+                                                    configForm.data.config?.mram_active !== false ? 'bg-emerald-500' : 'bg-gray-300'
+                                                }`}
+                                            >
+                                                <span
+                                                    className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-md ring-0 transition duration-200 ease-in-out ${
+                                                        configForm.data.config?.mram_active !== false ? 'translate-x-5' : 'translate-x-0'
+                                                    }`}
+                                                />
+                                            </button>
+                                            <div>
+                                                <span className={`text-xs font-bold block ${configForm.data.config?.mram_active !== false ? 'text-emerald-700' : 'text-gray-500'}`}>
+                                                    {configForm.data.config?.mram_active !== false ? 'Active' : 'Inactive'}
+                                                </span>
+                                                <span className="text-[10px] text-gray-400 block">
+                                                    {configForm.data.config?.mram_active !== false ? 'Click to deactivate' : 'Click to activate'}
+                                                </span>
+                                            </div>
+                                        </div>
+
+                                        {/* Set Default Checkbox */}
+                                        <label className="flex items-center gap-2 cursor-pointer select-none pl-3 border-l border-gray-200">
+                                            <input
+                                                type="checkbox"
+                                                checked={configForm.data.config?.mram_is_default !== false}
+                                                onChange={(e) => {
+                                                    const updated = {
+                                                        ...configForm.data.config,
+                                                        mram_is_default: e.target.checked,
+                                                        provider: e.target.checked ? 'mram' : configForm.data.config?.provider
+                                                    };
+                                                    configForm.setData('config', updated);
+                                                }}
+                                                className="w-4 h-4 rounded text-indigo-600 focus:ring-indigo-500 border-gray-300"
+                                            />
+                                            <div>
+                                                <span className="text-xs font-bold text-indigo-900 block">Set Default</span>
+                                                <span className="text-[10px] text-gray-400 block">Primary for Orders &amp; OTP</span>
+                                            </div>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                {/* M-RAM API Key */}
+                                <div>
+                                    <label className="text-xs font-bold text-gray-800 mb-1.5 block">
+                                        M-RAM API Key *
+                                    </label>
+                                    <div className="relative">
+                                        <input
+                                            type={showMramKey ? 'text' : 'password'}
+                                            value={configForm.data.config?.mram_api_key || ''}
+                                            onChange={(e) => {
+                                                const updated = { ...configForm.data.config, mram_api_key: e.target.value };
+                                                configForm.setData('config', updated);
+                                            }}
+                                            placeholder="Enter your M-RAM API Key (e.g. C40002956aa1a646106c41.09766335)"
+                                            className="w-full pl-4 pr-10 py-2.5 rounded-xl border border-gray-200 text-xs sm:text-sm font-mono text-gray-800 bg-white focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600"
+                                        />
+                                        <button
+                                            type="button"
+                                            onClick={() => setShowMramKey(!showMramKey)}
+                                            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 cursor-pointer"
+                                        >
+                                            {showMramKey ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                                        </button>
+                                    </div>
+                                </div>
+
+                                {/* Row 2: Sender ID & Base Endpoint */}
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                                    <div>
+                                        <label className="text-xs font-bold text-gray-800 mb-1.5 block">
+                                            Approved Sender ID / Number Masking *
+                                        </label>
+                                        <input
+                                            type="text"
+                                            value={configForm.data.config?.mram_sender_id || '8809601017199'}
+                                            onChange={(e) => {
+                                                const updated = { ...configForm.data.config, mram_sender_id: e.target.value };
+                                                configForm.setData('config', updated);
+                                            }}
+                                            placeholder="8809601017199"
+                                            className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-xs sm:text-sm font-mono text-gray-800 bg-white focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600"
+                                        />
+                                    </div>
+
+                                    <div>
+                                        <label className="text-xs font-bold text-gray-800 mb-1.5 block">
+                                            HTTP API Base Endpoint
+                                        </label>
+                                        <input
+                                            type="text"
+                                            value={configForm.data.config?.mram_base_url || 'https://msg.mram.com.bd/smsapi'}
+                                            onChange={(e) => {
+                                                const updated = { ...configForm.data.config, mram_base_url: e.target.value };
+                                                configForm.setData('config', updated);
+                                            }}
+                                            placeholder="https://msg.mram.com.bd/smsapi"
+                                            className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-xs sm:text-sm font-mono text-gray-800 bg-white focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600"
+                                        />
+                                    </div>
+                                </div>
+
+                                {/* Card Footer: Encryption Note & Save Button */}
+                                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-4 border-t border-gray-100">
+                                    <span className="text-[11px] text-gray-400">
+                                        Credentials are encrypted at rest with AES-256-CBC.
+                                    </span>
+
+                                    <button
+                                        type="submit"
+                                        disabled={configForm.processing}
+                                        className="px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 active:scale-98 text-white text-xs sm:text-sm font-bold flex items-center justify-center gap-2 transition-all shadow-xs cursor-pointer self-end sm:self-auto disabled:opacity-50"
+                                    >
+                                        <Save className="w-4 h-4" />
+                                        <span>Save Credentials</span>
+                                    </button>
+                                </div>
                             </div>
 
                             {/* SSL Wireless Credentials */}
