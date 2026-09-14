@@ -69,6 +69,7 @@ class HandleInertiaRequests extends Middleware
                 'whatsapp' => $contactSettings['whatsapp'] ?? SiteSetting::get('contact_whatsapp', '01700000000'),
                 'email' => $contactSettings['email'] ?? ($generalSettings['email'] ?? SiteSetting::get('contact_email', 'info@pustikunjo.com.bd')),
                 'address' => $contactSettings['address'] ?? 'ঢাকা, বাংলাদেশ',
+                'messenger' => $contactSettings['messenger'] ?? 'https://m.me/pustikunjobd',
                 'currency' => $generalSettings['currency'] ?? 'BDT',
                 'currency_symbol' => $generalSettings['currency_symbol'] ?? '৳',
             ],

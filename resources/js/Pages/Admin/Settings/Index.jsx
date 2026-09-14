@@ -98,6 +98,7 @@ export default function Index({
             email: contact?.email || 'info@pustikunjo.com.bd',
             address: contact?.address || 'ঢাকা, বাংলাদেশ',
             hotline_hours: contact?.hotline_hours || 'সকাল ৯টা - রাত ১০টা',
+            messenger: contact?.messenger || 'https://m.me/pustikunjobd',
         },
         shippingZones: shippingZones || [
             { name: 'ঢাকার ভিতরে', fee: 60 },
@@ -1913,6 +1914,19 @@ export default function Index({
                                     onChange={(e) => form.setData('contact', { ...form.data.contact, hotline_hours: e.target.value })}
                                     className="w-full px-3.5 py-2 rounded-xl border border-gray-300 text-sm"
                                 />
+                            </div>
+                            <div className="sm:col-span-2">
+                                <label className="text-xs font-bold text-gray-700 block mb-1">ফেসবুক পেজ / মেসেঞ্জার লিংক (Facebook Messenger Link)</label>
+                                <input
+                                    type="url"
+                                    value={form.data.contact.messenger || ''}
+                                    onChange={(e) => form.setData('contact', { ...form.data.contact, messenger: e.target.value })}
+                                    placeholder="https://m.me/pustikunjobd"
+                                    className="w-full px-3.5 py-2 rounded-xl border border-gray-300 text-sm font-mono"
+                                />
+                                <p className="text-[11px] text-gray-500 mt-1">
+                                    যোগাযোগ পেজের (/contact) লাইভ চ্যাট সেকশনের "Chat on Messenger" বাটনে এই লিংকটি কাজ করবে (যেমন: https://m.me/আপনার_পেজের_ইউজারনেম)।
+                                </p>
                             </div>
                             <div className="sm:col-span-2">
                                 <label className="text-xs font-bold text-gray-700 block mb-1">অফিসের ঠিকানা</label>

@@ -15,7 +15,7 @@ export default function Contact({ contact = {}, meta = {} }) {
     const cleanWhatsapp = whatsapp.replace(/[^0-9]/g, '');
     const email = contact?.email || siteConfig?.email || 'info@pustikunjo.com.bd';
     const address = contact?.address || 'Level-5, Noor Tower, 110/D/A Uttara C/A, Dhaka 1230';
-    const messenger = contact?.messenger || 'https://m.me/pustikunjobd';
+    const messenger = contact?.messenger || siteConfig?.messenger || 'https://m.me/pustikunjobd';
 
     // Direct Inquiry Message Form
     const [showForm, setShowForm] = useState(false);

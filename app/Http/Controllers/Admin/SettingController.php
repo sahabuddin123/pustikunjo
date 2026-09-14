@@ -52,6 +52,7 @@ class SettingController extends Controller
             'email' => 'info@pustikunjo.com.bd',
             'address' => 'ঢাকা, বাংলাদেশ',
             'hotline_hours' => 'সকাল ৯টা - রাত ১০টা',
+            'messenger' => 'https://m.me/pustikunjobd',
         ]);
 
         $shippingZones = SiteSetting::get('shipping_zones', [
