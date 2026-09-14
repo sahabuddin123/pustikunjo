@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useForm, router } from '@inertiajs/react';
 import AdminLayout from '@/Layouts/AdminLayout';
-import { Upload, Trash2, Copy, Check, Image as ImageIcon, ExternalLink } from 'lucide-react';
+import { Upload, Trash2, Copy, Check, Image as ImageIcon, ExternalLink, Sparkles } from 'lucide-react';
 
 export default function MediaIndex({ media = [] }) {
     const { data, setData, post, processing, errors, reset } = useForm({
@@ -9,6 +9,16 @@ export default function MediaIndex({ media = [] }) {
     });
 
     const [copiedUrl, setCopiedUrl] = useState(null);
+    const [convertingWebp, setConvertingWebp] = useState(false);
+
+    const handleConvertAllWebp = () => {
+        if (confirm('আপনি কি সাইটের সমস্ত ব্যানার, প্রোডাক্ট ও আপলোড করা ছবি স্বয়ংক্রিয়ভাবে WebP ফরম্যাটে অপ্টিমাইজ করতে চান?')) {
+            setConvertingWebp(true);
+            router.post('/admin/media/convert-all-webp', {}, {
+                onFinish: () => setConvertingWebp(false),
+            });
+        }
+    };
 
     const handleFileChange = (e) => {
         if (e.target.files && e.target.files[0]) {
@@ -47,28 +57,41 @@ export default function MediaIndex({ media = [] }) {
                         </p>
                     </div>
 
-                    <form onSubmit={handleUpload} className="flex items-center gap-2">
-                        <label className="flex items-center gap-2 px-4 py-2 border border-gray-200 hover:border-gray-300 rounded-xl cursor-pointer text-xs font-semibold text-gray-700 bg-gray-50/70 transition-colors">
-                            <Upload className="w-4 h-4 text-emerald-700" />
-                            <span>{data.image ? data.image.name : 'Choose Image'}</span>
-                            <input
-                                type="file"
-                                accept="image/*"
-                                onChange={handleFileChange}
-                                className="hidden"
-                            />
-                        </label>
+                    <div className="flex items-center gap-2 flex-wrap">
+                        <button
+                            type="button"
+                            onClick={handleConvertAllWebp}
+                            disabled={convertingWebp}
+                            className="flex items-center gap-1.5 px-3.5 py-2 border border-emerald-200 hover:bg-emerald-50 text-emerald-800 rounded-xl cursor-pointer text-xs font-bold transition-all disabled:opacity-50"
+                            title="সমস্ত PNG এবং JPG ছবি WebP ফরম্যাটে অপ্টিমাইজ করুন"
+                        >
+                            <Sparkles className={`w-3.5 h-3.5 text-emerald-600 ${convertingWebp ? 'animate-spin' : ''}`} />
+                            <span>{convertingWebp ? 'WebP রূপান্তর হচ্ছে...' : 'সব ছবি WebP করুন'}</span>
+                        </button>
 
-                        {data.image && (
-                            <button
-                                type="submit"
-                                disabled={processing}
-                                className="px-4 py-2 bg-emerald-800 text-white rounded-xl text-xs font-semibold hover:bg-emerald-900 transition-colors disabled:opacity-50"
-                            >
-                                {processing ? 'Uploading...' : 'Upload'}
-                            </button>
-                        )}
-                    </form>
+                        <form onSubmit={handleUpload} className="flex items-center gap-2">
+                            <label className="flex items-center gap-2 px-4 py-2 border border-gray-200 hover:border-gray-300 rounded-xl cursor-pointer text-xs font-semibold text-gray-700 bg-gray-50/70 transition-colors">
+                                <Upload className="w-4 h-4 text-emerald-700" />
+                                <span>{data.image ? data.image.name : 'Choose Image'}</span>
+                                <input
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={handleFileChange}
+                                    className="hidden"
+                                />
+                            </label>
+
+                            {data.image && (
+                                <button
+                                    type="submit"
+                                    disabled={processing}
+                                    className="px-4 py-2 bg-emerald-800 text-white rounded-xl text-xs font-semibold hover:bg-emerald-900 transition-colors disabled:opacity-50"
+                                >
+                                    {processing ? 'Uploading...' : 'Upload'}
+                                </button>
+                            )}
+                        </form>
+                    </div>
                 </div>
 
                 {errors.image && (

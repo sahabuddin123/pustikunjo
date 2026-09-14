@@ -115,19 +115,21 @@ export default function HeroBlock({ data = {} }) {
                                 className="block w-full h-full cursor-pointer"
                                 title={slide.alt}
                             >
-                                <picture>
-                                    <source srcSet={slide.image.replace(/\.(jpg|jpeg|png)$/i, '.webp')} type="image/webp" />
-                                    <img
-                                        src={slide.fallback || slide.image}
-                                        alt={slide.alt}
-                                        className="w-full h-full object-cover object-center"
-                                        loading={idx === 0 ? 'eager' : 'lazy'}
-                                        fetchPriority={idx === 0 ? 'high' : 'auto'}
-                                        decoding={idx === 0 ? 'sync' : 'async'}
-                                        width="1920"
-                                        height="650"
-                                    />
-                                </picture>
+                                <img
+                                    src={slide.image}
+                                    alt={slide.alt}
+                                    className="w-full h-full object-cover object-center"
+                                    loading={idx === 0 ? 'eager' : 'lazy'}
+                                    fetchPriority={idx === 0 ? 'high' : 'auto'}
+                                    decoding={idx === 0 ? 'sync' : 'async'}
+                                    width="1920"
+                                    height="650"
+                                    onError={(e) => {
+                                        if (e.currentTarget.src && e.currentTarget.src.endsWith('.webp')) {
+                                            e.currentTarget.src = e.currentTarget.src.replace(/\.webp$/i, '.jpg');
+                                        }
+                                    }}
+                                />
                             </Link>
                         </div>
                     );

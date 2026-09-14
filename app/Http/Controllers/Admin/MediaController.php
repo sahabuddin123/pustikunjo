@@ -93,28 +93,33 @@ class MediaController extends Controller
         }
 
         $file->move($uploadPath, $filename);
+        $fullPath = $uploadPath . '/' . $filename;
+
+        // Automatically convert to WebP if PNG/JPG
+        $webpPath = app(\App\Services\Image\WebpConverterService::class)->convert($fullPath);
 
         $mediaItem = [
             'filename' => $filename,
             'url' => asset('uploads/' . $filename),
-            'size' => round(filesize($uploadPath . '/' . $filename) / 1024, 2) . ' KB',
+            'webp_url' => ($webpPath && file_exists($webpPath)) ? asset('uploads/' . basename($webpPath)) : null,
+            'size' => round(filesize($fullPath) / 1024, 2) . ' KB',
             'updated_at' => date('Y-m-d H:i:s'),
         ];
 
         // If Inertia visit, return back() with flash message
         if ($request->header('X-Inertia')) {
-            return back()->with('success', 'ছবি সফলভাবে আপলোড হয়েছে!');
+            return back()->with('success', 'ছবি সফলভাবে আপলোড ও WebP তে অপ্টিমাইজ হয়েছে!');
         }
 
         if ($request->expectsJson() || $request->query('format') === 'json') {
             return response()->json([
                 'success' => true,
-                'message' => 'ছবি সফলভাবে আপলোড হয়েছে!',
+                'message' => 'ছবি সফলভাবে আপলোড ও WebP তে অপ্টিমাইজ হয়েছে!',
                 'media' => $mediaItem,
             ]);
         }
 
-        return back()->with('success', 'ছবি সফলভাবে আপলোড হয়েছে!');
+        return back()->with('success', 'ছবি সফলভাবে আপলোড ও WebP তে অপ্টিমাইজ হয়েছে!');
     }
 
     /**
@@ -135,14 +140,19 @@ class MediaController extends Controller
         }
 
         $file->move($uploadPath, $filename);
+        $fullPath = $uploadPath . '/' . $filename;
+
+        // Automatically convert to WebP if PNG/JPG
+        $webpPath = app(\App\Services\Image\WebpConverterService::class)->convert($fullPath);
 
         return response()->json([
             'success' => true,
-            'message' => 'ছবি সফলভাবে আপলোড হয়েছে!',
+            'message' => 'ছবি সফলভাবে আপলোড ও WebP তে অপ্টিমাইজ হয়েছে!',
             'media' => [
                 'filename' => $filename,
                 'url' => asset('uploads/' . $filename),
-                'size' => round(filesize($uploadPath . '/' . $filename) / 1024, 2) . ' KB',
+                'webp_url' => ($webpPath && file_exists($webpPath)) ? asset('uploads/' . basename($webpPath)) : null,
+                'size' => round(filesize($fullPath) / 1024, 2) . ' KB',
                 'updated_at' => date('Y-m-d H:i:s'),
             ],
         ]);
@@ -155,9 +165,19 @@ class MediaController extends Controller
         ]);
 
         $filePath = public_path('uploads/' . basename($request->filename));
+        $webpPath = preg_replace('/\.(jpg|jpeg|png)$/i', '.webp', $filePath);
+
+        $deleted = false;
         if (File::exists($filePath)) {
             File::delete($filePath);
+            $deleted = true;
+        }
+        if (File::exists($webpPath) && $webpPath !== $filePath) {
+            File::delete($webpPath);
+            $deleted = true;
+        }
 
+        if ($deleted) {
             if ($request->header('X-Inertia')) {
                 return back()->with('success', 'ফাইল মুছে ফেলা হয়েছে!');
             }
@@ -183,5 +203,22 @@ class MediaController extends Controller
         }
 
         return back()->with('error', 'ফাইল খুঁজে পাওয়া যায়নি!');
+    }
+
+    /**
+     * Batch convert all images across site to WebP
+     */
+    public function convertAllWebp(\App\Services\Image\WebpConverterService $converter)
+    {
+        $directories = [
+            public_path('images/banners'),
+            public_path('images/products'),
+            public_path('uploads'),
+            storage_path('app/public'),
+        ];
+
+        $stats = $converter->convertDirectories($directories);
+
+        return back()->with('success', "স্বয়ংক্রিয়ভাবে {$stats['converted']} টি ছবি WebP ফরম্যাটে অপ্টিমাইজ করা হয়েছে! (" . round($stats['bytes_saved'] / 1024, 2) . " KB সাইজ কমেছে)");
     }
 }

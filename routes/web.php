@@ -173,6 +173,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/media/api/list', [MediaController::class, 'apiList'])->name('media.api.list');
     Route::post('/media/upload', [MediaController::class, 'upload'])->name('media.upload');
     Route::post('/media/api/upload', [MediaController::class, 'apiUpload'])->name('media.api.upload');
+    Route::post('/media/convert-all-webp', [MediaController::class, 'convertAllWebp'])->name('media.convert-all-webp');
     Route::post('/media/destroy', [MediaController::class, 'destroy'])->name('media.destroy');
 
     // Blog
