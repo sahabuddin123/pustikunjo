@@ -456,6 +456,17 @@ export default function ProductDetail({ product, relatedProducts = [], shippingZ
                                 </span>
                             </div>
 
+                            {/* Short Description */}
+                            {product.short_description && (
+                                <div className="text-sm sm:text-base text-gray-600 leading-relaxed whitespace-pre-line">
+                                    {/<[a-z][\s\S]*>/i.test(product.short_description) ? (
+                                        <div dangerouslySetInnerHTML={{ __html: product.short_description }} />
+                                    ) : (
+                                        product.short_description
+                                    )}
+                                </div>
+                            )}
+
                             {/* Variation / Weight Selector (বাছাই করুন:) */}
                             <div className="space-y-2">
                                 <div className="flex items-center justify-between">

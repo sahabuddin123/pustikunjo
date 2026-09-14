@@ -66,8 +66,9 @@ class ProductController extends Controller
             ],
             'schemaJsonLd' => $schemaJsonLd,
             'meta' => [
-                'title' => ($product->meta_title ?: $product->name) . ' — পুষ্টি কুঞ্জ',
-                'description' => $product->meta_description ?: strip_tags($product->short_description),
+                'title' => $product->meta_title ?: ($product->name . ' — পুষ্টি কুঞ্জ'),
+                'description' => $product->meta_description ?: strip_tags($product->short_description ?: $product->name),
+                'keywords' => $product->meta_keywords ?: ('পুষ্টি কুঞ্জ, ' . $product->name . ', অর্গানিক ফুড বাংলাদেশ, ভেষজ পুষ্টি পণ্য, natural food bd'),
                 'ogImage' => $product->og_image ?: url($product->primary_image),
                 'sku' => $product->sku,
             ]

@@ -8,7 +8,7 @@ import { MessageCircle, ShoppingBag, Home, Search, PhoneCall, CheckCircle2, Aler
 import { trackEvent } from '@/Services/Analytics';
 
 function StorefrontContent({ children, meta = {} }) {
-    const { siteConfig, flash, marketing } = usePage().props;
+    const { siteConfig, flash, marketing, seo } = usePage().props;
     const { cartCount, setIsCartOpen, toastMessage } = useCart();
     const [showScrollTop, setShowScrollTop] = useState(false);
 
@@ -42,14 +42,22 @@ function StorefrontContent({ children, meta = {} }) {
     return (
         <div className="min-h-screen flex flex-col bg-[#F8FAF8] text-gray-900 font-sans selection:bg-emerald-700 selection:text-white">
             <Head>
-                <title>{meta.title ? `${meta.title} — ${siteConfig?.name || 'পুষ্টি কুঞ্জ'}` : `${siteConfig?.name || 'পুষ্টি কুঞ্জ'} — খাঁটি ও প্রাকৃতিক স্বাস্থ্য পণ্য`}</title>
-                <meta name="description" content={meta.description || 'পুষ্টি কুঞ্জ বাংলাদেশের শীর্ষস্থানীয় অর্গানিক ও প্রাকৃতিক স্বাস্থ্য পণ্য ব্র্যান্ড।'} />
+                <title>
+                    {meta.title
+                        ? ((meta.title.includes(siteConfig?.name || 'পুষ্টি কুঞ্জ') || meta.title.includes('Pusti Kunjo'))
+                            ? meta.title
+                            : `${meta.title} — ${siteConfig?.name || 'পুষ্টি কুঞ্জ'}`)
+                        : (seo?.meta_title || `${siteConfig?.name || 'পুষ্টি কুঞ্জ'} — খাঁটি ও প্রাকৃতিক স্বাস্থ্য পণ্য`)}
+                </title>
+                <meta name="description" content={meta.description || seo?.meta_description || 'পুষ্টি কুঞ্জ বাংলাদেশের শীর্ষস্থানীয় অর্গানিক ও প্রাকৃতিক স্বাস্থ্য পণ্য ব্র্যান্ড।'} />
+                {(meta.keywords || seo?.meta_keywords) && <meta name="keywords" content={meta.keywords || seo?.meta_keywords} />}
+                {seo?.indexing_directive && <meta name="robots" content={seo.indexing_directive} />}
                 {siteConfig?.favicon && <link rel="icon" href={siteConfig.favicon} />}
                 {siteConfig?.favicon && <link rel="shortcut icon" href={siteConfig.favicon} />}
                 {siteConfig?.favicon && <link rel="apple-touch-icon" href={siteConfig.favicon} />}
-                {meta.ogImage && <meta property="og:image" content={meta.ogImage} />}
-                <meta property="og:title" content={meta.title || siteConfig?.name} />
-                <meta property="og:description" content={meta.description || '১০০% প্রাকৃতিক ও খাঁটি খাদ্য উপাদান।'} />
+                {(meta.ogImage || seo?.og_image) && <meta property="og:image" content={meta.ogImage || seo?.og_image} />}
+                <meta property="og:title" content={meta.title || seo?.meta_title || siteConfig?.name} />
+                <meta property="og:description" content={meta.description || seo?.meta_description || '১০০% প্রাকৃতিক ও খাঁটি খাদ্য উপাদান।'} />
             </Head>
 
             {/* Flash Alerts / Toasts */}

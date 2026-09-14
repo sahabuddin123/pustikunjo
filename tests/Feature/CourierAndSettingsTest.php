@@ -171,4 +171,59 @@ class CourierAndSettingsTest extends TestCase
         $order->refresh();
         $this->assertEquals('confirmed', $order->status);
     }
+
+    public function test_seo_and_marketing_tracking_settings_save_and_render_in_storefront()
+    {
+        $payload = [
+            'seo' => [
+                'indexing_directive' => 'noindex, follow',
+                'meta_title' => 'পুষ্টি কুঞ্জ | খাঁটি ও প্রাকৃতিক পুষ্টি পণ্য — Pusti Kunjo',
+                'meta_description' => '১০০% প্রাকৃতিক ও অর্গানিক পুষ্টি পণ্যের বিশ্বস্ত প্রতিষ্ঠান। চিয়া সিড, বিটরুট পাউডার ও খাঁটি ঘি।',
+                'meta_keywords' => 'পুষ্টি কুঞ্জ, অর্গানিক ফুড, চিয়া সিড, বিটরুট পাউডার, ঘি, Pusti Kunjo',
+                'og_image' => '/storage/media/test_og.webp',
+                'google_site_verification' => 'G-VERIF-TEST-12345',
+                'bing_site_verification' => '<meta name="msvalidate.01" content="BING-TEST-98765" />',
+                'ga4_measurement_id' => 'G-739XJECS0D',
+                'google_tag_manager_id' => 'GTM-M5NPJS5V',
+                'facebook_pixel_id' => '1091602526637309',
+            ]
+        ];
+
+        $response = $this->actingAs($this->admin)->post('/admin/settings', $payload);
+        $response->assertRedirect();
+
+        $savedSeo = SiteSetting::get('seo_settings');
+        $this->assertEquals('noindex, follow', $savedSeo['indexing_directive']);
+        $this->assertEquals('G-739XJECS0D', $savedSeo['ga4_measurement_id']);
+        $this->assertEquals('GTM-M5NPJS5V', $savedSeo['google_tag_manager_id']);
+        $this->assertEquals('1091602526637309', $savedSeo['facebook_pixel_id']);
+
+        // Now test storefront rendering in HTML
+        $storefrontResponse = $this->get('/');
+        $storefrontResponse->assertStatus(200);
+
+        // Verify robots directive
+        $storefrontResponse->assertSee('<meta name="robots" content="noindex, follow">', false);
+
+        // Verify google site verification
+        $storefrontResponse->assertSee('<meta name="google-site-verification" content="G-VERIF-TEST-12345">', false);
+
+        // Verify bing site verification
+        $storefrontResponse->assertSee('<meta name="msvalidate.01" content="BING-TEST-98765" />', false);
+
+        // Verify keywords
+        $storefrontResponse->assertSee('পুষ্টি কুঞ্জ, অর্গানিক ফুড, চিয়া সিড, বিটরুট পাউডার, ঘি, Pusti Kunjo', false);
+
+        // Verify Google Tag Manager script & noscript
+        $storefrontResponse->assertSee("dataLayer','GTM-M5NPJS5V');", false);
+        $storefrontResponse->assertSee('googletagmanager.com/ns.html?id=GTM-M5NPJS5V', false);
+
+        // Verify GA4 script
+        $storefrontResponse->assertSee('googletagmanager.com/gtag/js?id=G-739XJECS0D', false);
+        $storefrontResponse->assertSee("gtag('config', 'G-739XJECS0D');", false);
+
+        // Verify Meta Pixel script
+        $storefrontResponse->assertSee("fbq('init', '1091602526637309');", false);
+        $storefrontResponse->assertSee('facebook.com/tr?id=1091602526637309', false);
+    }
 }

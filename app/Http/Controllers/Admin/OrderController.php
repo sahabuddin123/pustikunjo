@@ -190,6 +190,8 @@ class OrderController extends Controller
             'recipient_address' => 'nullable|string',
             'cod_amount' => 'nullable|numeric|min:0',
             'note' => 'nullable|string|max:255',
+            'rider_note' => 'nullable|string|max:255',
+            'pickup_note' => 'nullable|string|max:255',
         ]);
 
         $result = $this->steadfastService->createOrder($order, $request->all());

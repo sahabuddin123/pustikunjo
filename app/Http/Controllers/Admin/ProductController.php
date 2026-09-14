@@ -71,6 +71,7 @@ class ProductController extends Controller
             'is_active' => 'boolean',
             'meta_title' => 'nullable|string|max:255',
             'meta_description' => 'nullable|string',
+            'meta_keywords' => 'nullable|string',
         ]);
 
         if (empty($validated['slug'])) {
@@ -117,6 +118,7 @@ class ProductController extends Controller
             'is_active' => 'boolean',
             'meta_title' => 'nullable|string|max:255',
             'meta_description' => 'nullable|string',
+            'meta_keywords' => 'nullable|string',
         ]);
 
         $product->update($validated);

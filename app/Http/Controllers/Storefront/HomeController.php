@@ -35,6 +35,8 @@ class HomeController extends Controller
             ->take(3)
             ->get();
 
+        $seoSettings = SiteSetting::get('seo_settings', []);
+
         return Inertia::render('Storefront/Home', [
             'page' => $homePage,
             'products' => $allProducts,
@@ -43,9 +45,10 @@ class HomeController extends Controller
             'categories' => $categories,
             'latestBlogs' => $latestBlogs,
             'meta' => [
-                'title' => $homePage?->meta_title ?: 'খাঁটি ও প্রাকৃতিক স্বাস্থ্য পণ্য',
-                'description' => $homePage?->meta_description ?: 'পুষ্টি কুঞ্জ - আপনার সুস্বাস্থ্যের বিশ্বস্ত ঠিকানা। ১০০% প্রাকৃতিক ও নির্ভেজাল উপাদান।',
-                'ogImage' => $homePage?->og_image ?: '/images/og-default.jpg',
+                'title' => $homePage?->meta_title ?: ($seoSettings['meta_title'] ?? 'পুষ্টি কুঞ্জ (Pusti Kunjo) | ১০০% খাঁটি অর্গানিক ও ভেষজ পুষ্টি পণ্য'),
+                'description' => $homePage?->meta_description ?: ($seoSettings['meta_description'] ?? 'পুষ্টি কুঞ্জ (Pusti Kunjo) — বাংলাদেশের বিশ্বস্ত অর্গানিক ফুড ব্র্যান্ড। ১০০% খাঁটি রোজেলা চা, বিটরুট পাউডার, মেথি মিক্স ও প্রিমিয়াম চিয়া সিড। ক্যাশ অন ডেলিভারি!'),
+                'keywords' => $seoSettings['meta_keywords'] ?? 'পুষ্টি কুঞ্জ, Pusti Kunjo, pustikunjo, অর্গানিক ফুড বাংলাদেশ, রোজেলা চা, বিটরুট পাউডার, মেথি মিক্স, চিয়া সিড, ভেষজ পুষ্টি পণ্য, সুপারফুড',
+                'ogImage' => $homePage?->og_image ?: ($seoSettings['og_image'] ?? '/images/og-default.jpg'),
             ]
         ]);
     }

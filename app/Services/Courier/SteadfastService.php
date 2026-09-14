@@ -20,14 +20,15 @@ class SteadfastService
             'enabled' => true,
             'api_key' => env('STEADFAST_API_KEY', ''),
             'secret_key' => env('STEADFAST_SECRET_KEY', ''),
-            'base_url' => 'https://portal.steadfast.com.bd/api/v1',
+            'base_url' => 'https://portal.packzy.com/api/v1',
             'auto_sync' => true,
+            'pickup_warehouse' => 'Fakirapool 1st Lane, Dhaka-1000',
         ]);
 
         $this->enabled = (bool) ($settings['enabled'] ?? true);
         $this->apiKey = (string) ($settings['api_key'] ?? env('STEADFAST_API_KEY', ''));
         $this->secretKey = (string) ($settings['secret_key'] ?? env('STEADFAST_SECRET_KEY', ''));
-        $this->baseUrl = rtrim((string) ($settings['base_url'] ?? 'https://portal.steadfast.com.bd/api/v1'), '/');
+        $this->baseUrl = rtrim((string) ($settings['base_url'] ?? 'https://portal.packzy.com/api/v1'), '/');
     }
 
     /**
@@ -43,6 +44,7 @@ class SteadfastService
      */
     public function createOrder(Order $order, array $custom = []): array
     {
+        $settings = SiteSetting::get('courier_steadfast', []);
         $recipientName = $custom['recipient_name'] ?? $order->customer_name;
         $recipientPhone = $custom['recipient_phone'] ?? $order->customer_phone;
         $recipientAddress = $custom['recipient_address'] ?? $order->shipping_address;
@@ -50,7 +52,23 @@ class SteadfastService
         // If COD, collect grand_total; if already paid via bKash, collect 0
         $defaultCod = $order->payment_method === 'cod' ? (float) $order->grand_total : 0.0;
         $codAmount = isset($custom['cod_amount']) ? (float) $custom['cod_amount'] : $defaultCod;
-        $note = $custom['note'] ?? ($order->order_notes ?: 'Pusti Kunjo Organic Products');
+
+        // Handle rider note and pickup warehouse note
+        $riderNote = $custom['rider_note'] ?? ($order->courier_rider_note ?: '');
+        $pickupNote = $custom['pickup_note'] ?? ($order->courier_pickup_note ?: ($settings['pickup_warehouse'] ?? 'Fakirapool 1st Lane, Dhaka-1000'));
+
+        $noteParts = [];
+        if (!empty($riderNote)) {
+            $noteParts[] = "রাইডার নির্দেশনা: " . $riderNote;
+        }
+        if (!empty($order->order_notes)) {
+            $noteParts[] = "গ্রাহক নোট: " . $order->order_notes;
+        }
+        if (isset($custom['note']) && !empty($custom['note'])) {
+            $noteParts[] = $custom['note'];
+        }
+
+        $finalNote = !empty($noteParts) ? implode(' | ', $noteParts) : 'পুষ্টি কুঞ্জ অর্গানিক পণ্য';
 
         $payload = [
             'invoice' => $order->order_number,
@@ -58,7 +76,7 @@ class SteadfastService
             'recipient_phone' => $recipientPhone,
             'recipient_address' => $recipientAddress,
             'cod_amount' => $codAmount,
-            'note' => $note,
+            'note' => $finalNote,
         ];
 
         // 1. Live API call if credentials exist
@@ -85,6 +103,8 @@ class SteadfastService
                         'courier_consignment_id' => $cid,
                         'courier_tracking_code' => $tracking,
                         'courier_status' => $status,
+                        'courier_rider_note' => $riderNote,
+                        'courier_pickup_note' => $pickupNote,
                         'courier_sent_at' => now(),
                         'courier_response' => $data,
                         'status' => 'shipped',
@@ -95,6 +115,8 @@ class SteadfastService
                         'consignment_id' => $cid,
                         'tracking_code' => $tracking,
                         'status' => $status,
+                        'rider_note' => $riderNote,
+                        'pickup_note' => $pickupNote,
                         'message' => 'স্টেডফাস্ট কুরিয়ারে সফলভাবে পার্সেল বুকিং হয়েছে!',
                         'data' => $data,
                     ];
@@ -109,7 +131,6 @@ class SteadfastService
                 ];
             } catch (\Exception $e) {
                 Log::error('Steadfast API exception: ' . $e->getMessage());
-                // Fallback to sandbox simulation below if desired or return error
             }
         }
 
@@ -129,6 +150,7 @@ class SteadfastService
                 'recipient_phone' => $recipientPhone,
                 'recipient_address' => $recipientAddress,
                 'cod_amount' => $codAmount,
+                'note' => $finalNote,
                 'status' => $simulatedStatus,
             ]
         ];
@@ -138,6 +160,8 @@ class SteadfastService
             'courier_consignment_id' => $simulatedCid,
             'courier_tracking_code' => $simulatedTracking,
             'courier_status' => $simulatedStatus,
+            'courier_rider_note' => $riderNote,
+            'courier_pickup_note' => $pickupNote,
             'courier_sent_at' => now(),
             'courier_response' => $simulatedResponse,
             'status' => 'shipped',
@@ -148,6 +172,8 @@ class SteadfastService
             'consignment_id' => $simulatedCid,
             'tracking_code' => $simulatedTracking,
             'status' => $simulatedStatus,
+            'rider_note' => $riderNote,
+            'pickup_note' => $pickupNote,
             'message' => $this->isConfigured() 
                 ? 'স্টেডফাস্ট কুরিয়ারে বুকিং সম্পন্ন হয়েছে।'
                 : 'স্টেডফাস্ট কুরিয়ারে সফলভাবে বুকিং হয়েছে (স্যান্ডবক্স মোড - ট্র্যাকিং তৈরি হয়েছে)!',
@@ -187,13 +213,115 @@ class SteadfastService
             }
         }
 
-        // Mock status progression based on random/time
-        $statuses = ['in_review', 'in_transit', 'delivered_approval_pending', 'delivered'];
         return [
             'success' => true,
             'status' => 'in_transit',
             'raw' => ['status' => 'in_transit', 'message' => 'Parcel is on the way (Demo sync)'],
         ];
+    }
+
+    /**
+     * Get detailed live tracking for parcel
+     */
+    public function trackParcel(string $trackingCodeOrCid): array
+    {
+        $code = trim($trackingCodeOrCid);
+        if (empty($code)) {
+            return ['success' => false, 'message' => 'ট্র্যাকিং কোড বা কনসাইনমেন্ট আইডি খালি।'];
+        }
+
+        if ($this->isConfigured()) {
+            try {
+                $url = str_starts_with($code, 'SF')
+                    ? $this->baseUrl . '/status_by_trackingcode/' . $code
+                    : $this->baseUrl . '/status_by_cid/' . $code;
+
+                $response = Http::timeout(10)
+                    ->withHeaders([
+                        'Api-Key' => $this->apiKey,
+                        'Secret-Key' => $this->secretKey,
+                    ])
+                    ->get($url);
+
+                if ($response->successful()) {
+                    $data = $response->json();
+                    $status = $data['delivery_status'] ?? ($data['status'] ?? 'in_transit');
+                    return [
+                        'success' => true,
+                        'tracking_code' => $code,
+                        'status' => $status,
+                        'details' => $data,
+                        'message' => 'ট্র্যাকিং তথ্য সফলভাবে আনা হয়েছে।',
+                    ];
+                }
+            } catch (\Exception $e) {
+                Log::error('Steadfast trackParcel error: ' . $e->getMessage());
+            }
+        }
+
+        // Fallback demo tracking data
+        return [
+            'success' => true,
+            'tracking_code' => $code,
+            'status' => 'in_transit',
+            'details' => [
+                'delivery_status' => 'in_transit',
+                'tracking_code' => $code,
+                'updated_at' => now()->toDateTimeString(),
+                'status_message' => 'পার্সেলটি বর্তমানে ডেলিভারির জন্য ট্রানজিটে রয়েছে।',
+            ],
+            'message' => 'ট্র্যাকিং তথ্য পাওয়া গেছে (স্যান্ডবক্স/লাইভ)।',
+        ];
+    }
+
+    /**
+     * Get Steadfast Account Balance
+     */
+    public function getBalance(): array
+    {
+        if (!$this->isConfigured()) {
+            return [
+                'success' => false,
+                'balance' => 0.0,
+                'is_configured' => false,
+                'message' => 'API Key এবং Secret Key কনফিগার করা হয়নি।',
+            ];
+        }
+
+        try {
+            $response = Http::timeout(10)
+                ->withHeaders([
+                    'Api-Key' => $this->apiKey,
+                    'Secret-Key' => $this->secretKey,
+                ])
+                ->get($this->baseUrl . '/get_balance');
+
+            if ($response->successful()) {
+                $data = $response->json();
+                $balance = (float) ($data['current_balance'] ?? ($data['balance'] ?? 0));
+                return [
+                    'success' => true,
+                    'balance' => $balance,
+                    'is_configured' => true,
+                    'raw' => $data,
+                    'message' => "বর্তমান ব্যালেন্স: ৳ {$balance}",
+                ];
+            }
+
+            return [
+                'success' => false,
+                'balance' => 0.0,
+                'is_configured' => true,
+                'message' => 'ব্যালেন্স তথ্য আনা সম্ভব হয়নি।',
+            ];
+        } catch (\Exception $e) {
+            return [
+                'success' => false,
+                'balance' => 0.0,
+                'is_configured' => true,
+                'message' => 'ত্রুটি: ' . $e->getMessage(),
+            ];
+        }
     }
 
     /**
@@ -212,11 +340,11 @@ class SteadfastService
             $newCourierStatus = $result['status'];
             $order->courier_status = $newCourierStatus;
 
-            // Map courier status to order status if delivered
+            // Map courier status to order status if delivered or cancelled
             if (in_array($newCourierStatus, ['delivered', 'delivered_approval_pending'])) {
                 $order->status = 'delivered';
                 $order->payment_status = 'paid';
-            } elseif (in_array($newCourierStatus, ['cancelled', 'cancelled_approval_pending'])) {
+            } elseif (in_array($newCourierStatus, ['cancelled', 'cancelled_approval_pending', 'return'])) {
                 $order->status = 'cancelled';
             }
 

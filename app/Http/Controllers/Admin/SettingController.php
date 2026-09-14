@@ -33,14 +33,18 @@ class SettingController extends Controller
             'light_bg' => '#f0fdf4',
         ]);
 
-        $seo = SiteSetting::get('seo_settings', [
+        $seo = array_merge([
+            'indexing_directive' => 'index, follow',
             'meta_title' => 'পুষ্টি কুঞ্জ | ১০০% খাঁটি ও প্রাকৃতিক পুষ্টি পণ্য',
             'meta_description' => '১০০% প্রাকৃতিক ও অর্গানিক পুষ্টি পণ্যের বিশ্বস্ত প্রতিষ্ঠান। বিটরুট পাউডার, চিয়া সিড, খাঁটি ঘি ও হার্বাল পণ্য।',
             'meta_keywords' => 'পুষ্টি কুঞ্জ, অর্গানিক ফুড, চিয়া সিড, বিটরুট পাউডার, ঘি, Pusti Kunjo',
             'og_image' => '',
-            'facebook_pixel_id' => '',
+            'google_site_verification' => '',
+            'bing_site_verification' => '',
+            'ga4_measurement_id' => '',
             'google_tag_manager_id' => '',
-        ]);
+            'facebook_pixel_id' => '',
+        ], SiteSetting::get('seo_settings', []));
 
         $contact = SiteSetting::get('contact_settings', [
             'phone' => '01700-000000',
@@ -59,9 +63,11 @@ class SettingController extends Controller
             'enabled' => true,
             'api_key' => env('STEADFAST_API_KEY', ''),
             'secret_key' => env('STEADFAST_SECRET_KEY', ''),
-            'base_url' => 'https://portal.steadfast.com.bd/api/v1',
+            'base_url' => 'https://portal.packzy.com/api/v1',
             'auto_sync' => true,
             'default_note' => 'পুষ্টি কুঞ্জ অর্গানিক পণ্য — হ্যান্ডেল উইথ কেয়ার',
+            'pickup_warehouse' => 'Fakirapool 1st Lane, Dhaka-1000',
+            'webhook_token' => '',
         ]);
 
         $fraudSettings = SiteSetting::get('fraud_settings', [
@@ -116,6 +122,8 @@ class SettingController extends Controller
             'paymentBkash' => $paymentBkash,
             'emailSmtp' => $emailSmtp,
             'blacklistCount' => $blacklistCount,
+            'courierWebhookUrl' => url('/api/v1/courier/webhook/steadfast'),
+            'isCourierSecretConfigured' => !empty($courierSteadfast['secret_key']),
         ]);
     }
 
@@ -137,7 +145,12 @@ class SettingController extends Controller
             SiteSetting::set('shipping_zones', $request->input('shippingZones'), 'shipping');
         }
         if ($request->has('courierSteadfast')) {
-            SiteSetting::set('courier_steadfast', $request->input('courierSteadfast'), 'courier');
+            $existingCourier = SiteSetting::get('courier_steadfast', []);
+            $courierData = $request->input('courierSteadfast');
+            if (empty($courierData['secret_key']) && !empty($existingCourier['secret_key'])) {
+                $courierData['secret_key'] = $existingCourier['secret_key'];
+            }
+            SiteSetting::set('courier_steadfast', $courierData, 'courier');
         }
         if ($request->has('fraudSettings')) {
             SiteSetting::set('fraud_settings', $request->input('fraudSettings'), 'fraud');

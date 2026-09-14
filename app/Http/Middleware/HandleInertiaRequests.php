@@ -80,11 +80,18 @@ class HandleInertiaRequests extends Middleware
                 'light_bg' => '#f0fdf4',
                 'font' => 'Li Ador Noirrit',
             ], SiteSetting::get('theme_customizer', []), SiteSetting::get('appearance_settings', [])),
-            'seo' => SiteSetting::get('seo_settings', [
+            'seo' => array_merge([
+                'indexing_directive' => 'index, follow',
                 'meta_title' => 'পুষ্টি কুঞ্জ | ১০০% খাঁটি ও প্রাকৃতিক পুষ্টি পণ্য',
                 'meta_description' => '১০০% প্রাকৃতিক ও অর্গানিক পুষ্টি পণ্যের বিশ্বস্ত প্রতিষ্ঠান।',
+                'meta_keywords' => 'পুষ্টি কুঞ্জ, অর্গানিক ফুড, চিয়া সিড, বিটরুট পাউডার, ঘি',
                 'og_image' => '',
-            ]),
+                'google_site_verification' => '',
+                'bing_site_verification' => '',
+                'ga4_measurement_id' => '',
+                'google_tag_manager_id' => '',
+                'facebook_pixel_id' => '',
+            ], SiteSetting::get('seo_settings', [])),
             'navProducts' => fn () => Product::where('is_active', true)
                 ->select('id', 'name', 'slug', 'price', 'sale_price', 'primary_image', 'images')
                 ->orderBy('id')

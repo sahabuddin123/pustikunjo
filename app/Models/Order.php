@@ -35,6 +35,8 @@ class Order extends Model
         'courier_consignment_id',
         'courier_tracking_code',
         'courier_status',
+        'courier_rider_note',
+        'courier_pickup_note',
         'courier_sent_at',
         'courier_response',
         'fraud_score',

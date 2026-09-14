@@ -227,6 +227,16 @@ export default function Index({ orders, filters = {} }) {
                                                         <div className="text-[11px] font-semibold text-gray-500 capitalize">
                                                             স্ট্যাটাস: <span className="text-emerald-700">{order.courier_status || 'in_review'}</span>
                                                         </div>
+                                                        {order.courier_rider_note && (
+                                                            <div className="text-[10px] text-amber-800 bg-amber-50 px-1.5 py-0.5 rounded border border-amber-200 truncate max-w-xs" title={order.courier_rider_note}>
+                                                                রাইডার: {order.courier_rider_note}
+                                                            </div>
+                                                        )}
+                                                        {order.order_notes && !order.courier_rider_note && (
+                                                            <div className="text-[10px] text-blue-800 bg-blue-50 px-1.5 py-0.5 rounded border border-blue-200 truncate max-w-xs" title={order.order_notes}>
+                                                                নোট: {order.order_notes}
+                                                            </div>
+                                                        )}
                                                     </div>
                                                 ) : (
                                                     <Link

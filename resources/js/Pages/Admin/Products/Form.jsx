@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useForm, Link } from '@inertiajs/react';
 import AdminLayout from '@/Layouts/AdminLayout';
 import MediaPickerModal from '@/Components/Admin/MediaPickerModal';
-import { ArrowLeft, Save, Plus, Trash2, Image, Sparkles, Layers, DollarSign, Upload, FolderTree, ExternalLink } from 'lucide-react';
+import { ArrowLeft, Save, Plus, Trash2, Image, Sparkles, Layers, DollarSign, Upload, FolderTree, ExternalLink, Search } from 'lucide-react';
 
 export default function Form({ product = null, categories = [] }) {
     const isEdit = Boolean(product);
@@ -73,6 +73,7 @@ export default function Form({ product = null, categories = [] }) {
         is_active: product?.is_active !== undefined ? product.is_active : true,
         meta_title: product?.meta_title || '',
         meta_description: product?.meta_description || '',
+        meta_keywords: product?.meta_keywords || '',
     });
 
     const [newImageUrl, setNewImageUrl] = useState('');
@@ -411,6 +412,69 @@ export default function Form({ product = null, categories = [] }) {
                                 onChange={(e) => form.setData('usage_instructions', e.target.value)}
                                 className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:border-emerald-600"
                             />
+                        </div>
+
+                        {/* SEO & Search Engine Optimization Card */}
+                        <div className="bg-white p-6 rounded-2xl border border-emerald-100 shadow-xs space-y-4">
+                            <div className="flex items-center justify-between border-b border-gray-100 pb-3">
+                                <div>
+                                    <h2 className="font-bold text-base text-gray-900 flex items-center gap-2">
+                                        <Search className="w-4 h-4 text-emerald-700" />
+                                        <span>গুগল সার্চ ও এসইও (Search Engine Optimization)</span>
+                                    </h2>
+                                    <p className="text-xs text-gray-500 mt-0.5">গুগলে দ্রুত র‍্যাংক ও অর্গানিক ট্রাফিক পেতে কাস্টম মেটা টাইটেল, ডেসক্রিপশন ও কি-ওয়ার্ড যুক্ত করুন।</p>
+                                </div>
+                            </div>
+
+                            <div>
+                                <div className="flex items-center justify-between mb-1">
+                                    <label className="text-xs font-bold text-gray-700">
+                                        এসইও মেটা শিরোনাম (Meta Title)
+                                    </label>
+                                    <span className="text-[11px] text-gray-400 font-mono">
+                                        {(form.data.meta_title || '').length} / 60 অক্ষর
+                                    </span>
+                                </div>
+                                <input
+                                    type="text"
+                                    placeholder={form.data.name ? `${form.data.name} — পুষ্টি কুঞ্জ` : 'যেমন: প্রিমিয়াম রোজেলা চা — ১০০% খাঁটি হারবাল চা | পুষ্টি কুঞ্জ'}
+                                    value={form.data.meta_title}
+                                    onChange={(e) => form.setData('meta_title', e.target.value)}
+                                    className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600"
+                                />
+                            </div>
+
+                            <div>
+                                <div className="flex items-center justify-between mb-1">
+                                    <label className="text-xs font-bold text-gray-700">
+                                        এসইও মেটা বিবরণ (Meta Description)
+                                    </label>
+                                    <span className={`text-[11px] font-mono ${(form.data.meta_description || '').length > 160 ? 'text-amber-600 font-bold' : 'text-gray-400'}`}>
+                                        {(form.data.meta_description || '').length} / 160 অক্ষর (সুপারিশকৃত: ১৫০-১৬০)
+                                    </span>
+                                </div>
+                                <textarea
+                                    rows={3}
+                                    placeholder="গুগলে সার্চ রেজাল্টে প্রদর্শিত আকর্ষণীয় বিবরণ লিখুন (যেমন: ১০০% খাঁটি প্রাকৃতিক উপাদান, উপকারিতা ও ক্যাশ অন ডেলিভারি ইত্যাদি)..."
+                                    value={form.data.meta_description}
+                                    onChange={(e) => form.setData('meta_description', e.target.value)}
+                                    className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600"
+                                />
+                            </div>
+
+                            <div>
+                                <label className="text-xs font-bold text-gray-700 block mb-1">
+                                    টার্গেটেড মেটা কি-ওয়ার্ডসমূহ (Meta Keywords)
+                                </label>
+                                <input
+                                    type="text"
+                                    placeholder="কমা দিয়ে একাধিক কি-ওয়ার্ড লিখুন (যেমন: রোজেলা চা, rosella tea bd, হারবাল চা, ভেষজ পণ্য)..."
+                                    value={form.data.meta_keywords}
+                                    onChange={(e) => form.setData('meta_keywords', e.target.value)}
+                                    className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600 font-sans"
+                                />
+                                <p className="text-[11px] text-gray-400 mt-1">যে সকল শব্দ লিখে গ্রাহকরা গুগলে এই পণ্যটি খুঁজতে পারে তা কমা দিয়ে লিখুন।</p>
+                            </div>
                         </div>
                     </div>
 

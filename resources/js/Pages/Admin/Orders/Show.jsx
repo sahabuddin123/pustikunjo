@@ -39,7 +39,9 @@ export default function Show({ order, fraudAnalysis = {}, steadfastConfigured = 
         recipient_phone: order.customer_phone || '',
         recipient_address: `${order.shipping_address || ''} (${order.shipping_area || ''})`,
         cod_amount: order.payment_method === 'cod' ? order.grand_total : 0,
-        note: order.order_notes || 'পুষ্টি কুঞ্জ অর্গানিক পণ্য — হ্যান্ডেল উইথ কেয়ার',
+        rider_note: order.courier_rider_note || 'ডেলিভারির পূর্বে গ্রাহককে কল দিন। সাবধানে হ্যান্ডেল করুন।',
+        pickup_note: order.courier_pickup_note || 'Fakirapool 1st Lane, Dhaka-1000',
+        note: order.order_notes || '',
     });
 
     // Blacklist / Fraud modal state
@@ -489,6 +491,30 @@ export default function Show({ order, fraudAnalysis = {}, steadfastConfigured = 
                                                 {order.courier_status || 'in_review'}
                                             </span>
                                         </div>
+
+                                        {/* Rider Note Display */}
+                                        {order.courier_rider_note && (
+                                            <div className="pt-2 border-t border-sky-200 text-xs text-amber-900">
+                                                <span className="font-bold flex items-center gap-1">
+                                                    <Truck className="w-3 h-3 text-amber-600" /> রাইডার নোট:
+                                                </span>
+                                                <p className="mt-0.5 bg-amber-50 p-1.5 rounded border border-amber-200">
+                                                    {order.courier_rider_note}
+                                                </p>
+                                            </div>
+                                        )}
+
+                                        {/* Customer Note Display */}
+                                        {order.order_notes && (
+                                            <div className="pt-1 text-xs text-blue-900">
+                                                <span className="font-bold flex items-center gap-1">
+                                                    <User className="w-3 h-3 text-blue-600" /> গ্রাহক নোট:
+                                                </span>
+                                                <p className="mt-0.5 bg-blue-50 p-1.5 rounded border border-blue-200">
+                                                    {order.order_notes}
+                                                </p>
+                                            </div>
+                                        )}
                                     </div>
 
                                     {/* Direct Live Tracking Link */}
@@ -695,8 +721,35 @@ export default function Show({ order, fraudAnalysis = {}, steadfastConfigured = 
                                 </div>
                             </div>
 
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <div>
+                                    <label className="text-xs font-bold text-amber-900 block mb-1">
+                                        রাইডার নির্দেশনা / নোট (Rider Note)
+                                    </label>
+                                    <input
+                                        type="text"
+                                        value={courierForm.data.rider_note}
+                                        onChange={(e) => courierForm.setData('rider_note', e.target.value)}
+                                        placeholder="ডেলিভারির পূর্বে ফোন দিন। সাবধানে হ্যান্ডেল করুন।"
+                                        className="w-full px-3 py-2 rounded-xl border border-amber-300 bg-amber-50/40 text-xs sm:text-sm text-gray-800 focus:border-amber-500"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="text-xs font-bold text-gray-700 block mb-1">
+                                        পিকআপ ওয়্যারহাউজ / নোট
+                                    </label>
+                                    <input
+                                        type="text"
+                                        value={courierForm.data.pickup_note}
+                                        onChange={(e) => courierForm.setData('pickup_note', e.target.value)}
+                                        placeholder="Fakirapool 1st Lane, Dhaka-1000"
+                                        className="w-full px-3 py-2 rounded-xl border border-gray-300 text-xs sm:text-sm text-gray-800"
+                                    />
+                                </div>
+                            </div>
+
                             <div className="p-3 bg-emerald-50 rounded-xl border border-emerald-200 text-xs text-emerald-900">
-                                ℹ️ সাবমিট করার সাথে সাথে অর্ডারটি স্টেডফাস্ট পোর্টালে পাঠানো হবে এবং স্বয়ংক্রিয় ট্র্যাকিং কোড জেনারেট হবে।
+                                ℹ️ সাবমিট করার সাথে সাথে অর্ডারটি স্টেডফাস্ট পোর্টালে পাঠানো হবে এবং স্বয়ংক্রিয় ট্র্যাকিং কোড ও রাইডার নোট সেভ হবে।
                             </div>
 
                             <div className="flex items-center justify-end gap-2 pt-2">

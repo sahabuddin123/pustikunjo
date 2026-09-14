@@ -12,10 +12,12 @@ use App\Http\Controllers\Admin\MediaController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\Admin\PageBuilderController;
 use App\Http\Controllers\Admin\ProductController as AdminProductController;
+use App\Http\Controllers\Admin\CourierDashboardController;
 use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\SmsController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Api\SteadfastWebhookController;
 use App\Http\Controllers\FeedController;
 use App\Http\Controllers\Storefront\BlogController;
 use App\Http\Controllers\Storefront\CheckoutController;
@@ -198,9 +200,18 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::post('/settings/test-smtp', [SettingController::class, 'testSmtp'])->name('settings.test-smtp');
     Route::post('/settings/test-sms', [SettingController::class, 'testSms'])->name('settings.test-sms');
 
+    // Courier Management & Tracking Hub
+    Route::get('/courier', [CourierDashboardController::class, 'index'])->name('courier.index');
+    Route::post('/courier/track', [CourierDashboardController::class, 'track'])->name('courier.track');
+    Route::post('/courier/fraud-check', [CourierDashboardController::class, 'fraudCheck'])->name('courier.fraud-check');
+    Route::post('/courier/sync-all', [CourierDashboardController::class, 'syncAll'])->name('courier.sync-all');
+
     // Users & Roles
     Route::resource('users', UserController::class);
 });
+
+// Steadfast Courier Webhook (Public POST Endpoint)
+Route::post('/api/v1/courier/webhook/steadfast', [SteadfastWebhookController::class, 'handle'])->name('courier.webhook.steadfast');
 
 // Dynamic Storefront Pages (builder driven)
 Route::get('/{slug}', [PageController::class, 'show'])->name('page.show')

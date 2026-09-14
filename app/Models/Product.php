@@ -29,6 +29,7 @@ class Product extends Model
         'is_active',
         'meta_title',
         'meta_description',
+        'meta_keywords',
         'og_image',
     ];
 

@@ -21,7 +21,8 @@ import {
     Leaf,
     CheckCircle2,
     AlertCircle,
-    Tag
+    Tag,
+    Truck
 } from 'lucide-react';
 
 export default function AdminLayout({ children, title = 'Admin Panel' }) {
@@ -34,6 +35,7 @@ export default function AdminLayout({ children, title = 'Admin Panel' }) {
         { label: 'Products (পণ্য)', url: '/admin/products', icon: Package },
         { label: 'Categories (ক্যাটাগরি)', url: '/admin/categories', icon: FolderTree },
         { label: 'Orders (অর্ডারসমূহ)', url: '/admin/orders', icon: ShoppingCart },
+        { label: 'কুরিয়ার (Courier)', url: '/admin/courier', icon: Truck },
         { label: 'Coupons (কুপন)', url: '/admin/coupons', icon: Tag },
         { label: 'অভিযোগ (Complaints)', url: '/admin/complaints', icon: MessageSquareWarning },
         { label: 'Customers', url: '/admin/customers', icon: Users },
