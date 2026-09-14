@@ -32,8 +32,14 @@ class PustiKunjoSpecTest extends TestCase
 
     public function test_product_detail_page_loads_with_seeded_product(): void
     {
+        $product = Product::where('slug', 'beetroot-powder')->first();
         $response = $this->get('/product/beetroot-powder');
         $response->assertStatus(200);
+        $expectedTitle = $product->meta_title ?: ($product->name . ' — পুষ্টি কুঞ্জ');
+        $response->assertSee('property="og:title" content="' . $expectedTitle . '"', false);
+        $response->assertSee('property="og:image"', false);
+        $response->assertSee('property="og:description"', false);
+        $response->assertSee('property="og:type" content="product"', false);
     }
 
     public function test_facebook_catalog_feed_generates_valid_csv(): void

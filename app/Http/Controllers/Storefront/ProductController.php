@@ -53,6 +53,12 @@ class ProductController extends Controller
             ]
         ];
 
+        $rawOg = $product->og_image ?: $product->primary_image;
+        $ogImageUrl = $rawOg;
+        if (!empty($ogImageUrl) && !str_starts_with($ogImageUrl, 'http://') && !str_starts_with($ogImageUrl, 'https://')) {
+            $ogImageUrl = url($ogImageUrl);
+        }
+
         return Inertia::render('Storefront/ProductDetail', [
             'product' => $product,
             'relatedProducts' => $relatedProducts,
@@ -70,7 +76,7 @@ class ProductController extends Controller
                 'title' => $product->meta_title ?: ($product->name . ' — পুষ্টি কুঞ্জ'),
                 'description' => $product->meta_description ?: strip_tags($product->short_description ?: $product->name),
                 'keywords' => $product->meta_keywords ?: ('পুষ্টি কুঞ্জ, ' . $product->name . ', অর্গানিক ফুড বাংলাদেশ, ভেষজ পুষ্টি পণ্য, natural food bd'),
-                'ogImage' => $product->og_image ?: url($product->primary_image),
+                'ogImage' => $ogImageUrl,
                 'sku' => $product->sku,
             ]
         ]);

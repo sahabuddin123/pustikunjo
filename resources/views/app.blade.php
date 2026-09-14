@@ -27,18 +27,135 @@
         $gtmId = trim($appSeo['google_tag_manager_id'] ?? '');
         $pixelId = trim($appSeo['facebook_pixel_id'] ?? '');
         $defaultMetaKeywords = $appSeo['meta_keywords'] ?? '';
+
+        // Extract Dynamic Page Context from Inertia
+        $pageProps = isset($page) && is_array($page) ? ($page['props'] ?? []) : [];
+        $pageMeta = $pageProps['meta'] ?? [];
+        $rawProduct = $pageProps['product'] ?? null;
+        $pageProduct = is_object($rawProduct) ? $rawProduct->toArray() : (is_array($rawProduct) ? $rawProduct : null);
+        $rawPost = $pageProps['post'] ?? null;
+        $pagePost = is_object($rawPost) ? $rawPost->toArray() : (is_array($rawPost) ? $rawPost : null);
+        $siteConfig = $pageProps['siteConfig'] ?? [];
+        $siteName = $siteConfig['name'] ?? ($appGeneral['site_name'] ?? 'পুষ্টি কুঞ্জ');
+
+        // Dynamic Title
+        $resolvedTitle = null;
+        if (!empty($pageMeta['title'])) {
+            $resolvedTitle = $pageMeta['title'];
+        } elseif (!empty($pageProduct['meta_title'])) {
+            $resolvedTitle = $pageProduct['meta_title'];
+        } elseif (!empty($pageProduct['name'])) {
+            $resolvedTitle = $pageProduct['name'] . ' — ' . $siteName;
+        } elseif (!empty($pagePost['title'])) {
+            $resolvedTitle = $pagePost['title'] . ' — ' . $siteName;
+        } elseif (!empty($appSeo['meta_title'])) {
+            $resolvedTitle = $appSeo['meta_title'];
+        } else {
+            $resolvedTitle = $siteName . ' | ১০০% খাঁটি ও প্রাকৃতিক পুষ্টি পণ্য';
+        }
+
+        // Dynamic Description
+        $resolvedDescription = null;
+        if (!empty($pageMeta['description'])) {
+            $resolvedDescription = $pageMeta['description'];
+        } elseif (!empty($pageProduct['meta_description'])) {
+            $resolvedDescription = $pageProduct['meta_description'];
+        } elseif (!empty($pageProduct['short_description'])) {
+            $resolvedDescription = strip_tags($pageProduct['short_description']);
+        } elseif (!empty($pageProduct['description'])) {
+            $resolvedDescription = \Illuminate\Support\Str::limit(strip_tags($pageProduct['description']), 160);
+        } elseif (!empty($pagePost['summary'])) {
+            $resolvedDescription = $pagePost['summary'];
+        } elseif (!empty($appSeo['meta_description'])) {
+            $resolvedDescription = $appSeo['meta_description'];
+        } else {
+            $resolvedDescription = '১০০% প্রাকৃতিক ও অর্গানিক পুষ্টি পণ্যের বিশ্বস্ত প্রতিষ্ঠান।';
+        }
+        $resolvedDescription = trim(preg_replace('/\s+/', ' ', strip_tags($resolvedDescription)));
+
+        // Dynamic Keywords
+        $resolvedKeywords = null;
+        if (!empty($pageMeta['keywords'])) {
+            $resolvedKeywords = $pageMeta['keywords'];
+        } elseif (!empty($pageProduct['meta_keywords'])) {
+            $resolvedKeywords = $pageProduct['meta_keywords'];
+        } elseif (!empty($pageProduct['name'])) {
+            $resolvedKeywords = $siteName . ', ' . $pageProduct['name'] . ', অর্গানিক ফুড বাংলাদেশ, ভেষজ পুষ্টি পণ্য, natural food bd';
+        } elseif (!empty($appSeo['meta_keywords'])) {
+            $resolvedKeywords = $appSeo['meta_keywords'];
+        }
+
+        // Dynamic Image for WhatsApp, Facebook, Social Preview
+        $rawOgImage = null;
+        if (!empty($pageMeta['ogImage'])) {
+            $rawOgImage = $pageMeta['ogImage'];
+        } elseif (!empty($pageProduct['og_image'])) {
+            $rawOgImage = $pageProduct['og_image'];
+        } elseif (!empty($pageProduct['primary_image'])) {
+            $rawOgImage = $pageProduct['primary_image'];
+        } elseif (!empty($pageProduct['images']) && is_array($pageProduct['images']) && count($pageProduct['images']) > 0) {
+            $rawOgImage = $pageProduct['images'][0];
+        } elseif (!empty($pagePost['featured_image'])) {
+            $rawOgImage = $pagePost['featured_image'];
+        } elseif (!empty($appSeo['og_image'])) {
+            $rawOgImage = $appSeo['og_image'];
+        } elseif (!empty($appGeneral['logo'])) {
+            $rawOgImage = $appGeneral['logo'];
+        }
+
+        $resolvedOgImage = null;
+        if (!empty($rawOgImage)) {
+            $resolvedOgImage = (str_starts_with($rawOgImage, 'http://') || str_starts_with($rawOgImage, 'https://'))
+                ? $rawOgImage
+                : url($rawOgImage);
+        }
+
+        $canonicalUrl = url()->current();
+        $isProduct = !empty($pageProduct);
     @endphp
 
+    <title>{{ $resolvedTitle }}</title>
+    <meta name="title" content="{{ $resolvedTitle }}">
+    <meta name="description" content="{{ $resolvedDescription }}">
     @if(!empty($robotsDirective))
         <meta name="robots" content="{{ $robotsDirective }}">
     @endif
+    @if(!empty($resolvedKeywords))
+        <meta name="keywords" content="{{ $resolvedKeywords }}">
+    @endif
+    <link rel="canonical" href="{{ $canonicalUrl }}">
 
-    @if(!empty($appSeo['meta_description']))
-        <meta name="description" content="{{ $appSeo['meta_description'] }}">
+    <!-- Open Graph / WhatsApp / Facebook Preview Tags -->
+    <meta property="og:site_name" content="{{ $siteName }}">
+    <meta property="og:type" content="{{ $isProduct ? 'product' : 'website' }}">
+    <meta property="og:title" content="{{ $resolvedTitle }}">
+    <meta property="og:description" content="{{ $resolvedDescription }}">
+    <meta property="og:url" content="{{ $canonicalUrl }}">
+    @if($resolvedOgImage)
+        <meta property="og:image" content="{{ $resolvedOgImage }}">
+        <meta property="og:image:secure_url" content="{{ $resolvedOgImage }}">
+        <meta property="og:image:alt" content="{{ $resolvedTitle }}">
     @endif
 
-    @if(!empty($defaultMetaKeywords))
-        <meta name="keywords" content="{{ $defaultMetaKeywords }}">
+    @if($isProduct)
+        @php
+            $prodPrice = $pageProduct['sale_price'] ?? ($pageProduct['price'] ?? null);
+        @endphp
+        @if(!empty($prodPrice))
+            <meta property="product:price:amount" content="{{ $prodPrice }}">
+            <meta property="product:price:currency" content="BDT">
+        @endif
+        @if(isset($pageProduct['stock']))
+            <meta property="product:availability" content="{{ $pageProduct['stock'] > 0 ? 'in stock' : 'out of stock' }}">
+        @endif
+    @endif
+
+    <!-- Twitter / X Cards -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ $resolvedTitle }}">
+    <meta name="twitter:description" content="{{ $resolvedDescription }}">
+    @if($resolvedOgImage)
+        <meta name="twitter:image" content="{{ $resolvedOgImage }}">
     @endif
 
     @if(!empty($googleVerification))
