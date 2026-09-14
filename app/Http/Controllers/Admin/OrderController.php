@@ -103,7 +103,7 @@ class OrderController extends Controller
         ];
 
         if (isset($eventMap[$newStatus])) {
-            $this->smsService->triggerEvent($eventMap[$newStatus], $order);
+            app(\App\Services\Notification\NotificationService::class)->triggerOrderEvent($eventMap[$newStatus], $order);
         }
 
         return back()->with('success', 'অর্ডার স্ট্যাটাস সফলভাবে আপডেট করা হয়েছে!');
@@ -197,8 +197,8 @@ class OrderController extends Controller
         $result = $this->steadfastService->createOrder($order, $request->all());
 
         if ($result['success']) {
-            // Trigger order shipped SMS to customer
-            $this->smsService->triggerEvent('order_shipped', $order);
+            // Trigger order shipped SMS and Email to customer
+            app(\App\Services\Notification\NotificationService::class)->triggerOrderEvent('order_shipped', $order);
 
             return back()->with('success', $result['message']);
         }

@@ -113,7 +113,7 @@ class SteadfastWebhookController extends Controller
         if (in_array($status, ['delivered', 'delivered_approval_pending'])) {
             $order->status = 'delivered';
             $order->payment_status = 'paid';
-            $this->smsService->triggerEvent('order_delivered', $order);
+            app(\App\Services\Notification\NotificationService::class)->triggerOrderEvent('order_delivered', $order);
         } elseif (in_array($status, ['cancelled', 'cancelled_approval_pending', 'return', 'returned'])) {
             $order->status = 'cancelled';
         } elseif (in_array($status, ['in_transit', 'picked_up', 'out_for_delivery'])) {

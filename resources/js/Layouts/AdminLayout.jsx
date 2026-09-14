@@ -22,7 +22,9 @@ import {
     CheckCircle2,
     AlertCircle,
     Tag,
-    Truck
+    Truck,
+    Mail,
+    MessageSquare
 } from 'lucide-react';
 
 export default function AdminLayout({ children, title = 'Admin Panel' }) {
@@ -45,6 +47,8 @@ export default function AdminLayout({ children, title = 'Admin Panel' }) {
         { label: 'Media Library', url: '/admin/media', icon: Image },
         { label: 'Blog', url: '/admin/blog', icon: BookOpen },
         { label: 'Reports', url: '/admin/reports', icon: BarChart3 },
+        { label: 'এসএমএস গেটওয়ে', url: '/admin/sms', icon: MessageSquare },
+        { label: 'নোটিফিকেশন টেমপ্লেট', url: '/admin/templates', icon: Mail },
         { label: 'Settings', url: '/admin/settings', icon: Settings },
         { label: 'Users & Roles', url: '/admin/users', icon: Shield },
     ];

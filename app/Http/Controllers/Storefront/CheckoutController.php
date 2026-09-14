@@ -220,8 +220,8 @@ class CheckoutController extends Controller
                 $order->items()->create($itemRow);
             }
 
-            // Trigger SMS Notification
-            $this->smsService->triggerEvent('order_placed', $order);
+            // Trigger Dynamic SMS & Email Notification
+            app(\App\Services\Notification\NotificationService::class)->triggerOrderEvent('order_placed', $order);
 
             // If tokenized bKash PGW is chosen
             if ($validated['payment_method'] === 'bkash_pgw') {

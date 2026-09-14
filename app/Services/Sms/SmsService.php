@@ -22,23 +22,43 @@ class SmsService
             return false;
         }
 
+        // Check if dynamic NotificationTemplate exists
+        $dbTemplate = \App\Models\NotificationTemplate::where('channel', 'sms')
+            ->where('event_key', $eventName)
+            ->first();
+
         $triggerConfig = $triggers[$eventName] ?? null;
-        if (!$triggerConfig || empty($triggerConfig['enabled'])) {
+
+        $isActive = $dbTemplate ? $dbTemplate->is_active : (!empty($triggerConfig['enabled']));
+        if (!$isActive) {
             return false;
         }
 
-        $template = $triggerConfig['template'] ?? '';
+        $template = $dbTemplate ? $dbTemplate->body : ($triggerConfig['template'] ?? '');
         if (empty($template)) {
             return false;
         }
 
-        // Replace placeholders
+        $contact = SiteSetting::get('contact', []);
+        $general = SiteSetting::get('general', []);
+
+        // Replace all available placeholders
         $vars = [
-            '{{customer_name}}' => $order->customer_name,
-            '{{order_id}}' => $order->order_number,
-            '{{total}}' => '৳' . number_format($order->grand_total, 2),
-            '{{status}}' => $order->status_label,
+            '{{customer_name}}' => $order->customer_name ?? 'সম্মানিত গ্রাহক',
+            '{{customer_phone}}' => $order->customer_phone ?? '',
+            '{{customer_email}}' => $order->customer_email ?? '',
+            '{{order_id}}' => $order->order_number ?? '',
+            '{{order_number}}' => $order->order_number ?? '',
+            '{{total}}' => '৳' . number_format((float) ($order->grand_total ?? 0), 2),
+            '{{grand_total}}' => '৳' . number_format((float) ($order->grand_total ?? 0), 2),
+            '{{status}}' => $order->status_label ?? $order->status ?? 'গৃহীত',
+            '{{courier_name}}' => $order->courier_name ?? 'Steadfast Courier',
+            '{{tracking_code}}' => $order->tracking_code ?? 'Pending',
             '{{track_url}}' => url('/track-order?order=' . $order->order_number . '&phone=' . $order->customer_phone),
+            '{{site_name}}' => $general['site_name'] ?? 'পুষ্টি কুঞ্জ',
+            '{{support_phone}}' => $contact['phone'] ?? '01700-000000',
+            '{{payment_method}}' => strtoupper($order->payment_method ?? 'COD'),
+            '{{shipping_address}}' => $order->shipping_address ?? '',
             '{{reason}}' => $extraVars['reason'] ?? '',
         ];
 
@@ -48,8 +68,9 @@ class SmsService
         $this->sendSms($order->customer_phone, $message, $eventName);
 
         // Send to admin if requested
-        if (!empty($triggerConfig['send_to_admin'])) {
-            $adminPhone = SiteSetting::get('contact_phone', '');
+        $sendToAdmin = $dbTemplate ? $dbTemplate->send_to_admin : (!empty($triggerConfig['send_to_admin']));
+        if ($sendToAdmin) {
+            $adminPhone = ($dbTemplate && $dbTemplate->admin_recipient) ? $dbTemplate->admin_recipient : ($contact['phone'] ?? '');
             if (!empty($adminPhone)) {
                 $adminMsg = "[নতুন অর্ডার] {$order->order_number} — ৳{$order->grand_total} ({$order->customer_name})";
                 $this->sendSms($adminPhone, $adminMsg, $eventName . '_admin');

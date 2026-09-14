@@ -14,6 +14,7 @@ use App\Http\Controllers\Admin\PageBuilderController;
 use App\Http\Controllers\Admin\ProductController as AdminProductController;
 use App\Http\Controllers\Admin\CourierDashboardController;
 use App\Http\Controllers\Admin\ReportController;
+use App\Http\Controllers\Admin\NotificationTemplateController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\SmsController;
 use App\Http\Controllers\Admin\UserController;
@@ -185,6 +186,12 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::post('/sms/config', [SmsController::class, 'updateConfig'])->name('sms.config');
     Route::post('/sms/triggers', [SmsController::class, 'updateTriggers'])->name('sms.triggers');
     Route::post('/sms/test', [SmsController::class, 'sendTestSms'])->name('sms.test');
+
+    // Dynamic SMS & Email Notification Templates Hub
+    Route::get('/templates', [NotificationTemplateController::class, 'index'])->name('templates.index');
+    Route::put('/templates/{id}', [NotificationTemplateController::class, 'update'])->name('templates.update');
+    Route::post('/templates/{id}/reset', [NotificationTemplateController::class, 'reset'])->name('templates.reset');
+    Route::post('/templates/test-send', [NotificationTemplateController::class, 'testSend'])->name('templates.test-send');
 
     // Complaints Management
     Route::get('/complaints', [ComplaintController::class, 'adminIndex'])->name('complaints.index');
