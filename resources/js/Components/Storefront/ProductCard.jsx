@@ -44,12 +44,18 @@ export default function ProductCard({ product }) {
                 href={`/product/${product.slug}`}
                 className="block relative aspect-square w-full overflow-hidden bg-white mb-3 flex items-center justify-center"
             >
-                <img
-                    src={image}
-                    alt={product.name}
-                    className="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-300"
-                    loading="lazy"
-                />
+                <picture className="max-h-full max-w-full flex items-center justify-center">
+                    <source srcSet={image.replace(/\.(jpg|jpeg|png)$/i, '.webp')} type="image/webp" />
+                    <img
+                        src={image}
+                        alt={product.name}
+                        className="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-300"
+                        loading="lazy"
+                        decoding="async"
+                        width="300"
+                        height="300"
+                    />
+                </picture>
             </Link>
 
             {/* Product Title & Details */}

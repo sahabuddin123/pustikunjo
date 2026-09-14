@@ -4,17 +4,20 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 const DEFAULT_SLIDES = [
     {
-        image: '/images/banners/rosella-tea-banner.jpg',
+        image: '/images/banners/rosella-tea-banner.webp',
+        fallback: '/images/banners/rosella-tea-banner.jpg',
         url: '/product/rosella-tea',
         alt: 'পুষ্টি কুঞ্জ রোজেলা চা — ১০০% খাঁটি ও প্রাকৃতিক হারবাল চা',
     },
     {
-        image: '/images/banners/beetroot-powder-banner.jpg',
+        image: '/images/banners/beetroot-powder-banner.webp',
+        fallback: '/images/banners/beetroot-powder-banner.jpg',
         url: '/product/beetroot-powder',
         alt: 'স্প্রে ড্রাইড বিটরুট পাউডার — ১০০% অর্গানিক সুপারফুড',
     },
     {
-        image: '/images/banners/methi-mix-banner.jpg',
+        image: '/images/banners/methi-mix-banner.webp',
+        fallback: '/images/banners/methi-mix-banner.jpg',
         url: '/product/methi-mix',
         alt: 'মেথি মিক্স — প্রাকৃতিক হজম ও সুগার নিয়ন্ত্রণ',
     },
@@ -112,12 +115,19 @@ export default function HeroBlock({ data = {} }) {
                                 className="block w-full h-full cursor-pointer"
                                 title={slide.alt}
                             >
-                                <img
-                                    src={slide.image}
-                                    alt={slide.alt}
-                                    className="w-full h-full object-cover object-center"
-                                    loading={idx === 0 ? 'eager' : 'lazy'}
-                                />
+                                <picture>
+                                    <source srcSet={slide.image.replace(/\.(jpg|jpeg|png)$/i, '.webp')} type="image/webp" />
+                                    <img
+                                        src={slide.fallback || slide.image}
+                                        alt={slide.alt}
+                                        className="w-full h-full object-cover object-center"
+                                        loading={idx === 0 ? 'eager' : 'lazy'}
+                                        fetchPriority={idx === 0 ? 'high' : 'auto'}
+                                        decoding={idx === 0 ? 'sync' : 'async'}
+                                        width="1920"
+                                        height="650"
+                                    />
+                                </picture>
                             </Link>
                         </div>
                     );

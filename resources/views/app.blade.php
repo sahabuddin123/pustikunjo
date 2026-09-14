@@ -5,10 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <!-- Google Fonts: Hind Siliguri & Plus Jakarta Sans -->
+    <!-- Font Preloads & Optimized Asynchronous Google Fonts -->
+    <link rel="preload" href="/fonts/LiAdorNoirrit.ttf" as="font" type="font/ttf" crossorigin>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&family=Plus+Jakarta+Sans:wght@500;700;800&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&family=Plus+Jakarta+Sans:wght@500;700;800&display=swap" media="print" onload="this.media='all'">
+    <noscript>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&family=Plus+Jakarta+Sans:wght@500;700;800&display=swap">
+    </noscript>
 
     @php
         $appGeneral = \App\Models\SiteSetting::get('general_settings', []);
@@ -158,6 +163,13 @@
         <meta name="twitter:image" content="{{ $resolvedOgImage }}">
     @endif
 
+    <!-- Preload Critical LCP Hero Image for Fast Mobile Paint -->
+    @if($isProduct && !empty($resolvedOgImage))
+        <link rel="preload" as="image" href="{{ $resolvedOgImage }}" fetchpriority="high">
+    @else
+        <link rel="preload" as="image" href="/images/banners/rosella-tea-banner.webp" type="image/webp" fetchpriority="high">
+    @endif
+
     @if(!empty($googleVerification))
         @if(str_contains($googleVerification, '<meta'))
             {!! $googleVerification !!}
@@ -199,18 +211,20 @@
     @endif
 
     @if(!empty($pixelId))
-    <!-- Meta Pixel Code -->
+    <!-- Meta Pixel Code (Deferred for mobile performance) -->
     <script>
-    !function(f,b,e,v,n,t,s)
-    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-    n.queue=[];t=b.createElement(e);t.async=!0;
-    t.src=v;s=b.getElementsByTagName(e)[0];
-    s.parentNode.insertBefore(t,s)}(window, document,'script',
-    'https://connect.facebook.net/en_US/fbevents.js');
-    fbq('init', '{{ $pixelId }}');
-    fbq('track', 'PageView');
+    window.addEventListener('DOMContentLoaded', function() {
+        !function(f,b,e,v,n,t,s)
+        {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+        n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+        if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+        n.queue=[];t=b.createElement(e);t.async=!0;
+        t.src=v;s=b.getElementsByTagName(e)[0];
+        s.parentNode.insertBefore(t,s)}(window, document,'script',
+        'https://connect.facebook.net/en_US/fbevents.js');
+        fbq('init', '{{ $pixelId }}');
+        fbq('track', 'PageView');
+    });
     </script>
     <!-- End Meta Pixel Code -->
     @endif
@@ -232,27 +246,13 @@
             font-style: normal;
             font-display: swap;
         }
-        @font-face {
-            font-family: 'Li Ador';
-            src: url('/fonts/LiAdorNoirrit.ttf') format('truetype');
-            font-weight: 100 900;
-            font-style: normal;
-            font-display: swap;
-        }
-        @font-face {
-            font-family: 'Le Ador';
-            src: url('/fonts/LiAdorNoirrit.ttf') format('truetype');
-            font-weight: 100 900;
-            font-style: normal;
-            font-display: swap;
-        }
         :root {
             --primary-color: {{ $primaryColor }};
             --primary-hover: {{ $primaryHover }};
             --primary-light: {{ $lightBg }};
             --secondary-color: {{ $accentColor }};
             --accent-color: {{ $accentColor }};
-            --font-family: 'Li Ador Noirrit', 'Li Ador', 'Le Ador', 'Hind Siliguri', 'Plus Jakarta Sans', sans-serif;
+            --font-family: 'Li Ador Noirrit', 'Hind Siliguri', 'Plus Jakarta Sans', sans-serif;
             --container-width: 1280px;
             --radius-btn: 0.5rem;
         }
