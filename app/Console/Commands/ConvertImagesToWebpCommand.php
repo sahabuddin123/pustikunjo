@@ -44,6 +44,19 @@ class ConvertImagesToWebpCommand extends Command
 
         $stats = $converter->convertDirectories($directories, $quality);
 
+        // Ensure permissions across all target directories so Nginx/webserver can read files
+        foreach ($directories as $dir) {
+            if (is_dir($dir)) {
+                @chmod($dir, 0777);
+                try {
+                    $files = \Illuminate\Support\Facades\File::allFiles($dir);
+                    foreach ($files as $file) {
+                        @chmod($file->getRealPath(), 0666);
+                    }
+                } catch (\Throwable $e) {}
+            }
+        }
+
         $this->newLine();
         $this->info("✓ Conversion complete!");
         $this->table(

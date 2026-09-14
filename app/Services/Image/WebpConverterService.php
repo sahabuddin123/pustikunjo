@@ -33,42 +33,41 @@ class WebpConverterService
         $targetPath = preg_replace('/\.(jpg|jpeg|png|bmp)$/i', '.webp', $sourcePath);
 
         try {
-            $imageInfo = @getimagesize($sourcePath);
-            if (!$imageInfo) {
+            // Read source file content into memory for bulletproof decoding
+            $rawContent = @file_get_contents($sourcePath);
+            if (!$rawContent) {
                 return null;
             }
 
-            $mime = $imageInfo['mime'];
-            $image = null;
-
-            if ($mime === 'image/jpeg') {
-                $image = @imagecreatefromjpeg($sourcePath);
-            } elseif ($mime === 'image/png') {
-                $image = @imagecreatefrompng($sourcePath);
-                if ($image) {
-                    imagepalettetotruecolor($image);
-                    imagealphablending($image, true);
-                    imagesavealpha($image, true);
-                }
-            } elseif ($mime === 'image/bmp') {
-                if (function_exists('imagecreatefrombmp')) {
-                    $image = @imagecreatefrombmp($sourcePath);
-                }
-            }
-
+            $image = @imagecreatefromstring($rawContent);
             if (!$image) {
                 return null;
             }
+
+            // Ensure truecolor and transparency support
+            if (!imageistruecolor($image)) {
+                imagepalettetotruecolor($image);
+            }
+            imagealphablending($image, true);
+            imagesavealpha($image, true);
 
             // Save as WebP
             $success = @imagewebp($image, $targetPath, $quality);
             @imagedestroy($image);
 
-            if ($success && file_exists($targetPath)) {
+            if ($success && file_exists($targetPath) && filesize($targetPath) > 0) {
+                // Ensure readable permissions on Linux/aaPanel for Nginx (www user)
+                @chmod($targetPath, 0666);
+
                 if (!$keepOriginal && $sourcePath !== $targetPath) {
                     @unlink($sourcePath);
                 }
                 return $targetPath;
+            }
+
+            // If empty file was created on failure, remove it
+            if (file_exists($targetPath) && filesize($targetPath) === 0) {
+                @unlink($targetPath);
             }
         } catch (\Throwable $e) {
             Log::warning("Webp conversion failed for [{$sourcePath}]: " . $e->getMessage());
@@ -103,27 +102,34 @@ class WebpConverterService
                 continue;
             }
 
+            // Ensure directory has proper permissions
+            @chmod($fullDir, 0777);
+
             $files = File::allFiles($fullDir);
             foreach ($files as $file) {
                 $ext = strtolower($file->getExtension());
-                if (!in_array($ext, ['jpg', 'jpeg', 'png'])) {
+                if (!in_array($ext, ['jpg', 'jpeg', 'png', 'bmp'])) {
+                    if ($ext === 'webp') {
+                        @chmod($file->getRealPath(), 0666);
+                    }
                     continue;
                 }
 
                 $stats['scanned']++;
                 $sourcePath = $file->getRealPath();
-                $webpPath = preg_replace('/\.(jpg|jpeg|png)$/i', '.webp', $sourcePath);
+                $webpPath = preg_replace('/\.(jpg|jpeg|png|bmp)$/i', '.webp', $sourcePath);
 
                 $originalSize = $file->getSize();
 
                 // Convert
                 $result = $this->convert($sourcePath, $quality, true);
-                if ($result && file_exists($webpPath)) {
+                if ($result && file_exists($webpPath) && filesize($webpPath) > 0) {
                     $stats['converted']++;
                     $newSize = filesize($webpPath);
                     if ($originalSize > $newSize) {
                         $stats['bytes_saved'] += ($originalSize - $newSize);
                     }
+                    @chmod($webpPath, 0666);
                 } else {
                     $stats['failed']++;
                 }

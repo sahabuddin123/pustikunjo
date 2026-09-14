@@ -16,7 +16,9 @@ class MediaController extends Controller
     {
         $uploadPath = public_path('uploads');
         if (!File::exists($uploadPath)) {
-            File::makeDirectory($uploadPath, 0755, true);
+            File::makeDirectory($uploadPath, 0777, true);
+        } else {
+            @chmod($uploadPath, 0777);
         }
 
         $files = File::files($uploadPath);
@@ -26,6 +28,7 @@ class MediaController extends Controller
             $filename = $file->getFilename();
             $ext = strtolower($file->getExtension());
             if (in_array($ext, ['jpg', 'jpeg', 'png', 'webp', 'svg', 'gif'])) {
+                @chmod($file->getRealPath(), 0666);
                 $mediaList[] = [
                     'filename' => $filename,
                     'url' => asset('uploads/' . $filename),

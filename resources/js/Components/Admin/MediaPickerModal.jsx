@@ -351,6 +351,14 @@ export default function MediaPickerModal({
                                                         alt={item.filename}
                                                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
                                                         loading="lazy"
+                                                        onError={(e) => {
+                                                            const src = e.currentTarget.src;
+                                                            if (src.endsWith('.webp')) {
+                                                                e.currentTarget.src = src.replace(/\.webp$/i, '.jpg');
+                                                            } else if (src.endsWith('.jpg')) {
+                                                                e.currentTarget.src = src.replace(/\.jpg$/i, '.png');
+                                                            }
+                                                        }}
                                                     />
 
                                                     {/* Selected Checkmark Badge */}
