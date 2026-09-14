@@ -40,6 +40,22 @@ class ConvertImagesToWebpCommand extends Command
             storage_path('app/public'),
         ];
 
+        $driver = $converter->getDriver();
+        $this->line("Active WebP driver: <info>{$driver}</info>");
+
+        if ($driver === 'none') {
+            $this->newLine();
+            $this->error("❌ WebP কনভার্ট করার কোনো ড্রাইভার (GD বা Imagick) এই PHP CLI তে পাওয়া যায়নি!");
+            $this->warn("বর্তমান CLI PHP (" . PHP_BINARY . ") তে GD বা Imagick এক্সটেনশন লোড হয়নি।");
+            $this->newLine();
+            $this->line("<comment>💡 aaPanel সার্ভারে ওয়েবসাইটের পিএইচপি দিয়ে কমান্ডটি রান করুন:</comment>");
+            $this->line("   <info>/www/server/php/82/bin/php artisan images:convert-webp</info>");
+            $this->line("   অথবা");
+            $this->line("   <info>/www/server/php/83/bin/php artisan images:convert-webp</info>");
+            $this->newLine();
+            return self::FAILURE;
+        }
+
         $this->line("Target directories: " . implode(', ', array_map('basename', $directories)));
 
         $stats = $converter->convertDirectories($directories, $quality);

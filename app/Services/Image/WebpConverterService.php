@@ -8,6 +8,48 @@ use Illuminate\Support\Facades\Log;
 class WebpConverterService
 {
     /**
+     * Check if WebP conversion is supported in current environment.
+     */
+    public function isSupported(): bool
+    {
+        return function_exists('imagewebp') 
+            || class_exists('\Imagick') 
+            || $this->hasCliTool('cwebp') 
+            || $this->hasCliTool('convert');
+    }
+
+    /**
+     * Get active conversion driver name.
+     */
+    public function getDriver(): string
+    {
+        if (function_exists('imagewebp')) {
+            return 'gd';
+        }
+        if (class_exists('\Imagick')) {
+            return 'imagick';
+        }
+        if ($this->hasCliTool('cwebp')) {
+            return 'cwebp_cli';
+        }
+        if ($this->hasCliTool('convert')) {
+            return 'imagemagick_cli';
+        }
+        return 'none';
+    }
+
+    protected function hasCliTool(string $tool): bool
+    {
+        if (!function_exists('exec')) {
+            return false;
+        }
+        $output = [];
+        $returnVar = 1;
+        @exec("which {$tool} 2>&1", $output, $returnVar);
+        return $returnVar === 0 && !empty($output[0]);
+    }
+
+    /**
      * Convert an image file (PNG, JPG, JPEG) to WebP format.
      *
      * @param string $sourcePath Absolute path to the source image
@@ -17,12 +59,13 @@ class WebpConverterService
      */
     public function convert(string $sourcePath, int $quality = 82, bool $keepOriginal = true): ?string
     {
-        if (!file_exists($sourcePath) || !function_exists('imagewebp')) {
+        if (!file_exists($sourcePath)) {
             return null;
         }
 
         $extension = strtolower(pathinfo($sourcePath, PATHINFO_EXTENSION));
         if ($extension === 'webp') {
+            @chmod($sourcePath, 0666);
             return $sourcePath;
         }
 
@@ -32,45 +75,95 @@ class WebpConverterService
 
         $targetPath = preg_replace('/\.(jpg|jpeg|png|bmp)$/i', '.webp', $sourcePath);
 
-        try {
-            // Read source file content into memory for bulletproof decoding
-            $rawContent = @file_get_contents($sourcePath);
-            if (!$rawContent) {
-                return null;
-            }
+        // Driver 1: GD imagewebp
+        if (function_exists('imagewebp')) {
+            try {
+                $rawContent = @file_get_contents($sourcePath);
+                if ($rawContent) {
+                    $image = @imagecreatefromstring($rawContent);
+                    if ($image) {
+                        if (!imageistruecolor($image)) {
+                            imagepalettetotruecolor($image);
+                        }
+                        imagealphablending($image, true);
+                        imagesavealpha($image, true);
 
-            $image = @imagecreatefromstring($rawContent);
-            if (!$image) {
-                return null;
-            }
+                        $success = @imagewebp($image, $targetPath, $quality);
+                        @imagedestroy($image);
 
-            // Ensure truecolor and transparency support
-            if (!imageistruecolor($image)) {
-                imagepalettetotruecolor($image);
-            }
-            imagealphablending($image, true);
-            imagesavealpha($image, true);
-
-            // Save as WebP
-            $success = @imagewebp($image, $targetPath, $quality);
-            @imagedestroy($image);
-
-            if ($success && file_exists($targetPath) && filesize($targetPath) > 0) {
-                // Ensure readable permissions on Linux/aaPanel for Nginx (www user)
-                @chmod($targetPath, 0666);
-
-                if (!$keepOriginal && $sourcePath !== $targetPath) {
-                    @unlink($sourcePath);
+                        if ($success && file_exists($targetPath) && filesize($targetPath) > 0) {
+                            @chmod($targetPath, 0666);
+                            if (!$keepOriginal && $sourcePath !== $targetPath) {
+                                @unlink($sourcePath);
+                            }
+                            return $targetPath;
+                        }
+                    }
                 }
-                return $targetPath;
+            } catch (\Throwable $e) {
+                Log::warning("GD Webp conversion failed for [{$sourcePath}]: " . $e->getMessage());
             }
+        }
 
-            // If empty file was created on failure, remove it
-            if (file_exists($targetPath) && filesize($targetPath) === 0) {
-                @unlink($targetPath);
+        // Driver 2: Imagick extension
+        if (class_exists('\Imagick')) {
+            try {
+                $imagick = new \Imagick($sourcePath);
+                $imagick->setImageFormat('webp');
+                $imagick->setImageCompressionQuality($quality);
+                $imagick->writeImage($targetPath);
+                $imagick->clear();
+                $imagick->destroy();
+
+                if (file_exists($targetPath) && filesize($targetPath) > 0) {
+                    @chmod($targetPath, 0666);
+                    if (!$keepOriginal && $sourcePath !== $targetPath) {
+                        @unlink($sourcePath);
+                    }
+                    return $targetPath;
+                }
+            } catch (\Throwable $e) {
+                Log::warning("Imagick Webp conversion failed for [{$sourcePath}]: " . $e->getMessage());
             }
-        } catch (\Throwable $e) {
-            Log::warning("Webp conversion failed for [{$sourcePath}]: " . $e->getMessage());
+        }
+
+        // Driver 3: cwebp CLI binary
+        if ($this->hasCliTool('cwebp')) {
+            try {
+                $cmd = sprintf('cwebp -q %d %s -o %s 2>&1', $quality, escapeshellarg($sourcePath), escapeshellarg($targetPath));
+                @exec($cmd);
+                if (file_exists($targetPath) && filesize($targetPath) > 0) {
+                    @chmod($targetPath, 0666);
+                    if (!$keepOriginal && $sourcePath !== $targetPath) {
+                        @unlink($sourcePath);
+                    }
+                    return $targetPath;
+                }
+            } catch (\Throwable $e) {
+                Log::warning("cwebp CLI conversion failed for [{$sourcePath}]: " . $e->getMessage());
+            }
+        }
+
+        // Driver 4: ImageMagick CLI binary
+        if ($this->hasCliTool('convert')) {
+            try {
+                $cmd = sprintf('convert %s -quality %d %s 2>&1', escapeshellarg($sourcePath), $quality, escapeshellarg($targetPath));
+                @exec($cmd);
+                if (file_exists($targetPath) && filesize($targetPath) > 0) {
+                    @chmod($targetPath, 0666);
+                    if (!$keepOriginal && $sourcePath !== $targetPath) {
+                        @unlink($sourcePath);
+                    }
+                    return $targetPath;
+                }
+            } catch (\Throwable $e) {
+                Log::warning("convert CLI conversion failed for [{$sourcePath}]: " . $e->getMessage());
+            }
+        }
+
+        // If empty file was created on failure, remove it
+        if (file_exists($targetPath) && filesize($targetPath) === 0) {
+            @unlink($targetPath);
         }
 
         return null;
