@@ -77,6 +77,10 @@ Route::post('/customer/logout', [CustomerAuthController::class, 'logout'])->name
 
 // Marketing & Feeds
 Route::get('/feeds/facebook.csv', [FeedController::class, 'facebookCatalog'])->name('feed.facebook');
+Route::get('/feeds/facebook.xml', [FeedController::class, 'facebookCatalogXml'])->name('feed.facebook.xml');
+Route::get('/facebook-catalog', [FeedController::class, 'facebookCatalog']);
+Route::get('/facebook-catalog.csv', [FeedController::class, 'facebookCatalog']);
+Route::get('/facebook-catalog.xml', [FeedController::class, 'facebookCatalogXml']);
 Route::get('/sitemap.xml', [FeedController::class, 'sitemap'])->name('feed.sitemap');
 Route::get('/robots.txt', [FeedController::class, 'robots'])->name('feed.robots');
 

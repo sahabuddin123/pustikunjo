@@ -66,6 +66,21 @@ class PustiKunjoSpecTest extends TestCase
         $this->assertStringContainsString('Sitemap:', $robots->getContent());
     }
 
+    public function test_facebook_catalog_feed_returns_valid_responses(): void
+    {
+        $csv = $this->get('/feeds/facebook.csv');
+        $csv->assertStatus(200);
+        $this->assertStringContainsString('id,title,description', $csv->getContent());
+
+        $xml = $this->get('/feeds/facebook.xml');
+        $xml->assertStatus(200);
+        $this->assertStringContainsString('<rss version="2.0"', $xml->getContent());
+        $this->assertStringContainsString('<g:id>', $xml->getContent());
+
+        $alias = $this->get('/facebook-catalog.xml');
+        $alias->assertStatus(200);
+    }
+
     public function test_coupon_validation_api(): void
     {
         $response = $this->postJson('/api/validate-coupon', [

@@ -40,6 +40,8 @@ class MarketingController extends Controller
             'integrations' => $integrations,
             'events' => $events,
             'catalogFeedUrl' => url('/feeds/facebook.csv'),
+            'catalogFeedUrlCsv' => url('/feeds/facebook.csv'),
+            'catalogFeedUrlXml' => url('/feeds/facebook.xml'),
         ]);
     }
 

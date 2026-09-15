@@ -34,6 +34,20 @@ class FeedController extends Controller
     }
 
     /**
+     * Generate Meta / Facebook Catalog XML (RSS 2.0)
+     */
+    public function facebookCatalogXml()
+    {
+        $xmlContent = $this->catalogService->generateXml();
+
+        return response($xmlContent, 200, [
+            'Content-Type' => 'application/xml; charset=UTF-8',
+            'Content-Disposition' => 'inline; filename="facebook_catalog.xml"',
+            'Cache-Control' => 'max-age=3600, public',
+        ]);
+    }
+
+    /**
      * Generate dynamic sitemap.xml
      */
     public function sitemap()

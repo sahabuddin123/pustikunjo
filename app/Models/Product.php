@@ -27,6 +27,7 @@ class Product extends Model
         'usage_instructions',
         'is_featured',
         'is_active',
+        'is_visible_on_storefront',
         'meta_title',
         'meta_description',
         'meta_keywords',
@@ -39,10 +40,16 @@ class Product extends Model
         'stock' => 'integer',
         'is_featured' => 'boolean',
         'is_active' => 'boolean',
+        'is_visible_on_storefront' => 'boolean',
         'images' => 'array',
         'benefits' => 'array',
         'variants' => 'array',
     ];
+
+    public function scopeStorefront($query)
+    {
+        return $query->where('is_active', true)->where('is_visible_on_storefront', true);
+    }
 
     public function category()
     {

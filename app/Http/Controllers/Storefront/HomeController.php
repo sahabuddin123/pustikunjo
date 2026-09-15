@@ -16,15 +16,15 @@ class HomeController extends Controller
     {
         $homePage = Page::where('slug', 'home')->orWhere('slug', '/')->first();
         
-        $allProducts = Product::with('category')
-            ->where('is_active', true)
+        $allProducts = Product::storefront()
+            ->with('category')
             ->get();
 
         $featuredProducts = $allProducts->where('is_featured', true)->take(8)->values();
         $latestProducts = $allProducts->sortByDesc('created_at')->take(8)->values();
 
         $categories = Category::withCount(['products' => function ($q) {
-            $q->where('is_active', true);
+            $q->where('is_active', true)->where('is_visible_on_storefront', true);
         }])
         ->where('is_active', true)
         ->orderBy('sort_order')

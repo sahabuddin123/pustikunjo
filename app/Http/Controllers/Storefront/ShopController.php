@@ -12,7 +12,7 @@ class ShopController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Product::with('category')->where('is_active', true);
+        $query = Product::storefront()->with('category');
 
         // Search
         if ($request->filled('q')) {
@@ -42,7 +42,10 @@ class ShopController extends Controller
         };
 
         $products = $query->paginate(12)->withQueryString();
-        $categories = Category::withCount('products')->where('is_active', true)->orderBy('sort_order')->get();
+        $categories = Category::withCount(['products' => fn ($q) => $q->where('is_active', true)->where('is_visible_on_storefront', true)])
+            ->where('is_active', true)
+            ->orderBy('sort_order')
+            ->get();
 
         return Inertia::render('Storefront/Shop', [
             'products' => $products,
@@ -63,13 +66,16 @@ class ShopController extends Controller
     {
         $category = Category::where('slug', $slug)->firstOrFail();
         
-        $products = Product::with('category')
+        $products = Product::storefront()
+            ->with('category')
             ->where('category_id', $category->id)
-            ->where('is_active', true)
             ->latest()
             ->paginate(12);
 
-        $categories = Category::withCount('products')->where('is_active', true)->orderBy('sort_order')->get();
+        $categories = Category::withCount(['products' => fn ($q) => $q->where('is_active', true)->where('is_visible_on_storefront', true)])
+            ->where('is_active', true)
+            ->orderBy('sort_order')
+            ->get();
 
         return Inertia::render('Storefront/Shop', [
             'category' => $category,

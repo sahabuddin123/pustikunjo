@@ -93,7 +93,7 @@ class HandleInertiaRequests extends Middleware
                 'google_tag_manager_id' => '',
                 'facebook_pixel_id' => '',
             ], SiteSetting::get('seo_settings', [])),
-            'navProducts' => fn () => Product::where('is_active', true)
+            'navProducts' => fn () => Product::storefront()
                 ->select('id', 'name', 'slug', 'price', 'sale_price', 'primary_image', 'images')
                 ->orderBy('id')
                 ->get(),

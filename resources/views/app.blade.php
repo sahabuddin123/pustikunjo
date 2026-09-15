@@ -163,13 +163,6 @@
         <meta name="twitter:image" content="{{ $resolvedOgImage }}">
     @endif
 
-    <!-- Preload Critical LCP Hero Image for Fast Mobile Paint -->
-    @if($isProduct && !empty($resolvedOgImage))
-        <link rel="preload" as="image" href="{{ $resolvedOgImage }}" fetchpriority="high">
-    @else
-        <link rel="preload" as="image" href="/images/banners/rosella-tea-banner.webp" type="image/webp" fetchpriority="high">
-    @endif
-
     @if(!empty($googleVerification))
         @if(str_contains($googleVerification, '<meta'))
             {!! $googleVerification !!}
@@ -185,6 +178,44 @@
             <meta name="msvalidate.01" content="{{ $bingVerification }}">
         @endif
     @endif
+
+    @php
+        $orgSchema = [
+            '@context' => 'https://schema.org',
+            '@graph' => [
+                [
+                    '@type' => 'Organization',
+                    '@id' => url('/') . '/#organization',
+                    'name' => 'পুষ্টি কুঞ্জ (Pusti Kunjo)',
+                    'alternateName' => ['pustikunjo', 'Pustikunjo', 'Pusti Kunjo', 'পুষ্টিকুঞ্জ'],
+                    'url' => url('/'),
+                    'logo' => !empty($appGeneral['logo']) ? $appGeneral['logo'] : url('/images/logo.png'),
+                    'sameAs' => [
+                        'https://www.facebook.com/pustikunjo'
+                    ]
+                ],
+                [
+                    '@type' => 'WebSite',
+                    '@id' => url('/') . '/#website',
+                    'url' => url('/'),
+                    'name' => 'পুষ্টি কুঞ্জ (Pusti Kunjo)',
+                    'alternateName' => ['pustikunjo', 'Pustikunjo', 'পুষ্টিকুঞ্জ'],
+                    'publisher' => [
+                        '@id' => url('/') . '/#organization'
+                    ],
+                    'potentialAction' => [
+                        '@type' => 'SearchAction',
+                        'target' => url('/shop') . '?q={search_term_string}',
+                        'query-input' => 'required name=search_term_string'
+                    ]
+                ]
+            ]
+        ];
+    @endphp
+    <!-- Schema.org Organization & WebSite Structured Data for Google & Gemini Entity Recognition -->
+    <script type="application/ld+json">
+    {!! json_encode($orgSchema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) !!}
+    </script>
 
     <script>
         window.dataLayer = window.dataLayer || [];
@@ -279,6 +310,11 @@
     src="https://www.facebook.com/tr?id={{ $pixelId }}&ev=PageView&noscript=1"
     /></noscript>
     @endif
+
+    <noscript>
+        <h1>{{ $resolvedTitle }}</h1>
+        <p>{{ $resolvedDescription }}</p>
+    </noscript>
 
     @inertia
 </body>

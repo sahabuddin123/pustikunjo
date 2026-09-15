@@ -3,8 +3,12 @@ import { useForm } from '@inertiajs/react';
 import AdminLayout from '@/Layouts/AdminLayout';
 import { TrendingUp, Save, ExternalLink, Copy, Check, ShieldCheck, Tag } from 'lucide-react';
 
-export default function Index({ integrations = {}, events = [], catalogFeedUrl = '' }) {
-    const [copiedFeed, setCopiedFeed] = useState(false);
+export default function Index({ integrations = {}, events = [], catalogFeedUrl = '', catalogFeedUrlCsv = '', catalogFeedUrlXml = '' }) {
+    const [copiedCsv, setCopiedCsv] = useState(false);
+    const [copiedXml, setCopiedXml] = useState(false);
+
+    const feedCsv = catalogFeedUrlCsv || catalogFeedUrl || (window?.location?.origin + '/feeds/facebook.csv');
+    const feedXml = catalogFeedUrlXml || (window?.location?.origin + '/feeds/facebook.xml');
 
     const intForm = useForm({
         integrations: integrations,
@@ -24,10 +28,15 @@ export default function Index({ integrations = {}, events = [], catalogFeedUrl =
         eventForm.post('/admin/marketing/events');
     };
 
-    const copyFeedUrl = () => {
-        navigator.clipboard.writeText(catalogFeedUrl);
-        setCopiedFeed(true);
-        setTimeout(() => setCopiedFeed(false), 2000);
+    const copyToClipboard = (text, type) => {
+        navigator.clipboard.writeText(text);
+        if (type === 'csv') {
+            setCopiedCsv(true);
+            setTimeout(() => setCopiedCsv(false), 2000);
+        } else {
+            setCopiedXml(true);
+            setTimeout(() => setCopiedXml(false), 2000);
+        }
     };
 
     return (
@@ -38,26 +47,54 @@ export default function Index({ integrations = {}, events = [], catalogFeedUrl =
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
                             <Tag className="w-5 h-5 text-emerald-300" />
-                            <h2 className="font-bold text-base">Meta / Facebook Commerce Catalog Feed (CSV)</h2>
+                            <h2 className="font-bold text-base">Meta / Facebook Commerce Catalog Feeds</h2>
                         </div>
                         <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-emerald-700/80 border border-emerald-500">
                             Auto Updated
                         </span>
                     </div>
                     <p className="text-xs text-emerald-100/90 leading-relaxed">
-                        ফেসবুক কমার্স ম্যানেজারে স্বয়ংক্রিয় প্রোডাক্ট ক্যাটালগ সিঙ্কের জন্য নিচের CSV ফিড ইউআরএল ব্যবহার করুন। পিক্সেলের <code className="bg-emerald-950 px-1 py-0.5 rounded font-mono">content_ids</code> এবং ক্যাটালগের <code className="bg-emerald-950 px-1 py-0.5 rounded font-mono">id</code> শতভাগ ম্যাচ করা আছে।
+                        ফেসবুক কমার্স ম্যানেজারে (Facebook / Meta Commerce Manager Data Feed) স্বয়ংক্রিয় প্রোডাক্ট ক্যাটালগ সিঙ্কের জন্য নিচের যেকোনো একটি ইউআরএল ব্যবহার করুন। মেটা পিক্সেলের <code className="bg-emerald-950 px-1 py-0.5 rounded font-mono">content_ids</code> এবং ক্যাটালগের <code className="bg-emerald-950 px-1 py-0.5 rounded font-mono">id (SKU)</code> শতভাগ ম্যাচ করা আছে।
                     </p>
 
-                    <div className="flex items-center gap-2 bg-emerald-950/80 p-2.5 rounded-xl border border-emerald-700">
-                        <span className="text-xs font-mono text-emerald-200 flex-1 truncate">{catalogFeedUrl}</span>
-                        <button
-                            type="button"
-                            onClick={copyFeedUrl}
-                            className="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs flex items-center gap-1 shrink-0"
-                        >
-                            {copiedFeed ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
-                            <span>{copiedFeed ? 'কপি হয়েছে' : 'লিংক কপি'}</span>
-                        </button>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {/* XML Feed (Recommended) */}
+                        <div className="bg-emerald-950/80 p-3.5 rounded-xl border border-emerald-700 space-y-2">
+                            <div className="flex items-center justify-between">
+                                <span className="text-xs font-bold text-emerald-300">XML (RSS 2.0 / Google Merchant Feed)</span>
+                                <span className="text-[10px] bg-emerald-700 text-white px-2 py-0.5 rounded font-bold">Recommended</span>
+                            </div>
+                            <div className="flex items-center gap-2 bg-black/30 p-2 rounded-lg border border-emerald-800/80">
+                                <span className="text-xs font-mono text-emerald-200 flex-1 truncate">{feedXml}</span>
+                                <button
+                                    type="button"
+                                    onClick={() => copyToClipboard(feedXml, 'xml')}
+                                    className="px-3 py-1 rounded-md bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs flex items-center gap-1 shrink-0"
+                                >
+                                    {copiedXml ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
+                                    <span>{copiedXml ? 'কপি হয়েছে' : 'কপি'}</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        {/* CSV Feed */}
+                        <div className="bg-emerald-950/80 p-3.5 rounded-xl border border-emerald-700 space-y-2">
+                            <div className="flex items-center justify-between">
+                                <span className="text-xs font-bold text-emerald-300">CSV Feed</span>
+                                <span className="text-[10px] bg-emerald-800 text-emerald-200 px-2 py-0.5 rounded">Standard</span>
+                            </div>
+                            <div className="flex items-center gap-2 bg-black/30 p-2 rounded-lg border border-emerald-800/80">
+                                <span className="text-xs font-mono text-emerald-200 flex-1 truncate">{feedCsv}</span>
+                                <button
+                                    type="button"
+                                    onClick={() => copyToClipboard(feedCsv, 'csv')}
+                                    className="px-3 py-1 rounded-md bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs flex items-center gap-1 shrink-0"
+                                >
+                                    {copiedCsv ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
+                                    <span>{copiedCsv ? 'কপি হয়েছে' : 'কপি'}</span>
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
