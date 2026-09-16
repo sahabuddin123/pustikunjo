@@ -83,7 +83,7 @@ class SmsService
     /**
      * Core SMS Dispatcher across multiple BD gateways
      */
-    public function sendSms(string $phone, string $message, ?string $eventName = null): array
+    public function sendSms(string $phone, string $message, ?string $eventName = null, array $overrideConfig = []): array
     {
         // Standardize Bangladeshi phone number
         $cleanPhone = preg_replace('/[^0-9]/', '', $phone);
@@ -97,8 +97,8 @@ class SmsService
             $cleanPhone = '0' . $cleanPhone;
         }
 
-        $smsConfig = SiteSetting::get('sms_config', []);
-        $smsSettings = SiteSetting::get('sms_settings', []);
+        $smsConfig = !empty($overrideConfig) ? $overrideConfig : SiteSetting::get('sms_config', []);
+        $smsSettings = !empty($overrideConfig) ? $overrideConfig : SiteSetting::get('sms_settings', []);
         $provider = $smsConfig['provider'] ?? ($smsSettings['provider'] ?? 'mram');
         if (!empty($smsConfig['mram_is_default']) || !empty($smsSettings['mram_is_default'])) {
             $provider = 'mram';
@@ -169,35 +169,42 @@ class SmsService
                     break;
 
                 case 'ssl_wireless':
-                    $response = Http::asForm()->post('https://smsplus.sslwireless.com/api/v3/send-sms', [
-                        'api_token' => $smsConfig['ssl_api_token'] ?? '',
-                        'sid' => $smsConfig['ssl_sid'] ?? '',
-                        'msisdn' => $cleanPhone,
-                        'sms' => $message,
-                        'csms_id' => uniqid('PK_'),
-                    ]);
+                    $response = Http::asForm()
+                        ->timeout(8)
+                        ->withoutVerifying()
+                        ->post('https://smsplus.sslwireless.com/api/v3/send-sms', [
+                            'api_token' => $smsConfig['ssl_api_token'] ?? '',
+                            'sid' => $smsConfig['ssl_sid'] ?? '',
+                            'msisdn' => $cleanPhone,
+                            'sms' => $message,
+                            'csms_id' => uniqid('PK_'),
+                        ]);
                     $responseRaw = $response->body();
                     break;
 
                 case 'bulksmsbd':
-                    $response = Http::get('https://bulksmsbd.net/api/smsapi', [
-                        'api_key' => $smsConfig['bulk_api_key'] ?? '',
-                        'type' => 'text',
-                        'number' => $cleanPhone,
-                        'senderid' => $smsConfig['bulk_sender_id'] ?? '',
-                        'message' => $message,
-                    ]);
+                    $response = Http::timeout(8)
+                        ->withoutVerifying()
+                        ->get('https://bulksmsbd.net/api/smsapi', [
+                            'api_key' => $smsConfig['bulk_api_key'] ?? '',
+                            'type' => 'text',
+                            'number' => $cleanPhone,
+                            'senderid' => $smsConfig['bulk_sender_id'] ?? '',
+                            'message' => $message,
+                        ]);
                     $responseRaw = $response->body();
                     break;
 
                 case 'mdl':
-                    $response = Http::get('http://sms.mimisms.com/smsapi', [
-                        'api_key' => $smsConfig['mdl_api_key'] ?? '',
-                        'type' => 'text',
-                        'contacts' => $cleanPhone,
-                        'senderid' => $smsConfig['mdl_sender_id'] ?? '',
-                        'msg' => $message,
-                    ]);
+                    $response = Http::timeout(8)
+                        ->withoutVerifying()
+                        ->get('http://sms.mimisms.com/smsapi', [
+                            'api_key' => $smsConfig['mdl_api_key'] ?? '',
+                            'type' => 'text',
+                            'contacts' => $cleanPhone,
+                            'senderid' => $smsConfig['mdl_sender_id'] ?? '',
+                            'msg' => $message,
+                        ]);
                     $responseRaw = $response->body();
                     break;
 

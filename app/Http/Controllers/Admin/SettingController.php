@@ -211,7 +211,8 @@ class SettingController extends Controller
         $recipient = $request->input('test_email');
 
         try {
-            $smtp = SiteSetting::get('email_smtp', []);
+            $reqSmtp = $request->input('smtp');
+            $smtp = (!empty($reqSmtp) && !empty($reqSmtp['host'])) ? $reqSmtp : SiteSetting::get('email_smtp', []);
             $host = trim($smtp['host'] ?? '');
             if (empty($host)) {
                 return back()->with('error', 'SMTP Host কনফিগার করা হয়নি। অনুগ্রহ করে আগে সেটিংস সংরক্ষণ করুন।');
@@ -266,7 +267,8 @@ class SettingController extends Controller
         $request->validate(['test_phone' => 'required|string']);
         $phone = $request->input('test_phone');
 
-        $result = $smsService->sendSms($phone, 'এটি পুষ্টি কুঞ্জ এডমিন প্যানেল থেকে পাঠানো টেস্ট এসএমএস।');
+        $smsOverride = $request->input('sms', []);
+        $result = $smsService->sendSms($phone, 'এটি পুষ্টি কুঞ্জ এডমিন প্যানেল থেকে পাঠানো টেস্ট এসএমএস।', null, $smsOverride);
         if (!empty($result['success'])) {
             return back()->with('success', "টেস্ট এসএমএস সফলভাবে {$phone} নম্বরে পাঠানো হয়েছে!");
         }

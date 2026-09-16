@@ -197,7 +197,10 @@ export default function Index({
             return;
         }
         setTestingSmtp(true);
-        router.post('/admin/settings/test-smtp', { test_email: testEmail }, {
+        router.post('/admin/settings/test-smtp', { 
+            test_email: testEmail,
+            smtp: form.data.emailSmtp,
+        }, {
             preserveScroll: true,
             onFinish: () => setTestingSmtp(false),
         });
@@ -209,7 +212,10 @@ export default function Index({
             return;
         }
         setTestingSms(true);
-        router.post('/admin/settings/test-sms', { test_phone: testPhone }, {
+        router.post('/admin/settings/test-sms', { 
+            test_phone: testPhone,
+            sms: form.data.sms,
+        }, {
             preserveScroll: true,
             onFinish: () => setTestingSms(false),
         });
