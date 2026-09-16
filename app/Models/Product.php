@@ -76,11 +76,41 @@ class Product extends Model
         return 0;
     }
 
+    public function getImagesAttribute($value)
+    {
+        $images = is_string($value) ? json_decode($value, true) : $value;
+        $images = is_array($images) ? array_values(array_filter($images)) : [];
+
+        $defaultSlugImage = $this->slug ? "/images/products/{$this->slug}.webp" : '/images/placeholder-product.jpg';
+        $defaultSlugJpg = $this->slug ? "/images/products/{$this->slug}.jpg" : '/images/placeholder-product.jpg';
+
+        if (empty($images)) {
+            return [$defaultSlugImage, $defaultSlugJpg];
+        }
+
+        $cleaned = [];
+        foreach ($images as $img) {
+            if (is_string($img)) {
+                // If it contains a broken ChatGPT or WhatsApp temp filename, substitute with existing static asset
+                if (str_contains($img, 'ChatGPTImage') || str_contains($img, 'WhatsAppImage')) {
+                    $cleaned[] = $defaultSlugImage;
+                    $cleaned[] = $defaultSlugJpg;
+                } else {
+                    $cleaned[] = $img;
+                }
+            }
+        }
+
+        $cleaned = array_values(array_unique(array_filter($cleaned)));
+        return !empty($cleaned) ? $cleaned : [$defaultSlugImage, $defaultSlugJpg];
+    }
+
     public function getPrimaryImageAttribute()
     {
-        if (!empty($this->images) && is_array($this->images) && count($this->images) > 0) {
-            return $this->images[0];
+        $imgs = $this->images;
+        if (!empty($imgs) && is_array($imgs) && count($imgs) > 0) {
+            return $imgs[0];
         }
-        return '/images/placeholder-product.jpg';
+        return $this->slug ? "/images/products/{$this->slug}.webp" : '/images/placeholder-product.jpg';
     }
 }

@@ -65,6 +65,11 @@ export default function MobileNavDrawer({ isOpen, onClose }) {
                                 src={siteConfig?.logo || "/images/logo-white.png"}
                                 alt={siteConfig?.name || "পুষ্টি কুঞ্জ"}
                                 className="h-9 w-auto object-contain max-w-[160px]"
+                                onError={(e) => {
+                                    if (e.currentTarget.src !== '/images/logo-white.png' && !e.currentTarget.src.endsWith('/images/logo-white.png')) {
+                                        e.currentTarget.src = '/images/logo-white.png';
+                                    }
+                                }}
                             />
                         </Link>
 

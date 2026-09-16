@@ -43,6 +43,11 @@ class HandleInertiaRequests extends Middleware
             ? $generalSettings['logo']
             : (!empty($appearanceSettings['logo_url']) ? $appearanceSettings['logo_url'] : '/images/logo-white.png');
 
+        // Convert any absolute remote upload domain or broken placeholder to clean relative path
+        if (empty($siteLogo) || str_contains($siteLogo, '1789327595_pusti-kunjo-logo.png') || str_contains($siteLogo, 'ChatGPTImage')) {
+            $siteLogo = '/images/logo-white.png';
+        }
+
         $siteFavicon = !empty($generalSettings['favicon'])
             ? $generalSettings['favicon']
             : (!empty($appearanceSettings['favicon_url']) ? $appearanceSettings['favicon_url'] : '/favicon.ico');

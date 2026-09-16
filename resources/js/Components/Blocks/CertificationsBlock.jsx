@@ -30,8 +30,24 @@ export default function CertificationsBlock({ data = {} }) {
         ? data.items
         : defaultCertificates;
 
-    // Filter out invalid items
-    const items = rawItems.filter((it) => it && (it.image || it.title));
+    // Sanitize items so broken WhatsApp/ChatGPT temp paths fall back to Waffen lab reports
+    const items = rawItems.map((it, idx) => {
+        const fallback = defaultCertificates[idx] || defaultCertificates[0];
+        let image = it?.image;
+        if (!image || image.includes('WhatsAppImage') || image.includes('ChatGPTImage')) {
+            image = fallback.image;
+        }
+
+        return {
+            ...fallback,
+            ...it,
+            image,
+            fallbackImage: fallback.image,
+            title: it?.title && it.title !== 'সার্টিফিকেশন' ? it.title : fallback.title,
+            subtitle: it?.subtitle || fallback.subtitle,
+            alt: it?.alt && it.alt !== 'সার্টিফিকেশন' ? it.alt : fallback.alt,
+        };
+    }).filter((it) => it && (it.image || it.title));
 
     // Lightbox modal state for full view of test report
     const [activeCertModal, setActiveCertModal] = useState(null);
@@ -111,6 +127,11 @@ export default function CertificationsBlock({ data = {} }) {
                                     alt={item.alt || item.title || `Certificate ${idx + 1}`}
                                     className="w-full h-full object-contain drop-shadow-sm transition-transform duration-300 group-hover/img:scale-[1.02]"
                                     loading="lazy"
+                                    onError={(e) => {
+                                        if (item.fallbackImage && e.currentTarget.src !== item.fallbackImage && !e.currentTarget.src.endsWith(item.fallbackImage)) {
+                                            e.currentTarget.src = item.fallbackImage;
+                                        }
+                                    }}
                                 />
 
                                 {/* Hover Overlay with Zoom Button */}
@@ -199,6 +220,11 @@ export default function CertificationsBlock({ data = {} }) {
                                 src={activeCertModal.image}
                                 alt={activeCertModal.title || 'Full Lab Report'}
                                 className="max-w-full max-h-[75vh] w-auto h-auto object-contain rounded-lg shadow-md bg-white p-2"
+                                onError={(e) => {
+                                    if (activeCertModal.fallbackImage && e.currentTarget.src !== activeCertModal.fallbackImage && !e.currentTarget.src.endsWith(activeCertModal.fallbackImage)) {
+                                        e.currentTarget.src = activeCertModal.fallbackImage;
+                                    }
+                                }}
                             />
                         </div>
                     </div>

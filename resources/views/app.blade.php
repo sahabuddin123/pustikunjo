@@ -129,6 +129,8 @@
         <meta name="keywords" content="{{ $resolvedKeywords }}">
     @endif
     <link rel="canonical" href="{{ $canonicalUrl }}">
+    <link rel="icon" type="image/x-icon" href="{{ !empty($appFavicon) ? $appFavicon : '/favicon.ico' }}">
+    <link rel="shortcut icon" href="/favicon.ico">
 
     <!-- Open Graph / WhatsApp / Facebook Preview Tags -->
     <meta property="og:site_name" content="{{ $siteName }}">

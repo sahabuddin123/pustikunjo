@@ -463,6 +463,39 @@ export default function Builder({ page = null, products = [], categories = [] })
         updateBlockData('steps', steps);
     };
 
+    // FAQ Accordion Items Helper
+    const updateFaqItem = (faqIdx, field, val) => {
+        const rawItems = (activeBlock?.data?.items && activeBlock.data.items.length > 0)
+            ? activeBlock.data.items
+            : [];
+        const items = rawItems.map((item) => ({ ...item }));
+        if (!items[faqIdx]) return;
+        items[faqIdx][field] = val;
+        updateBlockData('items', items);
+    };
+
+    const addFaqItem = () => {
+        const rawItems = (activeBlock?.data?.items && activeBlock.data.items.length > 0)
+            ? activeBlock.data.items
+            : [];
+        const items = [
+            ...rawItems.map((item) => ({ ...item })),
+            {
+                question: 'নতুন প্রশ্ন এখানে লিখুন?',
+                answer: 'প্রশ্নের উত্তর বিস্তারিত এখানে লিখুন।'
+            }
+        ];
+        updateBlockData('items', items);
+    };
+
+    const removeFaqItem = (faqIdx) => {
+        const rawItems = (activeBlock?.data?.items && activeBlock.data.items.length > 0)
+            ? activeBlock.data.items
+            : [];
+        const items = rawItems.filter((_, i) => i !== faqIdx);
+        updateBlockData('items', items);
+    };
+
     const handleSubmit = (e) => {
         e.preventDefault();
         if (isEdit) {
@@ -1398,9 +1431,84 @@ export default function Builder({ page = null, products = [], categories = [] })
                                 )}
 
                                 {/* ========================================== */}
-                                {/* 8. GENERIC FALLBACK FOR OTHER BLOCKS */}
+                                {/* 8. FAQ ACCORDION */}
                                 {/* ========================================== */}
-                                {['hero', 'banner_slider', 'product_grid', 'product_videos', 'certifications', 'why_pustikunjo', 'step_cards', 'consultation_cta', 'contact_strip'].indexOf(activeBlock.type) === -1 && (
+                                {activeBlock.type === 'faq' && (
+                                    <div className="space-y-4">
+                                        <div>
+                                            <label className="text-xs font-bold text-gray-700 block mb-1">
+                                                সেকশন শিরোনাম (Section Heading)
+                                            </label>
+                                            <input
+                                                type="text"
+                                                value={activeBlock.data.heading || 'সচরাচর জিজ্ঞাসিত প্রশ্নাবলী (FAQ)'}
+                                                onChange={(e) => updateBlockData('heading', e.target.value)}
+                                                className="w-full px-3 py-2 rounded-xl border border-gray-300 text-sm font-bold"
+                                            />
+                                        </div>
+
+                                        <div className="flex items-center justify-between pt-2 border-t border-gray-100">
+                                            <h3 className="font-bold text-gray-900 text-sm flex items-center gap-1.5">
+                                                <HelpCircle className="w-4 h-4 text-emerald-700" />
+                                                <span>প্রশ্নোত্তর তালিকা (FAQ Items) - {((activeBlock.data.items || []).length)}টি</span>
+                                            </h3>
+                                            <button
+                                                type="button"
+                                                onClick={addFaqItem}
+                                                className="px-3 py-1.5 bg-emerald-700 hover:bg-emerald-800 text-white rounded-lg text-xs font-bold flex items-center gap-1 shadow-xs cursor-pointer transition-colors"
+                                            >
+                                                <Plus className="w-3.5 h-3.5" />
+                                                <span>নতুন প্রশ্ন যোগ করুন</span>
+                                            </button>
+                                        </div>
+
+                                        <div className="space-y-3">
+                                            {(activeBlock.data.items || []).map((faq, fIdx) => (
+                                                <div key={fIdx} className="p-4 rounded-xl border border-gray-200 bg-gray-50/70 space-y-2.5">
+                                                    <div className="flex items-center justify-between gap-2">
+                                                        <div className="flex items-center gap-2 flex-1">
+                                                            <span className="w-6 h-6 rounded-full bg-emerald-100 text-emerald-800 font-bold text-xs flex items-center justify-center shrink-0">
+                                                                {fIdx + 1}
+                                                            </span>
+                                                            <input
+                                                                type="text"
+                                                                value={faq.question || ''}
+                                                                onChange={(e) => updateFaqItem(fIdx, 'question', e.target.value)}
+                                                                placeholder="প্রশ্ন লিখুন (যেমন: কীভাবে অর্ডার করব?)"
+                                                                className="w-full px-3 py-1.5 rounded-lg border border-gray-300 font-bold text-xs sm:text-sm bg-white focus:border-emerald-600"
+                                                            />
+                                                        </div>
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => removeFaqItem(fIdx)}
+                                                            className="p-1.5 text-rose-500 hover:text-rose-700 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer"
+                                                            title="এই প্রশ্নটি মুছে ফেলুন"
+                                                        >
+                                                            <Trash2 className="w-4 h-4" />
+                                                        </button>
+                                                    </div>
+                                                    <div>
+                                                        <label className="text-[11px] font-bold text-gray-600 block mb-1">
+                                                            উত্তর (Answer)
+                                                        </label>
+                                                        <textarea
+                                                            rows={3}
+                                                            value={faq.answer || ''}
+                                                            onChange={(e) => updateFaqItem(fIdx, 'answer', e.target.value)}
+                                                            placeholder="প্রশ্নের উত্তর বিস্তারিত এখানে লিখুন..."
+                                                            className="w-full px-3 py-2 rounded-lg border border-gray-300 text-xs sm:text-sm bg-white focus:border-emerald-600"
+                                                        />
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+
+                                {/* ========================================== */}
+                                {/* 9. GENERIC FALLBACK FOR OTHER BLOCKS */}
+                                {/* ========================================== */}
+                                {['hero', 'banner_slider', 'product_grid', 'product_videos', 'certifications', 'why_pustikunjo', 'step_cards', 'consultation_cta', 'contact_strip', 'faq'].indexOf(activeBlock.type) === -1 && (
                                     <div className="space-y-4">
                                         {activeBlock.data.heading !== undefined && (
                                             <div>

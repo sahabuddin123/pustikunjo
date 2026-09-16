@@ -51,7 +51,9 @@ class UpdateThreeProductsSeeder extends Seeder
                 ],
                 'usage_instructions' => "৪-৫ টি শুকনো রোজেলা ফুল ১ কাপ গরম পানিতে দিয়ে ৫-৭ মিনিট ভিজিয়ে রাখুন। এরপর ছেঁকে নিন। স্বাদ বাড়াতে সামান্য মধু মেশানো যায়।",
                 'images' => [
+                    '/images/products/rosella-tea.webp',
                     '/images/products/rosella-tea.jpg',
+                    '/images/products/rosella-tea-label.webp',
                     '/images/products/rosella-tea-label.jpg',
                 ],
                 'is_featured' => true,
@@ -81,7 +83,9 @@ class UpdateThreeProductsSeeder extends Seeder
                 ],
                 'usage_instructions' => "এক গ্লাস কুসুম গরম পানি বা হালকা গরম দুধে এক চা চামচ বিটরুট পাউডার ভালোভাবে মিশিয়ে পান করুন। স্বাদ বাড়াতে মধু বা লেবুর রস মেশান।\nসকালের ফল বা সবজির স্মুদিতে কিংবা জুসের সাথে ১ চা চামচ মিশিয়ে নিতে পারেন।\nস্যুপ, সস বা পরোটা ও রুটির আটার সাথে মিশিয়েও এটি খাওয়া যায়।",
                 'images' => [
+                    '/images/products/beetroot-powder.webp',
                     '/images/products/beetroot-powder.jpg',
+                    '/images/products/beetroot-powder-label.webp',
                     '/images/products/beetroot-powder-label.jpg',
                 ],
                 'is_featured' => true,
@@ -111,7 +115,9 @@ class UpdateThreeProductsSeeder extends Seeder
                 ],
                 'usage_instructions' => "প্রতিদিন অল্প পরিমাপ (প্রায় ১ চা চামচ) মেথি মিক্স পাউডার এক গ্লাস হালকা কুসুম গরম পানিতে ভালোভাবে মিশিয়ে শারীরিক প্রয়োজন অনুযায়ী দিনে ১-২ বার খাওয়া যেতে পারে।\nপ্রয়োজনে পাতলা কাপড় দিয়ে ছেঁকে নিতে পারেন।",
                 'images' => [
+                    '/images/products/methi-mix.webp',
                     '/images/products/methi-mix.jpg',
+                    '/images/products/methi-mix-label.webp',
                     '/images/products/methi-mix-label.jpg',
                 ],
                 'is_featured' => true,

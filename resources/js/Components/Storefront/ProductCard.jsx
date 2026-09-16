@@ -14,9 +14,16 @@ export default function ProductCard({ product }) {
     const originalPrice = Number(product.price);
     const hasDiscount = product.sale_price && Number(product.sale_price) > 0 && Number(product.sale_price) < Number(product.price);
 
-    const image = (product.images && product.images.length > 0)
+    const fallbackWebp = product.slug ? `/images/products/${product.slug}.webp` : '/images/placeholder-product.jpg';
+    const fallbackJpg = product.slug ? `/images/products/${product.slug}.jpg` : '/images/placeholder-product.jpg';
+
+    // Discard any broken ChatGPT or WhatsApp temporary upload filenames
+    const validRawImage = (product.images && product.images.length > 0 && !product.images[0].includes('ChatGPTImage') && !product.images[0].includes('WhatsAppImage'))
         ? product.images[0]
-        : (product.primary_image || 'https://images.unsplash.com/photo-1615485290382-441e4d049cb5?w=500&auto=format&fit=crop&q=80');
+        : null;
+
+    const image = validRawImage
+        || (product.primary_image && !product.primary_image.includes('ChatGPTImage') && !product.primary_image.includes('WhatsAppImage') ? product.primary_image : fallbackWebp);
 
     const handleInstantBuy = (e) => {
         e.preventDefault();
@@ -53,8 +60,11 @@ export default function ProductCard({ product }) {
                     width="300"
                     height="300"
                     onError={(e) => {
-                        if (e.currentTarget.src && e.currentTarget.src.endsWith('.webp')) {
-                            e.currentTarget.src = e.currentTarget.src.replace(/\.webp$/i, '.jpg');
+                        const target = e.currentTarget;
+                        if (target.src.endsWith('.webp')) {
+                            target.src = target.src.replace(/\.webp$/i, '.jpg');
+                        } else if (target.src !== fallbackJpg && !target.src.endsWith(fallbackJpg)) {
+                            target.src = fallbackJpg;
                         }
                     }}
                 />

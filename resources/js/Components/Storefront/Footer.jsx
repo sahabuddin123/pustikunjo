@@ -64,6 +64,11 @@ export default function Footer() {
                                         src={siteConfig?.logo || "/images/logo-white.png"}
                                         alt={siteConfig?.name || "পুষ্টি কুঞ্জ"}
                                         className="h-10 sm:h-11 w-auto object-contain max-w-[200px]"
+                                        onError={(e) => {
+                                            if (e.currentTarget.src !== '/images/logo-white.png' && !e.currentTarget.src.endsWith('/images/logo-white.png')) {
+                                                e.currentTarget.src = '/images/logo-white.png';
+                                            }
+                                        }}
                                     />
                                 </Link>
                             </div>

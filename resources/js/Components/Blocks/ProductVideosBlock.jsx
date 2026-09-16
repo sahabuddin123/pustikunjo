@@ -46,9 +46,34 @@ export default function ProductVideosBlock({ data = {} }) {
         },
     ];
 
-    const items = (data.items && Array.isArray(data.items) && data.items.length > 0)
+    const rawItems = (data.items && Array.isArray(data.items) && data.items.length > 0)
         ? data.items
         : defaultItems;
+
+    const items = rawItems.map((item, idx) => {
+        const defaultItem = defaultItems[idx] || defaultItems[0];
+        const fallbackPoster = defaultItem.poster;
+        const fallbackPromo = defaultItem.promoBanner;
+
+        let poster = item.poster;
+        if (!poster || poster.includes('ChatGPTImage') || poster.includes('WhatsAppImage')) {
+            poster = fallbackPoster;
+        }
+
+        let promoBanner = item.promoBanner;
+        if (!promoBanner || promoBanner.includes('ChatGPTImage') || promoBanner.includes('WhatsAppImage')) {
+            promoBanner = fallbackPromo;
+        }
+
+        return {
+            ...defaultItem,
+            ...item,
+            poster,
+            promoBanner,
+            fallbackPoster,
+            fallbackPromo,
+        };
+    });
 
     return (
         <section className="w-full bg-white py-10 sm:py-14 select-none">
@@ -75,6 +100,11 @@ export default function ProductVideosBlock({ data = {} }) {
                                     alt={item.alt}
                                     className="w-full h-full object-cover object-center group-hover:scale-[1.02] transition-transform duration-500"
                                     loading="lazy"
+                                    onError={(e) => {
+                                        if (item.fallbackPoster && e.currentTarget.src !== item.fallbackPoster && !e.currentTarget.src.endsWith(item.fallbackPoster)) {
+                                            e.currentTarget.src = item.fallbackPoster;
+                                        }
+                                    }}
                                 />
 
                                 {/* Subtle Play Icon Overlay on Hover */}
@@ -97,6 +127,11 @@ export default function ProductVideosBlock({ data = {} }) {
                                         alt={item.fullTitle}
                                         className="w-full h-full object-cover object-center group-hover:scale-[1.03] transition-transform duration-500"
                                         loading="lazy"
+                                        onError={(e) => {
+                                            if (item.fallbackPromo && e.currentTarget.src !== item.fallbackPromo && !e.currentTarget.src.endsWith(item.fallbackPromo)) {
+                                                e.currentTarget.src = item.fallbackPromo;
+                                            }
+                                        }}
                                     />
                                 </Link>
 

@@ -57,6 +57,11 @@ export default function Header() {
                             src={siteConfig?.logo || "/images/logo-white.png"}
                             alt={siteConfig?.name || 'Pusti Kunjo (পুষ্টি কুঞ্জ)'}
                             className="h-9 sm:h-11 md:h-12 w-auto object-contain max-w-[180px] sm:max-w-[220px]"
+                            onError={(e) => {
+                                if (e.currentTarget.src !== '/images/logo-white.png' && !e.currentTarget.src.endsWith('/images/logo-white.png')) {
+                                    e.currentTarget.src = '/images/logo-white.png';
+                                }
+                            }}
                         />
                     </Link>
 
