@@ -265,7 +265,7 @@ export default function Builder({ page = null, products = [], categories = [] })
     const [activeBlockIndex, setActiveBlockIndex] = useState(0);
     const [showAddModal, setShowAddModal] = useState(false);
     const [activeTab, setActiveTab] = useState(
-        page?.slug === 'home' || page?.slug === '/' ? 'blocks' : (page?.blocks?.length > 0 && !page?.content ? 'blocks' : 'editor')
+        page?.blocks?.length > 0 ? 'blocks' : 'editor'
     );
 
     const addBlock = (blockDef) => {
@@ -647,6 +647,22 @@ export default function Builder({ page = null, products = [], categories = [] })
                                 </span>
                             </div>
                         </div>
+
+                        {form.data.blocks?.length > 0 && (
+                            <div className="p-4 rounded-xl bg-amber-50/90 border border-amber-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-2xs">
+                                <div className="flex items-center gap-2.5 text-amber-900 text-xs sm:text-sm font-medium">
+                                    <Layers className="w-5 h-5 text-amber-600 shrink-0" />
+                                    <span>এই পেজে <strong>{form.data.blocks.length}টি সক্রিয় ব্লক</strong> রয়েছে (যেমন প্রশ্নোত্তর/FAQ সেকশন)। ব্লক ও প্রশ্নসমূহ এডিট করতে পাশের ট্যাবে ক্লিক করুন।</span>
+                                </div>
+                                <button
+                                    type="button"
+                                    onClick={() => setActiveTab('blocks')}
+                                    className="px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-white rounded-xl font-bold text-xs shrink-0 shadow-xs cursor-pointer transition-colors"
+                                >
+                                    ব্লক ও সেকশন বিল্ডারে যান &rarr;
+                                </button>
+                            </div>
+                        )}
 
                         <RichTextEditor
                             value={form.data.content || ''}

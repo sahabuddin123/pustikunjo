@@ -18,16 +18,34 @@ class EmailService
         $smtp = SiteSetting::get('email_smtp', []);
 
         if (!empty($smtp['host'])) {
+            $encryption = strtolower($smtp['encryption'] ?? 'tls');
+            if ($encryption === 'none' || empty($encryption)) {
+                $encryption = null;
+            }
+
             Config::set([
                 'mail.default' => 'smtp',
+                'mail.mailers.smtp.transport' => 'smtp',
                 'mail.mailers.smtp.host' => $smtp['host'],
                 'mail.mailers.smtp.port' => (int) ($smtp['port'] ?? 587),
-                'mail.mailers.smtp.encryption' => $smtp['encryption'] ?? 'tls',
+                'mail.mailers.smtp.encryption' => $encryption,
                 'mail.mailers.smtp.username' => $smtp['username'] ?? '',
                 'mail.mailers.smtp.password' => $smtp['password'] ?? '',
+                'mail.mailers.smtp.verify_peer' => false,
+                'mail.mailers.smtp.timeout' => 10,
+                'mail.mailers.smtp.local_domain' => 'pustikunjo.com.bd',
                 'mail.from.address' => $smtp['from_address'] ?? 'info@pustikunjo.com.bd',
                 'mail.from.name' => $smtp['from_name'] ?? 'Pusti Kunjo',
+                'mail.mailers.smtp.stream' => [
+                    'ssl' => [
+                        'verify_peer' => false,
+                        'verify_peer_name' => false,
+                        'allow_self_signed' => true,
+                    ],
+                ],
             ]);
+
+            app('mail.manager')->purge('smtp');
         }
     }
 

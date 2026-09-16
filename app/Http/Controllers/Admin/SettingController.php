@@ -212,18 +212,44 @@ class SettingController extends Controller
 
         try {
             $smtp = SiteSetting::get('email_smtp', []);
+            $host = trim($smtp['host'] ?? '');
+            if (empty($host)) {
+                return back()->with('error', 'SMTP Host কনফিগার করা হয়নি। অনুগ্রহ করে আগে সেটিংস সংরক্ষণ করুন।');
+            }
+
+            $encryption = strtolower($smtp['encryption'] ?? 'tls');
+            if ($encryption === 'none' || empty($encryption)) {
+                $encryption = null;
+            }
+
             config([
-                'mail.mailers.smtp.host' => $smtp['host'] ?? 'smtp.gmail.com',
-                'mail.mailers.smtp.port' => $smtp['port'] ?? 587,
-                'mail.mailers.smtp.encryption' => $smtp['encryption'] ?? 'tls',
+                'mail.default' => 'smtp',
+                'mail.mailers.smtp.transport' => 'smtp',
+                'mail.mailers.smtp.host' => $host,
+                'mail.mailers.smtp.port' => (int) ($smtp['port'] ?? 587),
+                'mail.mailers.smtp.encryption' => $encryption,
                 'mail.mailers.smtp.username' => $smtp['username'] ?? '',
                 'mail.mailers.smtp.password' => $smtp['password'] ?? '',
+                'mail.mailers.smtp.verify_peer' => false,
+                'mail.mailers.smtp.timeout' => 10,
+                'mail.mailers.smtp.local_domain' => 'pustikunjo.com.bd',
                 'mail.from.address' => $smtp['from_address'] ?? 'info@pustikunjo.com.bd',
                 'mail.from.name' => $smtp['from_name'] ?? 'Pusti Kunjo',
+                'mail.mailers.smtp.stream' => [
+                    'ssl' => [
+                        'verify_peer' => false,
+                        'verify_peer_name' => false,
+                        'allow_self_signed' => true,
+                    ],
+                ],
             ]);
 
-            Mail::raw('এটি পুষ্টি কুঞ্জ এডমিন প্যানেল থেকে সফল SMTP টেস্ট ইমেইল।', function ($msg) use ($recipient) {
-                $msg->to($recipient)->subject('পুষ্টি কুঞ্জ: টেস্ট ইমেইল ভেরিফিকেশন');
+            app('mail.manager')->purge('smtp');
+
+            Mail::mailer('smtp')->raw('এটি পুষ্টি কুঞ্জ এডমিন প্যানেল থেকে সফল SMTP টেস্ট ইমেইল।', function ($msg) use ($recipient, $smtp) {
+                $msg->to($recipient)
+                    ->from($smtp['from_address'] ?? 'info@pustikunjo.com.bd', $smtp['from_name'] ?? 'Pusti Kunjo')
+                    ->subject('পুষ্টি কুঞ্জ: টেস্ট ইমেইল ভেরিফিকেশন');
             });
 
             return back()->with('success', "টেস্ট ইমেইল সফলভাবে {$recipient} ঠিকানায় পাঠানো হয়েছে!");
