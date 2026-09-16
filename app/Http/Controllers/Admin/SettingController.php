@@ -266,10 +266,11 @@ class SettingController extends Controller
         $request->validate(['test_phone' => 'required|string']);
         $phone = $request->input('test_phone');
 
-        $sent = $smsService->sendSms($phone, 'এটি পুষ্টি কুঞ্জ এডমিন প্যানেল থেকে পাঠানো টেস্ট এসএমএস।');
-        if ($sent) {
+        $result = $smsService->sendSms($phone, 'এটি পুষ্টি কুঞ্জ এডমিন প্যানেল থেকে পাঠানো টেস্ট এসএমএস।');
+        if (!empty($result['success'])) {
             return back()->with('success', "টেস্ট এসএমএস সফলভাবে {$phone} নম্বরে পাঠানো হয়েছে!");
         }
-        return back()->with('error', 'এসএমএস পাঠানো সম্ভব হয়নি। এসএমএস গেটওয়ে সেটিংস চেক করুন।');
+        $errorMsg = $result['response'] ?? ($result['error'] ?? 'এসএমএস গেটওয়ে সেটিংস চেক করুন।');
+        return back()->with('error', 'এসএমএস পাঠানো ব্যর্থ হয়েছে: ' . $errorMsg);
     }
 }
