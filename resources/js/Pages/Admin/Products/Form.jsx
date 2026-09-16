@@ -64,7 +64,7 @@ export default function Form({ product = null, categories = [] }) {
         badge: product?.badge || '',
         short_description: product?.short_description || '',
         description: product?.description || '',
-        images: product?.images || ['https://images.unsplash.com/photo-1615485290382-441e4d049cb5?w=800&auto=format&fit=crop&q=80'],
+        images: Array.isArray(product?.images) ? product.images : [],
         benefits: product?.benefits || [
             { title: 'রক্তস্বল্পতা দূর করে', text: 'রক্তের হিমোগ্লোবিন বৃদ্ধিতে সাহায্য করে।', icon: 'HeartPulse' }
         ],

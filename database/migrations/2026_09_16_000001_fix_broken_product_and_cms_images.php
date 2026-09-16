@@ -11,70 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // 1. Fix Product Images
-        $productUpdates = [
-            'beetroot-powder' => [
-                'name' => 'বিটরুট পাউডার (Beetroot Powder)',
-                'images' => [
-                    '/images/products/beetroot-powder.webp',
-                    '/images/products/beetroot-powder.jpg',
-                    '/images/products/beetroot-powder-label.webp',
-                ],
-            ],
-            'methi-mix' => [
-                'name' => 'মেথি মিক্স (Methi Mix)',
-                'images' => [
-                    '/images/products/methi-mix.webp',
-                    '/images/products/methi-mix.jpg',
-                    '/images/products/methi-mix-label.webp',
-                ],
-            ],
-            'rosella-tea' => [
-                'name' => 'রোজেলা চা (Rosella Tea)',
-                'images' => [
-                    '/images/products/rosella-tea.webp',
-                    '/images/products/rosella-tea.jpg',
-                    '/images/products/rosella-tea-label.webp',
-                ],
-            ],
-            'chia-seeds' => [
-                'images' => [
-                    '/images/products/chia-seeds.webp',
-                    '/images/products/chia-seeds.jpg',
-                ],
-            ],
-            'moringa-powder' => [
-                'images' => [
-                    '/images/products/moringa-powder.webp',
-                    '/images/products/moringa-powder.jpg',
-                ],
-            ],
-        ];
-
-        foreach ($productUpdates as $slug => $data) {
-            $product = Product::where('slug', $slug)->first();
-            if ($product) {
-                $needsUpdate = false;
-                $currentImages = is_array($product->images) ? $product->images : [];
-                
-                // Check if current images contain broken upload strings or is empty
-                $hasBrokenImage = empty($currentImages);
-                foreach ($currentImages as $img) {
-                    if (str_contains($img, 'ChatGPTImage') || str_contains($img, 'WhatsAppImage') || !str_starts_with($img, '/images/')) {
-                        $hasBrokenImage = true;
-                        break;
-                    }
-                }
-
-                if ($hasBrokenImage || isset($data['name'])) {
-                    $product->images = $data['images'];
-                    if (isset($data['name']) && empty($product->name)) {
-                        $product->name = $data['name'];
-                    }
-                    $product->save();
-                }
-            }
-        }
+        // Product images are managed directly via Admin Panel, do not overwrite user database records here
 
         // 2. Fix Homepage CMS Blocks (Product Videos & Certifications)
         $homePages = Page::whereIn('slug', ['home', '/'])->get();

@@ -78,31 +78,11 @@ class Product extends Model
 
     public function getImagesAttribute($value)
     {
-        $images = is_string($value) ? json_decode($value, true) : $value;
-        $images = is_array($images) ? array_values(array_filter($images)) : [];
-
-        $defaultSlugImage = $this->slug ? "/images/products/{$this->slug}.webp" : '/images/placeholder-product.jpg';
-        $defaultSlugJpg = $this->slug ? "/images/products/{$this->slug}.jpg" : '/images/placeholder-product.jpg';
-
-        if (empty($images)) {
-            return [$defaultSlugImage, $defaultSlugJpg];
+        if (is_null($value)) {
+            return [];
         }
-
-        $cleaned = [];
-        foreach ($images as $img) {
-            if (is_string($img)) {
-                // If it contains a broken ChatGPT or WhatsApp temp filename, substitute with existing static asset
-                if (str_contains($img, 'ChatGPTImage') || str_contains($img, 'WhatsAppImage')) {
-                    $cleaned[] = $defaultSlugImage;
-                    $cleaned[] = $defaultSlugJpg;
-                } else {
-                    $cleaned[] = $img;
-                }
-            }
-        }
-
-        $cleaned = array_values(array_unique(array_filter($cleaned)));
-        return !empty($cleaned) ? $cleaned : [$defaultSlugImage, $defaultSlugJpg];
+        $decoded = is_string($value) ? json_decode($value, true) : $value;
+        return is_array($decoded) ? array_values(array_filter($decoded)) : [];
     }
 
     public function getPrimaryImageAttribute()
