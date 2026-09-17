@@ -114,12 +114,8 @@ export default function MediaIndex({ media = [] }) {
                                         alt={item.filename}
                                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                                         onError={(e) => {
-                                            const src = e.currentTarget.src;
-                                            if (src.endsWith('.webp')) {
-                                                e.currentTarget.src = src.replace(/\.webp$/i, '.jpg');
-                                            } else if (src.endsWith('.jpg')) {
-                                                e.currentTarget.src = src.replace(/\.jpg$/i, '.png');
-                                            }
+                                            e.currentTarget.onerror = null;
+                                            e.currentTarget.src = '/images/placeholder-product.jpg';
                                         }}
                                     />
                                     <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
