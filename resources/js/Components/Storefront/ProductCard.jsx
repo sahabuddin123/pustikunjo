@@ -14,16 +14,10 @@ export default function ProductCard({ product }) {
     const originalPrice = Number(product.price);
     const hasDiscount = product.sale_price && Number(product.sale_price) > 0 && Number(product.sale_price) < Number(product.price);
 
-    const fallbackWebp = product.slug ? `/images/products/${product.slug}.webp` : '/images/placeholder-product.jpg';
-    const fallbackJpg = product.slug ? `/images/products/${product.slug}.jpg` : '/images/placeholder-product.jpg';
-
-    // Discard any broken ChatGPT or WhatsApp temporary upload filenames
-    const validRawImage = (product.images && product.images.length > 0 && !product.images[0].includes('ChatGPTImage') && !product.images[0].includes('WhatsAppImage'))
+    const fallbackImage = '/images/placeholder-product.jpg';
+    const image = (product.images && Array.isArray(product.images) && product.images.length > 0 && product.images[0])
         ? product.images[0]
-        : null;
-
-    const image = validRawImage
-        || (product.primary_image && !product.primary_image.includes('ChatGPTImage') && !product.primary_image.includes('WhatsAppImage') ? product.primary_image : fallbackWebp);
+        : (product.primary_image || fallbackImage);
 
     const handleInstantBuy = (e) => {
         e.preventDefault();

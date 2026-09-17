@@ -88,41 +88,44 @@ class MediaController extends Controller
         ]);
 
         $file = $request->file('image');
-        $filename = time() . '_' . preg_replace('/[^a-zA-Z0-9._-]/', '', $file->getClientOriginalName());
+        $safeName = preg_replace('/[^a-zA-Z0-9_-]/', '_', pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME));
+        $ext = strtolower($file->getClientOriginalExtension());
+        $filename = time() . '_' . $safeName . '.' . $ext;
         
         $uploadPath = public_path('uploads');
         if (!File::exists($uploadPath)) {
-            File::makeDirectory($uploadPath, 0755, true);
+            File::makeDirectory($uploadPath, 0777, true);
         }
 
         $file->move($uploadPath, $filename);
         $fullPath = $uploadPath . '/' . $filename;
 
-        // Automatically convert to WebP if PNG/JPG
-        $webpPath = app(\App\Services\Image\WebpConverterService::class)->convert($fullPath);
+        // Automatically convert to WebP and DELETE original file if JPG/PNG
+        $webpPath = app(\App\Services\Image\WebpConverterService::class)->convert($fullPath, 82, false);
+        $finalPath = ($webpPath && file_exists($webpPath)) ? $webpPath : $fullPath;
+        $finalFilename = basename($finalPath);
 
         $mediaItem = [
-            'filename' => $filename,
-            'url' => asset('uploads/' . $filename),
-            'webp_url' => ($webpPath && file_exists($webpPath)) ? asset('uploads/' . basename($webpPath)) : null,
-            'size' => round(filesize($fullPath) / 1024, 2) . ' KB',
+            'filename' => $finalFilename,
+            'url' => asset('uploads/' . $finalFilename),
+            'size' => round(filesize($finalPath) / 1024, 2) . ' KB',
             'updated_at' => date('Y-m-d H:i:s'),
         ];
 
         // If Inertia visit, return back() with flash message
         if ($request->header('X-Inertia')) {
-            return back()->with('success', 'ছবি সফলভাবে আপলোড ও WebP তে অপ্টিমাইজ হয়েছে!');
+            return back()->with('success', 'ছবি সফলভাবে আপলোড ও WebP ফরম্যাটে সংরক্ষিত হয়েছে!');
         }
 
         if ($request->expectsJson() || $request->query('format') === 'json') {
             return response()->json([
                 'success' => true,
-                'message' => 'ছবি সফলভাবে আপলোড ও WebP তে অপ্টিমাইজ হয়েছে!',
+                'message' => 'ছবি সফলভাবে আপলোড ও WebP ফরম্যাটে সংরক্ষিত হয়েছে!',
                 'media' => $mediaItem,
             ]);
         }
 
-        return back()->with('success', 'ছবি সফলভাবে আপলোড ও WebP তে অপ্টিমাইজ হয়েছে!');
+        return back()->with('success', 'ছবি সফলভাবে আপলোড ও WebP ফরম্যাটে সংরক্ষিত হয়েছে!');
     }
 
     /**
@@ -135,27 +138,30 @@ class MediaController extends Controller
         ]);
 
         $file = $request->file('image');
-        $filename = time() . '_' . preg_replace('/[^a-zA-Z0-9._-]/', '', $file->getClientOriginalName());
+        $safeName = preg_replace('/[^a-zA-Z0-9_-]/', '_', pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME));
+        $ext = strtolower($file->getClientOriginalExtension());
+        $filename = time() . '_' . $safeName . '.' . $ext;
         
         $uploadPath = public_path('uploads');
         if (!File::exists($uploadPath)) {
-            File::makeDirectory($uploadPath, 0755, true);
+            File::makeDirectory($uploadPath, 0777, true);
         }
 
         $file->move($uploadPath, $filename);
         $fullPath = $uploadPath . '/' . $filename;
 
-        // Automatically convert to WebP if PNG/JPG
-        $webpPath = app(\App\Services\Image\WebpConverterService::class)->convert($fullPath);
+        // Automatically convert to WebP and DELETE original file if JPG/PNG
+        $webpPath = app(\App\Services\Image\WebpConverterService::class)->convert($fullPath, 82, false);
+        $finalPath = ($webpPath && file_exists($webpPath)) ? $webpPath : $fullPath;
+        $finalFilename = basename($finalPath);
 
         return response()->json([
             'success' => true,
-            'message' => 'ছবি সফলভাবে আপলোড ও WebP তে অপ্টিমাইজ হয়েছে!',
+            'message' => 'ছবি সফলভাবে আপলোড ও WebP ফরম্যাটে সংরক্ষিত হয়েছে!',
             'media' => [
-                'filename' => $filename,
-                'url' => asset('uploads/' . $filename),
-                'webp_url' => ($webpPath && file_exists($webpPath)) ? asset('uploads/' . basename($webpPath)) : null,
-                'size' => round(filesize($fullPath) / 1024, 2) . ' KB',
+                'filename' => $finalFilename,
+                'url' => asset('uploads/' . $finalFilename),
+                'size' => round(filesize($finalPath) / 1024, 2) . ' KB',
                 'updated_at' => date('Y-m-d H:i:s'),
             ],
         ]);
@@ -209,19 +215,65 @@ class MediaController extends Controller
     }
 
     /**
-     * Batch convert all images across site to WebP
+     * Batch convert all images across site to WebP and clean old JPG/PNG
      */
     public function convertAllWebp(\App\Services\Image\WebpConverterService $converter)
     {
         $directories = [
-            public_path('images/banners'),
-            public_path('images/products'),
             public_path('uploads'),
+            public_path('images/products'),
+            public_path('images/banners'),
             storage_path('app/public'),
         ];
 
-        $stats = $converter->convertDirectories($directories);
+        // Convert with keepOriginal = false so all JPG/PNG are converted and deleted!
+        $stats = $converter->convertDirectories($directories, 82, false);
 
-        return back()->with('success', "স্বয়ংক্রিয়ভাবে {$stats['converted']} টি ছবি WebP ফরম্যাটে অপ্টিমাইজ করা হয়েছে! (" . round($stats['bytes_saved'] / 1024, 2) . " KB সাইজ কমেছে)");
+        // Update database references in products table
+        try {
+            $products = \App\Models\Product::all();
+            foreach ($products as $p) {
+                $changed = false;
+                if (is_array($p->images)) {
+                    $newImages = array_map(function ($img) {
+                        return is_string($img) ? preg_replace('/\.(jpg|jpeg|png)$/i', '.webp', $img) : $img;
+                    }, $p->images);
+                    if ($newImages !== $p->images) {
+                        $p->images = $newImages;
+                        $changed = true;
+                    }
+                }
+                if ($p->og_image && preg_match('/\.(jpg|jpeg|png)$/i', $p->og_image)) {
+                    $p->og_image = preg_replace('/\.(jpg|jpeg|png)$/i', '.webp', $p->og_image);
+                    $changed = true;
+                }
+                if ($changed) {
+                    $p->save();
+                }
+            }
+
+            // Update database references in site_settings table
+            $settings = \Illuminate\Support\Facades\DB::table('site_settings')->get();
+            foreach ($settings as $s) {
+                if (is_string($s->value) && preg_match('/\.(jpg|jpeg|png)/i', $s->value)) {
+                    $newVal = preg_replace('/\.(jpg|jpeg|png)/i', '.webp', $s->value);
+                    \Illuminate\Support\Facades\DB::table('site_settings')->where('id', $s->id)->update(['value' => $newVal]);
+                }
+            }
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::error('DB update during WebP batch convert failed: ' . $e->getMessage());
+        }
+
+        $msg = "স্বয়ংক্রিয়ভাবে {$stats['converted']} টি ছবি WebP ফরম্যাটে রূপান্তর ও অপ্রয়োজনীয় ফাইল ডিলিট করা হয়েছে! (" . round($stats['bytes_saved'] / 1024, 2) . " KB সাইজ সেভ হয়েছে)";
+
+        if (request()->expectsJson() || (request()->header('X-Inertia') === null && request()->ajax())) {
+            return response()->json([
+                'success' => true,
+                'message' => $msg,
+                'stats' => $stats,
+            ]);
+        }
+
+        return back()->with('success', $msg);
     }
 }

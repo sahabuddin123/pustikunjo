@@ -97,7 +97,7 @@ export default function Index({ products, categories = [], filters = {} }) {
                                             <td className="py-3.5 px-4">
                                                 <div className="flex items-center gap-3">
                                                     <img
-                                                        src={(product.images && product.images.length > 0) ? product.images[0] : (product.primary_image || 'https://images.unsplash.com/photo-1615485290382-441e4d049cb5?w=100&auto=format&fit=crop&q=80')}
+                                                        src={(product.images && product.images.length > 0) ? product.images[0] : (product.primary_image || '/images/placeholder-product.jpg')}
                                                         alt={product.name}
                                                         className="w-12 h-12 rounded-xl object-cover border border-gray-100 shrink-0"
                                                     />

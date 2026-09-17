@@ -137,26 +137,10 @@ export default function ProductDetail({ product, relatedProducts = [], shippingZ
     const whatsapp = siteConfig?.whatsapp || '01700000000';
     const cleanWhatsapp = whatsapp.replace(/[^0-9]/g, '');
 
-    // Product Images: Only use actual product images from admin / database
-    const fallbackSlugWebp = product.slug ? `/images/products/${product.slug}.webp` : '/images/placeholder-product.jpg';
-    const fallbackSlugJpg = product.slug ? `/images/products/${product.slug}.jpg` : '/images/placeholder-product.jpg';
-    const fallbackSlugLabel = product.slug ? `/images/products/${product.slug}-label.webp` : null;
-
-    const rawImages = (product.images && Array.isArray(product.images) && product.images.length > 0)
-        ? product.images.filter(Boolean)
-        : (product.primary_image ? [product.primary_image] : []);
-
-    const cleanedImages = rawImages.flatMap((img) => {
-        if (!img || typeof img !== 'string') return [];
-        if (img.includes('ChatGPTImage') || img.includes('WhatsAppImage')) {
-            return [fallbackSlugWebp, fallbackSlugJpg, fallbackSlugLabel].filter(Boolean);
-        }
-        return [img];
-    });
-
-    const galleryImages = cleanedImages.length > 0
-        ? Array.from(new Set(cleanedImages))
-        : [fallbackSlugWebp, fallbackSlugJpg];
+    // Product Images: Strictly use product's actual images saved in database
+    const galleryImages = (product.images && Array.isArray(product.images) && product.images.filter(Boolean).length > 0)
+        ? Array.from(new Set(product.images.filter(Boolean)))
+        : (product.primary_image ? [product.primary_image] : ['/images/placeholder-product.jpg']);
 
     // Track Meta Pixel ViewContent
     useEffect(() => {

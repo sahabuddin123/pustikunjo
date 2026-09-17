@@ -91,6 +91,6 @@ class Product extends Model
         if (!empty($imgs) && is_array($imgs) && count($imgs) > 0) {
             return $imgs[0];
         }
-        return $this->slug ? "/images/products/{$this->slug}.webp" : '/images/placeholder-product.jpg';
+        return '/images/placeholder-product.jpg';
     }
 }

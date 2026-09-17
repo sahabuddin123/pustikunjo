@@ -55,15 +55,8 @@ export default function ProductVideosBlock({ data = {} }) {
         const fallbackPoster = defaultItem.poster;
         const fallbackPromo = defaultItem.promoBanner;
 
-        let poster = item.poster;
-        if (!poster || poster.includes('ChatGPTImage') || poster.includes('WhatsAppImage')) {
-            poster = fallbackPoster;
-        }
-
-        let promoBanner = item.promoBanner;
-        if (!promoBanner || promoBanner.includes('ChatGPTImage') || promoBanner.includes('WhatsAppImage')) {
-            promoBanner = fallbackPromo;
-        }
+        const poster = item.poster || fallbackPoster;
+        const promoBanner = item.promoBanner || fallbackPromo;
 
         return {
             ...defaultItem,

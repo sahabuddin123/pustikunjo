@@ -10,7 +10,8 @@ import {
     CheckCircle2,
     AlertCircle,
     Plus,
-    ExternalLink
+    ExternalLink,
+    Sparkles
 } from 'lucide-react';
 
 export default function MediaPickerModal({
@@ -27,6 +28,7 @@ export default function MediaPickerModal({
     const [uploading, setUploading] = useState(false);
     const [uploadError, setUploadError] = useState(null);
     const [dragActive, setDragActive] = useState(false);
+    const [convertingWebp, setConvertingWebp] = useState(false);
     const fileInputRef = useRef(null);
 
     // Fetch media list when modal opens
@@ -114,6 +116,34 @@ export default function MediaPickerModal({
             if (fileInputRef.current) {
                 fileInputRef.current.value = '';
             }
+        }
+    };
+
+    const handleConvertAllWebp = async () => {
+        if (!confirm('আপনি কি সমস্ত আপলোড করা ছবি WebP ফরম্যাটে রূপান্তর ও অপ্রয়োজনীয় JPG/PNG মুছে ফেলতে চান?')) {
+            return;
+        }
+        setConvertingWebp(true);
+        try {
+            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+            const res = await fetch('/admin/media/convert-all-webp', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken,
+                    'X-Requested-With': 'XMLHttpRequest',
+                },
+            });
+            const data = await res.json();
+            await fetchMedia();
+            if (data.message) {
+                alert(data.message);
+            }
+        } catch (err) {
+            console.error('Convert all error:', err);
+            await fetchMedia();
+        } finally {
+            setConvertingWebp(false);
         }
     };
 
@@ -222,6 +252,17 @@ export default function MediaPickerModal({
                             title="রিফ্রেশ করুন"
                         >
                             <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin text-emerald-600' : ''}`} />
+                        </button>
+
+                        <button
+                            type="button"
+                            onClick={handleConvertAllWebp}
+                            disabled={convertingWebp}
+                            className="px-3 py-1.5 rounded-xl border border-emerald-200 text-emerald-800 bg-emerald-50 hover:bg-emerald-100 text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer disabled:opacity-50"
+                            title="সব ছবি WebP ফরম্যাটে রূপান্তর করুন"
+                        >
+                            <Sparkles className={`w-3.5 h-3.5 text-emerald-600 ${convertingWebp ? 'animate-spin' : ''}`} />
+                            <span>{convertingWebp ? 'WebP হচ্ছে...' : 'সব WebP করুন'}</span>
                         </button>
                     </div>
 
@@ -352,12 +393,7 @@ export default function MediaPickerModal({
                                                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
                                                         loading="lazy"
                                                         onError={(e) => {
-                                                            const src = e.currentTarget.src;
-                                                            if (src.endsWith('.webp')) {
-                                                                e.currentTarget.src = src.replace(/\.webp$/i, '.jpg');
-                                                            } else if (src.endsWith('.jpg')) {
-                                                                e.currentTarget.src = src.replace(/\.jpg$/i, '.png');
-                                                            }
+                                                            e.currentTarget.src = '/images/placeholder-product.jpg';
                                                         }}
                                                     />
 

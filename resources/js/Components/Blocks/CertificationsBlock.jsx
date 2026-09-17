@@ -30,13 +30,10 @@ export default function CertificationsBlock({ data = {} }) {
         ? data.items
         : defaultCertificates;
 
-    // Sanitize items so broken WhatsApp/ChatGPT temp paths fall back to Waffen lab reports
+    // Use configured items or default certificates
     const items = rawItems.map((it, idx) => {
         const fallback = defaultCertificates[idx] || defaultCertificates[0];
-        let image = it?.image;
-        if (!image || image.includes('WhatsAppImage') || image.includes('ChatGPTImage')) {
-            image = fallback.image;
-        }
+        const image = it?.image || fallback.image;
 
         return {
             ...fallback,

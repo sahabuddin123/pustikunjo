@@ -176,7 +176,7 @@ class WebpConverterService
      * @param int $quality
      * @return array Summary of conversion results
      */
-    public function convertDirectories(array $directories, int $quality = 82): array
+    public function convertDirectories(array $directories, int $quality = 82, bool $keepOriginal = false): array
     {
         $stats = [
             'scanned' => 0,
@@ -214,8 +214,22 @@ class WebpConverterService
 
                 $originalSize = $file->getSize();
 
+                // If WebP already exists and is valid, and keepOriginal is false, remove the original file
+                if (file_exists($webpPath) && filesize($webpPath) > 0) {
+                    if (!$keepOriginal && $sourcePath !== $webpPath) {
+                        @unlink($sourcePath);
+                    }
+                    $stats['converted']++;
+                    $newSize = filesize($webpPath);
+                    if ($originalSize > $newSize) {
+                        $stats['bytes_saved'] += ($originalSize - $newSize);
+                    }
+                    @chmod($webpPath, 0666);
+                    continue;
+                }
+
                 // Convert
-                $result = $this->convert($sourcePath, $quality, true);
+                $result = $this->convert($sourcePath, $quality, $keepOriginal);
                 if ($result && file_exists($webpPath) && filesize($webpPath) > 0) {
                     $stats['converted']++;
                     $newSize = filesize($webpPath);

@@ -623,8 +623,8 @@ export default function Form({ product = null, categories = [] }) {
                             <div className="flex flex-col sm:flex-row gap-2">
                                 <div className="flex flex-1 gap-2">
                                     <input
-                                        type="url"
-                                        placeholder="https://... ইমেজ লিংক"
+                                        type="text"
+                                        placeholder="https://... অথবা /uploads/... ইমেজ লিংক"
                                         value={newImageUrl}
                                         onChange={(e) => setNewImageUrl(e.target.value)}
                                         className="flex-1 px-3 py-2 rounded-xl border border-gray-200 text-xs"
