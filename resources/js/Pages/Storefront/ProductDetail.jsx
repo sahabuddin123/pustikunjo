@@ -687,7 +687,7 @@ export default function ProductDetail({ product, relatedProducts = [], shippingZ
                             <h3 className="text-base sm:text-lg font-bold text-gray-900">
                                 পণ্য পরিচিতি ও বিস্তারিত:
                             </h3>
-                            <p>{product.description || product.short_description}</p>
+                            <p className="whitespace-pre-line">{product.description || product.short_description}</p>
                         </div>
                     )}
 
