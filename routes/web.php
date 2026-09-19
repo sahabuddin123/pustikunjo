@@ -30,6 +30,7 @@ use App\Http\Controllers\Storefront\OrderTrackingController;
 use App\Http\Controllers\Storefront\PageController;
 use App\Http\Controllers\Storefront\ProductController;
 use App\Http\Controllers\Storefront\ShopController;
+use App\Http\Controllers\Storefront\SocialImageController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -42,6 +43,10 @@ Route::get('/shop', [ShopController::class, 'index'])->name('shop');
 Route::get('/category/{slug}', [ShopController::class, 'category'])->name('category.show');
 Route::get('/product/{slug}', [ProductController::class, 'show'])->name('product.show');
 Route::post('/product/{id}/review', [ProductController::class, 'submitReview'])->name('product.review');
+
+// Social Sharing Guaranteed JPEG Images (WhatsApp / Facebook / Twitter)
+Route::get('/social-image/product/{slug}.jpg', [SocialImageController::class, 'productImage'])->name('social.product');
+Route::get('/social-image/site.jpg', [SocialImageController::class, 'siteImage'])->name('social.site');
 
 // Cart & Checkout
 Route::get('/cart', function () {

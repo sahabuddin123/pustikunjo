@@ -53,11 +53,7 @@ class ProductController extends Controller
             ]
         ];
 
-        $rawOg = $product->og_image ?: $product->primary_image;
-        $ogImageUrl = $rawOg;
-        if (!empty($ogImageUrl) && !str_starts_with($ogImageUrl, 'http://') && !str_starts_with($ogImageUrl, 'https://')) {
-            $ogImageUrl = url($ogImageUrl);
-        }
+        $ogImageUrl = url('/social-image/product/' . $product->slug . '.jpg');
 
         return Inertia::render('Storefront/ProductDetail', [
             'product' => $product,

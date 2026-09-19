@@ -109,10 +109,14 @@
         }
 
         $resolvedOgImage = null;
-        if (!empty($rawOgImage)) {
+        if ($isProduct && !empty($pageProduct['slug'])) {
+            $resolvedOgImage = url('/social-image/product/' . $pageProduct['slug'] . '.jpg');
+        } elseif (!empty($rawOgImage)) {
             $resolvedOgImage = (str_starts_with($rawOgImage, 'http://') || str_starts_with($rawOgImage, 'https://'))
                 ? $rawOgImage
                 : url($rawOgImage);
+        } else {
+            $resolvedOgImage = url('/social-image/site.jpg');
         }
 
         $canonicalUrl = url()->current();
@@ -141,6 +145,9 @@
     @if($resolvedOgImage)
         <meta property="og:image" content="{{ $resolvedOgImage }}">
         <meta property="og:image:secure_url" content="{{ $resolvedOgImage }}">
+        <meta property="og:image:type" content="image/jpeg">
+        <meta property="og:image:width" content="800">
+        <meta property="og:image:height" content="800">
         <meta property="og:image:alt" content="{{ $resolvedTitle }}">
     @endif
 
