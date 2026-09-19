@@ -38,10 +38,12 @@
         $pageMeta = $pageProps['meta'] ?? [];
         $rawProduct = $pageProps['product'] ?? null;
         $pageProduct = is_object($rawProduct) ? $rawProduct->toArray() : (is_array($rawProduct) ? $rawProduct : null);
+        $isProduct = !empty($pageProduct);
         $rawPost = $pageProps['post'] ?? null;
         $pagePost = is_object($rawPost) ? $rawPost->toArray() : (is_array($rawPost) ? $rawPost : null);
         $siteConfig = $pageProps['siteConfig'] ?? [];
         $siteName = $siteConfig['name'] ?? ($appGeneral['site_name'] ?? 'পুষ্টি কুঞ্জ');
+        $canonicalUrl = url()->current();
 
         // Dynamic Title
         $resolvedTitle = null;
@@ -118,9 +120,6 @@
         } else {
             $resolvedOgImage = url('/social-image/site.jpg');
         }
-
-        $canonicalUrl = url()->current();
-        $isProduct = !empty($pageProduct);
     @endphp
 
     <title>{{ $resolvedTitle }}</title>
