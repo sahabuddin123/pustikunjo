@@ -46,6 +46,13 @@ class Product extends Model
         'variants' => 'array',
     ];
 
+    protected $appends = [
+        'primary_image',
+        'thumbnail',
+        'effective_price',
+        'discount_percent',
+    ];
+
     public function scopeStorefront($query)
     {
         return $query->where('is_active', true)->where('is_visible_on_storefront', true);
@@ -92,5 +99,10 @@ class Product extends Model
             return $imgs[0];
         }
         return '/images/placeholder-product.jpg';
+    }
+
+    public function getThumbnailAttribute()
+    {
+        return $this->primary_image;
     }
 }

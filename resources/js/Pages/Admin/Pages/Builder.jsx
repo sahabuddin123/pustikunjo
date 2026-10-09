@@ -1116,13 +1116,13 @@ export default function Builder({ page = null, products = [], categories = [] })
                                                                 />
                                                                 <div>
                                                                     <label className="text-xs font-bold text-gray-700 block mb-1">
-                                                                        ভিডিও MP4 / স্ট্রিম লিংক URL
+                                                                        ভিডিও URL (YouTube / Shorts / Vimeo / MP4)
                                                                     </label>
                                                                     <input
                                                                         type="text"
                                                                         value={item.videoUrl || ''}
                                                                         onChange={(e) => updateVideoItem(vIdx, 'videoUrl', e.target.value)}
-                                                                        placeholder="https://...mp4"
+                                                                        placeholder="https://www.youtube.com/watch?v=... অথবা MP4 লিংক"
                                                                         className="w-full px-3 py-2 rounded-xl border border-gray-300 text-xs sm:text-sm bg-white font-mono"
                                                                     />
                                                                 </div>

@@ -31,166 +31,46 @@ class DatabaseSeeder extends Seeder
         // 2. Call the dedicated 3 Products & Banners Seeder
         $this->call(UpdateThreeProductsSeeder::class);
 
-        // 2. Categories (ONLY the genuine categories for Pusti Kunjo's 3 products)
-        $catPowders = Category::updateOrCreate(['slug' => 'organic-powders'], [
-            'name' => 'ভেষজ ও পুষ্টিকর পাউডার',
-            'image' => 'https://images.unsplash.com/photo-1615485290382-441e4d049cb5?w=500&auto=format&fit=crop&q=80',
-            'description' => '১০০% প্রাকৃতিক ও নির্ভেজাল পুষ্টিকর ভেষজ পাউডার সমূহ।',
-            'is_featured' => true,
-            'sort_order' => 1,
-        ]);
+        // 3. Reviews for the 3 real products
+        $pRosella = Product::where('slug', 'rosella-tea')->first();
+        $pBeetroot = Product::where('slug', 'beetroot-powder')->first();
+        $pMethi = Product::where('slug', 'methi-mix')->first();
 
-        $catSuperfood = Category::updateOrCreate(['slug' => 'super-food'], [
-            'name' => 'সুপার ফুড ও বীজ',
-            'image' => 'https://images.unsplash.com/photo-1543362906-acfc16c67564?w=500&auto=format&fit=crop&q=80',
-            'description' => 'উচ্চ পুষ্টিগুণসম্পন্ন প্রিমিয়াম অর্গানিক চিয়া সিড ও স্বাস্থ্যকর সুপারফুড।',
-            'is_featured' => true,
-            'sort_order' => 2,
-        ]);
+        if ($pRosella) {
+            Review::firstOrCreate(
+                ['product_id' => $pRosella->id, 'customer_phone' => '01811223344'],
+                [
+                    'customer_name' => 'ফারহানা ইসলাম',
+                    'rating' => 5,
+                    'comment' => 'রোজেলা চা অত্যন্ত ফ্রেশ এবং স্বাদও চমৎকার। রক্তচাপ নিয়ন্ত্রণে অনেক উপকার পেয়েছি!',
+                    'is_approved' => true,
+                ]
+            );
+        }
 
-        // Clean up any extra categories if present
-        Category::whereNotIn('slug', ['organic-powders', 'super-food'])->delete();
+        if ($pBeetroot) {
+            Review::firstOrCreate(
+                ['product_id' => $pBeetroot->id, 'customer_phone' => '01711223344'],
+                [
+                    'customer_name' => 'তানভীর আহমেদ',
+                    'rating' => 5,
+                    'comment' => 'বিটরুট পাউডার খুব ভালো এবং খাঁটি। দ্রুত ডেলিভারির জন্য ধন্যবাদ পুষ্টি কুঞ্জকে!',
+                    'is_approved' => true,
+                ]
+            );
+        }
 
-        // 3. Products (Strictly the 3 real products)
-        $seedProduct = function (array $data): Product {
-            return Product::updateOrCreate(['slug' => $data['slug']], $data);
-        };
-
-        // Product 1: Beetroot Powder (PK-BT-001)
-        $p1 = $seedProduct([
-            'name' => 'বিটরুট পাউডার (Beetroot Powder)',
-            'slug' => 'beetroot-powder',
-            'sku' => 'PK-BT-001',
-            'price' => 450.00,
-            'sale_price' => 390.00,
-            'stock' => 85,
-            'weight' => '২০০ গ্রাম',
-            'variants' => [
-                ['name' => '২০০ গ্রাম', 'price' => 450.00, 'sale_price' => 390.00, 'stock' => 50],
-                ['name' => '৫০০ গ্রাম', 'price' => 950.00, 'sale_price' => 850.00, 'stock' => 35],
-            ],
-            'category_id' => $catPowders->id,
-            'badge' => 'বেস্ট সেলার',
-            'short_description' => '১০০% খাঁটি ও তাজা বিটরুট থেকে প্রস্তুতকৃত প্রিমিয়াম পাউডার। রক্তস্বল্পতা দূর করতে ও প্রাকৃতিক উজ্জ্বলতার জন্য অতুলনীয়।',
-            'description' => 'পুষ্টি কুঞ্জের বিটরুট পাউডার উচ্চমানের তাজা বিটরুট ধুয়ে, শুকিয়ে এবং হাইজিনিক উপায়ে গুঁড়ো করে তৈরি করা হয়। এতে কোনো কৃত্রিম রং বা প্রিজারভেটিভ নেই। এটি আয়রন, নাইট্রেট এবং ভিটামিন সি এর সমৃদ্ধ উৎস যা রক্ত সঞ্চালন বাড়ায়, ত্বকে লাবণ্য আনে এবং শরীরের ক্লান্তি দূর করে।',
-            'images' => [
-                'https://images.unsplash.com/photo-1615485290382-441e4d049cb5?w=900&auto=format&fit=crop&q=85',
-                'https://images.unsplash.com/photo-1528751014936-863e6e7a319c?w=900&auto=format&fit=crop&q=85',
-                'https://images.unsplash.com/photo-1598170845058-32b9d6a5da37?w=900&auto=format&fit=crop&q=85'
-            ],
-            'benefits' => [
-                ['title' => 'রক্তস্বল্পতা দূর করে', 'text' => 'উচ্চমাত্রার আয়রন ও ফোলেট রক্তের হিমোগ্লোবিন দ্রুত বৃদ্ধিতে সাহায্য করে।', 'icon' => 'HeartPulse'],
-                ['title' => 'ত্বকের প্রাকৃতিক উজ্জ্বলতা', 'text' => 'প্রাকৃতিক অ্যান্টিঅক্সিডেন্ট ত্বককে ভেতর থেকে প্রাণবন্ত ও উজ্জ্বল করে।', 'icon' => 'Sparkles'],
-                ['title' => 'স্ট্যামিনা ও রক্তচাপ নিয়ন্ত্রণ', 'text' => 'নাইট্রেট উপাদান রক্তনালী প্রসারিত করে রক্তচাপ স্বাভাবিক রাখতে সহায়তা করে।', 'icon' => 'Activity'],
-            ],
-            'usage_instructions' => "১. প্রতিদিন সকালে বা সন্ধ্যায় ১ চা চামচ (৫ গ্রাম) বিটরুট পাউডার নিন।\n২. এক গ্লাস কুসুম গরম পানি, দুধ, জুস বা স্মুদির সাথে ভালো করে মিশিয়ে নিন।\n৩. নিয়মিত সেবনে সর্বোচ্চ ফলাফল পাওয়া যায়।",
-            'is_featured' => true,
-            'is_active' => true,
-            'meta_title' => 'খাঁটি বিটরুট পাউডার — পুষ্টি কুঞ্জ',
-            'meta_description' => '১০০% প্রাকৃতিক ও নির্ভেজাল বিটরুট পাউডার। ঘরে বসেই ক্যাশ অন ডেলিভারিতে অর্ডার করুন।',
-        ]);
-
-        // Product 2: Methimix (PK-MM-002)
-        $p2 = $seedProduct([
-            'name' => 'মেথিমিক্স (Methimix)',
-            'slug' => 'methimix',
-            'sku' => 'PK-MM-002',
-            'price' => 380.00,
-            'sale_price' => 330.00,
-            'stock' => 60,
-            'weight' => '২৫০ গ্রাম',
-            'variants' => [
-                ['name' => '২৫০ গ্রাম', 'price' => 380.00, 'sale_price' => 330.00, 'stock' => 40],
-                ['name' => '৫০০ গ্রাম', 'price' => 720.00, 'sale_price' => 620.00, 'stock' => 20],
-            ],
-            'category_id' => $catPowders->id,
-            'badge' => 'জনপ্রিয়',
-            'short_description' => 'মেথি, মৌরি ও প্রাকৃতিক ভেষজের সুষম মিশ্রণ। ডায়াবেটিস নিয়ন্ত্রণ ও গ্যাস্ট্রিকের সমস্যায় জাদুকরী সমাধান।',
-            'description' => 'পুষ্টি কুঞ্জ মেথিমিক্স হলো বাছাইকৃত মেথি দানা ও বিশেষ ভেষজের প্রাকৃতিক ফর্মুলা। এটি হজম প্রক্রিয়াকে ত্বরান্বিত করে, রক্তে চিনির মাত্রা নিয়ন্ত্রণ করতে সাহায্য করে এবং শরীরের বিষাক্ত টক্সিন দূর করে।',
-            'images' => [
-                'https://images.unsplash.com/photo-1599940824399-b87987ceb72a?w=900&auto=format&fit=crop&q=85',
-                'https://images.unsplash.com/photo-1509358271058-acd22cc93898?w=900&auto=format&fit=crop&q=85',
-                'https://images.unsplash.com/photo-1506368249639-73a05d6f6488?w=900&auto=format&fit=crop&q=85'
-            ],
-            'benefits' => [
-                ['title' => 'ডায়াবেটিস নিয়ন্ত্রণ', 'text' => 'রক্তের গ্লুকোজ লেভেল নিয়ন্ত্রণে রাখতে অত্যন্ত সহায়ক ভূমিকা পালন করে।', 'icon' => 'ShieldCheck'],
-                ['title' => 'হজমশক্তি বৃদ্ধি ও গ্যাস্ট্রিক মুক্তি', 'text' => 'পেটের ফোলাভাব ও অ্যাসিডিটি দূর করে হজম ক্ষমতা বাড়ায়।', 'icon' => 'CheckCircle2'],
-                ['title' => 'ওজন ও অতিরিক্ত চর্বি হ্রাস', 'text' => 'প্রচুর ফাইবার থাকায় ক্ষুধা নিয়ন্ত্রণ করে মেদ কমাতে সাহায্য করে।', 'icon' => 'Scale'],
-            ],
-            'usage_instructions' => "১. রাতে ১ চামচ মেথিমিক্স এক গ্লাস পানিতে ভিজিয়ে রাখুন।\n২. সকালে খালি পেটে পানিটুকু ছেঁকে বা মিশ্রণসহ পান করুন।",
-            'is_featured' => true,
-            'is_active' => true,
-            'meta_title' => 'খাঁটি মেথিমিক্স — ডায়াবেটিস ও গ্যাস্ট্রিক নিয়ন্ত্রণে পুষ্টি কুঞ্জ',
-            'meta_description' => 'ডায়াবেটিস ও হজমের সমস্যার প্রাকৃতিক সমাধান পুষ্টি কুঞ্জ মেথিমিক্স।',
-        ]);
-
-        // Product 3: Organic Chia Seeds (PK-CS-003)
-        $p3 = $seedProduct([
-            'name' => 'প্রিমিয়াম চিয়া সিড (Organic Chia Seeds)',
-            'slug' => 'chia-seeds',
-            'sku' => 'PK-CS-003',
-            'price' => 550.00,
-            'sale_price' => 490.00,
-            'stock' => 120,
-            'weight' => '২৫০ গ্রাম',
-            'variants' => [
-                ['name' => '২৫০ গ্রাম', 'price' => 550.00, 'sale_price' => 490.00, 'stock' => 80],
-                ['name' => '৫০০ গ্রাম', 'price' => 1050.00, 'sale_price' => 920.00, 'stock' => 40],
-            ],
-            'category_id' => $catSuperfood->id,
-            'badge' => 'নতুন স্টক',
-            'short_description' => 'আমদানি করা শতভাগ খাঁটি ও পরিষ্কার অর্গানিক চিয়া সিড। ওমেগা-৩ ফ্যাটি এসিড এবং প্রোটিনে ভরপুর।',
-            'description' => 'চিয়া সিড একটি প্রাকৃতিক সুপারফুড। এতে রয়েছে প্রচুর পরিমাণ ওমেগা-৩, ক্যালসিয়াম, প্রোটিন, ম্যাগনেসিয়াম ও ফাইবার। যারা ওজন নিয়ন্ত্রণ করতে চান এবং হার্ট সুস্থ রাখতে চান তাদের জন্য এটি অত্যন্ত উপকারী।',
-            'images' => [
-                'https://images.unsplash.com/photo-1543362906-acfc16c67564?w=900&auto=format&fit=crop&q=85',
-                'https://images.unsplash.com/photo-1514733670139-4d87a1941d55?w=900&auto=format&fit=crop&q=85',
-                'https://images.unsplash.com/photo-1490818387583-1baba5e638af?w=900&auto=format&fit=crop&q=85'
-            ],
-            'benefits' => [
-                ['title' => 'ওমেগা-৩ ফ্যাটি এসিড', 'text' => 'হার্ট ভালো রাখে এবং রক্তে খারাপ কোলেস্টেরল কমায়।', 'icon' => 'Heart'],
-                ['title' => 'ওজন নিয়ন্ত্রণে কার্যকর', 'text' => 'প্রচুর ডায়েটারি ফাইবার দীর্ঘক্ষণ পেট ভরা রেখে ক্ষুধা কমায়।', 'icon' => 'Smile'],
-                ['title' => 'হাড় ও পেশীর শক্তি', 'text' => 'ক্যালসিয়াম ও ম্যাগনেসিয়াম হাড় মজবুত ও শক্তিশালী করে।', 'icon' => 'Zap'],
-            ],
-            'usage_instructions' => "১. ১ চামচ চিয়া সিড ১৫-২০ মিনিট পানিতে ভিজিয়ে রাখুন।\n২. এরপর লেবুর পানি, ডাবের পানি, জুস বা টক দইয়ের সাথে মিশিয়ে খেয়ে নিন।",
-            'is_featured' => true,
-            'is_active' => true,
-            'meta_title' => 'প্রিমিয়াম অর্গানিক চিয়া সিড — পুষ্টি কুঞ্জ',
-            'meta_description' => 'খাঁটি ও ফ্রেশ সুপারফুড চিয়া সিড কিনুন পুষ্টি কুঞ্জ থেকে।',
-        ]);
-
-        // Clean up any extra products if present
-        Product::whereNotIn('slug', ['beetroot-powder', 'methimix', 'chia-seeds'])->delete();
-
-        // Reviews for real products
-        Review::firstOrCreate(
-            ['product_id' => $p1->id, 'customer_phone' => '01811223344'],
-            [
-                'customer_name' => 'ফারহানা ইসলাম',
-                'rating' => 5,
-                'comment' => 'বিটরুট পাউডার খুব ভালো এবং খাঁটি। দ্রুত ডেলিভারির জন্য ধন্যবাদ পুষ্টি কুঞ্জকে!',
-                'is_approved' => true,
-            ]
-        );
-
-        Review::firstOrCreate(
-            ['product_id' => $p2->id, 'customer_phone' => '01711223344'],
-            [
-                'customer_name' => 'তানভীর আহমেদ',
-                'rating' => 5,
-                'comment' => 'মেথিমিক্স খেয়ে হজম ও পেটের সমস্যায় অনেক উপকার পেয়েছি। প্যাকেজিংও দারুণ।',
-                'is_approved' => true,
-            ]
-        );
-
-        Review::firstOrCreate(
-            ['product_id' => $p3->id, 'customer_phone' => '01911223344'],
-            [
-                'customer_name' => 'কামরুল হাসান',
-                'rating' => 5,
-                'comment' => 'চিয়া সিডগুলো অত্যন্ত ফ্রেশ ও পরিষ্কার। ক্যাশ অন ডেলিভারিতে হাতে পেয়ে যাচাই করে নিয়েছি।',
-                'is_approved' => true,
-            ]
-        );
+        if ($pMethi) {
+            Review::firstOrCreate(
+                ['product_id' => $pMethi->id, 'customer_phone' => '01911223344'],
+                [
+                    'customer_name' => 'কামরুল হাসান',
+                    'rating' => 5,
+                    'comment' => 'মেথি মিক্স খেয়ে হজম ও পেটের সমস্যায় অনেক উপকার পেয়েছি। প্যাকেজিংও দারুণ।',
+                    'is_approved' => true,
+                ]
+            );
+        }
 
         // 4. Coupons
         Coupon::firstOrCreate(
@@ -225,19 +105,19 @@ class DatabaseSeeder extends Seeder
                 'data' => [
                     'slides' => [
                         [
-                            'image' => 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=1920&auto=format&fit=crop&q=85',
-                            'url' => '/shop',
-                            'alt' => 'পুষ্টি কুঞ্জ — ১০০% খাঁটি ও প্রাকৃতিক পুষ্টি পণ্য',
+                            'image' => '/images/banners/rosella-tea-banner.jpg',
+                            'url' => '/product/rosella-tea',
+                            'alt' => 'পুষ্টি কুঞ্জ রোজেলা চা — ১০০% খাঁটি ও প্রাকৃতিক হারবাল চা',
                         ],
                         [
-                            'image' => 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=1920&auto=format&fit=crop&q=85',
-                            'url' => '/product/chia-seeds',
-                            'alt' => 'প্রিমিয়াম অর্গানিক চিয়া সিড',
-                        ],
-                        [
-                            'image' => 'https://images.unsplash.com/photo-1615485290382-441e4d049cb5?w=1920&auto=format&fit=crop&q=85',
+                            'image' => '/images/banners/beetroot-powder-banner.jpg',
                             'url' => '/product/beetroot-powder',
-                            'alt' => 'খাঁটি বিটরুট পাউডার',
+                            'alt' => 'স্প্রে ড্রাইড বিটরুট পাউডার — ১০০% অর্গানিক সুপারফুড',
+                        ],
+                        [
+                            'image' => '/images/banners/methi-mix-banner.jpg',
+                            'url' => '/product/methi-mix',
+                            'alt' => 'মেথি মিক্স — প্রাকৃতিক হজম ও সুগার নিয়ন্ত্রণ ভেষজ ফর্মুলা',
                         ],
                     ]
                 ]
@@ -265,37 +145,37 @@ class DatabaseSeeder extends Seeder
                     'items' => [
                         [
                             'id' => 1,
-                            'poster' => '/images/product_videos/video_poster_1.jpg',
+                            'poster' => '/uploads/1789723597_ChatGPT_Image_Sep_11__2026__08_04_06_PM.webp',
                             'videoUrl' => 'https://assets.mixkit.co/videos/preview/mixkit-woman-smiling-at-the-camera-in-a-park-41315-large.mp4',
-                            'promoBanner' => '/images/product_videos/promo_banner_1.jpg',
-                            'thumb' => '/images/product_videos/thumb_1.png',
-                            'title' => 'Spray Dried Beetr...',
+                            'promoBanner' => '/uploads/1789579454_ChatGPTImageSep11202608_15_15PM.webp',
+                            'thumb' => '/uploads/1789579454_ChatGPTImageSep11202608_15_15PM.webp',
+                            'title' => 'Spray Dried Beetroot',
                             'fullTitle' => 'Spray Dried Beetroot Powder',
-                            'price' => 'Tk 1,150.00',
+                            'price' => '৳ ৩৯০.০০',
                             'productUrl' => '/product/beetroot-powder',
                             'alt' => 'Spray Dried Beetroot Powder Video Review & Promo',
                         ],
                         [
                             'id' => 2,
-                            'poster' => '/images/product_videos/video_poster_2.jpg',
+                            'poster' => '/uploads/1789723623_ChatGPT_Image_Sep_11__2026__08_04_13_PM.webp',
                             'videoUrl' => 'https://assets.mixkit.co/videos/preview/mixkit-young-woman-talking-on-a-video-call-41712-large.mp4',
-                            'promoBanner' => '/images/product_videos/promo_banner_2.jpg',
-                            'thumb' => '/images/product_videos/thumb_2.png',
+                            'promoBanner' => '/uploads/1789579439_ChatGPTImageSep11202608_15_50PM.webp',
+                            'thumb' => '/uploads/1789579439_ChatGPTImageSep11202608_15_50PM.webp',
                             'title' => 'Pure Herbal Methi Mix',
                             'fullTitle' => 'Pure Herbal Methi Mix',
-                            'price' => 'Tk 880.00',
+                            'price' => '৳ ৭৮০.০০',
                             'productUrl' => '/product/methi-mix',
                             'alt' => 'Pure Herbal Methi Mix Video Review & Promo',
                         ],
                         [
                             'id' => 3,
-                            'poster' => '/images/product_videos/video_poster_3.jpg',
+                            'poster' => '/uploads/1789723673_ChatGPT_Image_Sep_11__2026__08_04_20_PM.webp',
                             'videoUrl' => 'https://assets.mixkit.co/videos/preview/mixkit-woman-recording-a-vlog-with-her-phone-41314-large.mp4',
-                            'promoBanner' => '/images/product_videos/promo_banner_3.jpg',
-                            'thumb' => '/images/product_videos/thumb_3.png',
-                            'title' => 'Rosella Tea...',
+                            'promoBanner' => '/uploads/1789579366_rosella-tea.webp',
+                            'thumb' => '/uploads/1789579366_rosella-tea.webp',
+                            'title' => 'Organic Rosella Tea',
                             'fullTitle' => 'Organic Rosella Herbal Tea',
-                            'price' => 'Tk 950.00',
+                            'price' => '৳ ৮৫০.০০',
                             'productUrl' => '/product/rosella-tea',
                             'alt' => 'Organic Rosella Tea Video Review & Promo',
                         ],

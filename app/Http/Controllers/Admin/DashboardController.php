@@ -92,13 +92,13 @@ class DashboardController extends Controller
         $lowStockList = Product::where('stock', '<=', 5)
             ->orderBy('stock', 'asc')
             ->take(5)
-            ->get(['id', 'name', 'sku', 'stock', 'price', 'thumbnail']);
+            ->get(['id', 'name', 'sku', 'stock', 'price', 'images']);
 
         // Top Selling / Featured Products
         $topProducts = Product::where('is_active', true)
             ->orderBy('stock', 'desc')
             ->take(4)
-            ->get(['id', 'name', 'sku', 'price', 'stock', 'thumbnail', 'is_featured']);
+            ->get(['id', 'name', 'sku', 'price', 'stock', 'images', 'is_featured']);
 
         // System integrations status
         $steadfastConfig = \App\Models\SiteSetting::get('courier_steadfast', []);

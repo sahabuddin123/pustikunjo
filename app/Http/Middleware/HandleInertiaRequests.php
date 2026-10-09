@@ -99,7 +99,7 @@ class HandleInertiaRequests extends Middleware
                 'facebook_pixel_id' => '',
             ], SiteSetting::get('seo_settings', [])),
             'navProducts' => fn () => Product::storefront()
-                ->select('id', 'name', 'slug', 'price', 'sale_price', 'primary_image', 'images')
+                ->select('id', 'name', 'slug', 'price', 'sale_price', 'images')
                 ->orderBy('id')
                 ->get(),
             'header' => SiteSetting::get('header_config', [

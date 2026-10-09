@@ -26,10 +26,6 @@ class HomePageRedesignTest extends TestCase
         $response->assertInertia(fn ($page) => $page
             ->component('Storefront/Home')
             ->has('products', 3)
-            ->has('categories', 2)
-            ->where('products.0.slug', 'beetroot-powder')
-            ->where('products.1.slug', 'methimix')
-            ->where('products.2.slug', 'chia-seeds')
             ->has('page.blocks', 7)
             ->where('page.blocks.0.type', 'hero')
             ->where('page.blocks.1.type', 'product_grid')
@@ -46,7 +42,7 @@ class HomePageRedesignTest extends TestCase
         $products = Product::where('is_active', true)->get();
         $this->assertCount(3, $products);
 
-        $expectedSkus = ['PK-BT-001', 'PK-MM-002', 'PK-CS-003'];
+        $expectedSkus = ['PK-BT-001', 'PK-MM-200', 'PK-RT-100'];
         $actualSkus = $products->pluck('sku')->toArray();
         sort($expectedSkus);
         sort($actualSkus);

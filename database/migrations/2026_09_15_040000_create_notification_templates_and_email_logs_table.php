@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('notification_templates', function (Blueprint $table) {
             $table->id();
-            $table->string('channel'); // 'sms' or 'email'
-            $table->string('event_key'); // 'order_placed', 'order_confirmed', 'order_shipped', etc.
+            $table->string('channel', 50); // 'sms' or 'email'
+            $table->string('event_key', 100); // 'order_placed', 'order_confirmed', 'order_shipped', etc.
             $table->string('name'); // Display Name
             $table->string('subject')->nullable(); // For email
             $table->text('body'); // Content with {{placeholders}}
