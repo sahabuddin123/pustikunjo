@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link, usePage } from '@inertiajs/react';
 import { Leaf, Phone, Mail, MapPin, ShieldCheck, Heart, MessageCircle, PhoneCall } from 'lucide-react';
+import { formatWhatsAppUrl } from '@/Utils/whatsapp';
 
 export default function Footer() {
     const { siteConfig, footer } = usePage().props;
@@ -10,18 +11,13 @@ export default function Footer() {
 
     const phone = siteConfig?.phone || '09678812525';
     const cleanPhone = phone.replace(/[^0-9+]/g, '');
-    const whatsapp = siteConfig?.whatsapp || '01700000000';
-    const cleanWhatsapp = whatsapp.replace(/[^0-9]/g, '');
 
     const socialLinks = footer?.social_links || {};
     const fbUrl = socialLinks.facebook || 'https://facebook.com';
     const ytUrl = socialLinks.youtube || 'https://youtube.com';
     const instaUrl = socialLinks.instagram || 'https://instagram.com';
     const rawWhatsapp = socialLinks.whatsapp || siteConfig?.whatsapp || '01700000000';
-    const cleanWaDigits = rawWhatsapp.replace(/[^0-9]/g, '');
-    const waUrl = rawWhatsapp.startsWith('http')
-        ? rawWhatsapp
-        : `https://wa.me/${cleanWaDigits.startsWith('880') ? cleanWaDigits : '880' + cleanWaDigits.replace(/^0+/, '')}`;
+    const waUrl = formatWhatsAppUrl(rawWhatsapp);
 
     return (
         <div className="w-full">

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Head, Link } from '@inertiajs/react';
 import StorefrontLayout from '@/Layouts/StorefrontLayout';
+import { formatWhatsAppUrl } from '@/Utils/whatsapp';
 import {
     Heart,
     Activity,
@@ -592,7 +593,7 @@ export default function DietaryGuide({ hotline = '01700-000000', whatsapp = '017
                             </Link>
 
                             <a
-                                href={`https://wa.me/88${whatsapp.replace(/[^0-9]/g, '')}?text=${encodeURIComponent('পুষ্টি কুঞ্জ: আমি পুষ্টি চিকিৎসা ও পথ্যের ব্যাপারে পরামর্শ নিতে চাই।')}`}
+                                href={formatWhatsAppUrl(whatsapp, 'পুষ্টি কুঞ্জ: আমি পুষ্টি চিকিৎসা ও পথ্যের ব্যাপারে পরামর্শ নিতে চাই।')}
                                 target="_blank"
                                 rel="noreferrer"
                                 className="px-6 py-3 rounded-xl bg-emerald-800 hover:bg-emerald-700 text-white font-bold text-xs sm:text-sm transition-all flex items-center gap-2 border border-emerald-700"

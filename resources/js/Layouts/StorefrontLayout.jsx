@@ -6,6 +6,7 @@ import Footer from '@/Components/Storefront/Footer';
 import CartDrawer from '@/Components/Storefront/CartDrawer';
 import { MessageCircle, ShoppingBag, Home, Search, PhoneCall, CheckCircle2, AlertCircle, Truck, ChevronUp } from 'lucide-react';
 import { trackEvent } from '@/Services/Analytics';
+import { formatWhatsAppUrl } from '@/Utils/whatsapp';
 
 function StorefrontContent({ children, meta = {} }) {
     const { siteConfig, flash, marketing, seo } = usePage().props;
@@ -37,7 +38,6 @@ function StorefrontContent({ children, meta = {} }) {
     }, [meta.title]);
 
     const whatsappNumber = siteConfig?.whatsapp || '01700000000';
-    const cleanWhatsapp = whatsappNumber.replace(/[^0-9]/g, '');
 
     return (
         <div className="min-h-screen flex flex-col bg-[#F8FAF8] text-gray-900 font-sans selection:bg-emerald-700 selection:text-white">
@@ -106,7 +106,7 @@ function StorefrontContent({ children, meta = {} }) {
 
             {/* Floating WhatsApp Quick Action */}
             <a
-                href={`https://wa.me/880${cleanWhatsapp}?text=${encodeURIComponent('হ্যালো পুষ্টি কুঞ্জ! পণ্য সম্পর্কে জানতে চাচ্ছি।')}`}
+                href={formatWhatsAppUrl(whatsappNumber, 'হ্যালো পুষ্টি কুঞ্জ! পণ্য সম্পর্কে জানতে চাচ্ছি।')}
                 target="_blank"
                 rel="noreferrer"
                 className="fixed bottom-20 sm:bottom-6 right-4 sm:right-6 z-40 w-13 h-13 rounded-full bg-[#25D366] hover:bg-[#20bd5a] text-white flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"

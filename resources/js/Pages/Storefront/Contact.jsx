@@ -5,6 +5,7 @@ import {
     Phone, Mail, MapPin, MessageCircle, Send, CheckCircle2, 
     Headphones, ShieldCheck, Heart, Clock, ArrowRight, Sparkles 
 } from 'lucide-react';
+import { formatWhatsAppUrl } from '@/Utils/whatsapp';
 
 export default function Contact({ contact = {}, meta = {} }) {
     const { siteConfig, flash } = usePage().props;
@@ -12,7 +13,6 @@ export default function Contact({ contact = {}, meta = {} }) {
     const phone = contact?.phone || siteConfig?.phone || '09678812525';
     const cleanPhone = phone.replace(/[^0-9+]/g, '');
     const whatsapp = contact?.whatsapp || siteConfig?.whatsapp || '01700000000';
-    const cleanWhatsapp = whatsapp.replace(/[^0-9]/g, '');
     const email = contact?.email || siteConfig?.email || 'info@pustikunjo.com.bd';
     const address = contact?.address || 'Level-5, Noor Tower, 110/D/A Uttara C/A, Dhaka 1230';
     const messenger = contact?.messenger || siteConfig?.messenger || 'https://m.me/pustikunjobd';
@@ -196,7 +196,7 @@ export default function Contact({ contact = {}, meta = {} }) {
                                         <p className="text-xs text-gray-500 mt-0.5 mb-5">Tap to start a conversation</p>
                                         
                                         <a
-                                            href={`https://wa.me/880${cleanWhatsapp}?text=${encodeURIComponent('হ্যালো পুষ্টি কুঞ্জ! আমি আপনাদের পণ্য ও সেবা সম্পর্কে জানতে চাচ্ছি।')}`}
+                                            href={formatWhatsAppUrl(whatsapp, 'হ্যালো পুষ্টি কুঞ্জ! আমি আপনাদের পণ্য ও সেবা সম্পর্কে জানতে চাচ্ছি।')}
                                             target="_blank"
                                             rel="noreferrer"
                                             className="px-6 py-2 rounded-full bg-[#EAF5ED] hover:bg-[#25D366] text-[#0B3E25] hover:text-white text-xs font-bold transition-all duration-200 shadow-2xs inline-flex items-center gap-1.5 cursor-pointer"

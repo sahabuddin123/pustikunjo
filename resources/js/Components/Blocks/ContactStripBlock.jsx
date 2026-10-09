@@ -1,13 +1,13 @@
 import React from 'react';
 import { usePage } from '@inertiajs/react';
 import { PhoneCall, MessageCircle } from 'lucide-react';
+import { formatWhatsAppUrl } from '@/Utils/whatsapp';
 
 export default function ContactStripBlock({ data = {} }) {
     const { siteConfig, header } = usePage().props;
     const phone = siteConfig?.phone || header?.hotline_phone || '01700-000000';
     const cleanPhone = phone.replace(/[^0-9+]/g, '');
     const whatsapp = siteConfig?.whatsapp || '01700000000';
-    const cleanWhatsapp = whatsapp.replace(/[^0-9]/g, '');
 
     const title = data.title || 'কিছু জানার আছে?';
     const text = data.text || 'পণ্য বা অর্ডার সংক্রান্ত যেকোনো প্রয়োজনে সরাসরি কল করুন অথবা হোয়াটসঅ্যাপে যোগাযোগ করুন।';
@@ -39,7 +39,7 @@ export default function ContactStripBlock({ data = {} }) {
 
                     {/* WhatsApp Button */}
                     <a
-                        href={`https://wa.me/880${cleanWhatsapp}?text=${encodeURIComponent('হ্যালো পুষ্টি কুঞ্জ! পণ্য সম্পর্কে জানতে চাই।')}`}
+                        href={formatWhatsAppUrl(whatsapp, 'হ্যালো পুষ্টি কুঞ্জ! পণ্য সম্পর্কে জানতে চাই।')}
                         target="_blank"
                         rel="noreferrer"
                         className="inline-flex items-center gap-2 px-5 py-2.5 rounded-md bg-[#25D366] hover:bg-[#20bd5a] text-white text-sm sm:text-base font-bold shadow-xs transition-all"

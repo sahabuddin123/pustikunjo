@@ -4,6 +4,7 @@ import StorefrontLayout from '@/Layouts/StorefrontLayout';
 import ProductCard from '@/Components/Storefront/ProductCard';
 import { useCart } from '@/Context/CartContext';
 import { trackEvent } from '@/Services/Analytics';
+import { formatWhatsAppUrl } from '@/Utils/whatsapp';
 import {
     ShoppingBag,
     ShoppingCart,
@@ -135,7 +136,6 @@ export default function ProductDetail({ product, relatedProducts = [], shippingZ
     const phone = siteConfig?.phone || header?.hotline_phone || '01700-000000';
     const cleanPhone = phone.replace(/[^0-9+]/g, '');
     const whatsapp = siteConfig?.whatsapp || '01700000000';
-    const cleanWhatsapp = whatsapp.replace(/[^0-9]/g, '');
 
     // Product Images: Strictly use product's actual images saved in database
     const galleryImages = (product.images && Array.isArray(product.images) && product.images.filter(Boolean).length > 0)
@@ -551,7 +551,7 @@ export default function ProductDetail({ product, relatedProducts = [], shippingZ
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                 {/* WhatsApp Order Button */}
                                 <a
-                                    href={`https://wa.me/880${cleanWhatsapp}?text=${encodeURIComponent(`হ্যালো পুষ্টি কুঞ্জ! আমি ${product.name} (${selectedWeight}, দাম: ৳${basePrice}, পরিমাণ: ${quantity} টি) অর্ডার করতে চাচ্ছি।`)}`}
+                                    href={formatWhatsAppUrl(whatsapp, `হ্যালো পুষ্টি কুঞ্জ! আমি ${product.name} (${selectedWeight}, দাম: ৳${basePrice}, পরিমাণ: ${quantity} টি) অর্ডার করতে চাচ্ছি।`)}
                                     target="_blank"
                                     rel="noreferrer"
                                     className="w-full py-2.5 px-4 rounded-md bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all shadow-xs"

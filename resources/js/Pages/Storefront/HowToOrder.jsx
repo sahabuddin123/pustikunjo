@@ -1,6 +1,7 @@
 import React from 'react';
 import { Head, Link } from '@inertiajs/react';
 import StorefrontLayout from '@/Layouts/StorefrontLayout';
+import { formatWhatsAppUrl } from '@/Utils/whatsapp';
 import { 
     ShoppingBag, 
     Truck, 
@@ -23,7 +24,6 @@ export default function HowToOrder({ page = null, contact = {}, meta = {} }) {
     const phone = contact.phone || '09678812525';
     const cleanPhone = phone.replace(/[^0-9+]/g, '');
     const whatsapp = contact.whatsapp || '01700000000';
-    const cleanWhatsapp = whatsapp.replace(/[^0-9]/g, '');
 
     const hasDynamicContent = Boolean(page?.content && page.content.trim().length > 20);
 
@@ -301,7 +301,7 @@ export default function HowToOrder({ page = null, contact = {}, meta = {} }) {
                                     <span>{phone}</span>
                                 </a>
                                 <a
-                                    href={`https://wa.me/880${cleanWhatsapp}`}
+                                    href={formatWhatsAppUrl(whatsapp)}
                                     target="_blank"
                                     rel="noreferrer"
                                     className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#25D366] hover:bg-[#20bd5a] text-white text-sm font-bold shadow-xs transition-all"

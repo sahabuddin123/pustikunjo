@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useForm, usePage } from '@inertiajs/react';
 import StorefrontLayout from '@/Layouts/StorefrontLayout';
+import { formatWhatsAppUrl } from '@/Utils/whatsapp';
 import { 
     User, Phone, MessageSquare, CheckCircle2, AlertCircle, X, 
     ArrowRight, Sparkles, HeartPulse, Scale, ShieldCheck, Clock, 
@@ -43,8 +44,6 @@ export default function NutritionistConsultation({ categories = [], hotline = '0
             },
         });
     };
-
-    const cleanWhatsapp = (whatsapp || siteConfig?.whatsapp || '01700000000').replace(/[^0-9]/g, '');
 
     return (
         <StorefrontLayout meta={meta}>
@@ -236,7 +235,7 @@ export default function NutritionistConsultation({ categories = [], hotline = '0
                             </div>
 
                             <a
-                                href={`https://wa.me/880${cleanWhatsapp}?text=${encodeURIComponent('হ্যালো পুষ্টি কুঞ্জ! আমি পুষ্টিবিদের সাথে পরামর্শ করতে চাচ্ছি।')}`}
+                                href={formatWhatsAppUrl(whatsapp || siteConfig?.whatsapp, 'হ্যালো পুষ্টি কুঞ্জ! আমি পুষ্টিবিদের সাথে পরামর্শ করতে চাচ্ছি।')}
                                 target="_blank"
                                 rel="noreferrer"
                                 className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#25D366] hover:bg-[#1fa951] text-white font-bold transition-colors cursor-pointer shadow-xs"
