@@ -105,4 +105,21 @@ class Product extends Model
     {
         return $this->primary_image;
     }
+
+    protected static function booted()
+    {
+        static::saved(function () {
+            try {
+                \Illuminate\Support\Facades\Cache::forget('storefront_nav_products');
+                \Illuminate\Support\Facades\Cache::forget('storefront_all_products');
+            } catch (\Throwable $e) {}
+        });
+
+        static::deleted(function () {
+            try {
+                \Illuminate\Support\Facades\Cache::forget('storefront_nav_products');
+                \Illuminate\Support\Facades\Cache::forget('storefront_all_products');
+            } catch (\Throwable $e) {}
+        });
+    }
 }

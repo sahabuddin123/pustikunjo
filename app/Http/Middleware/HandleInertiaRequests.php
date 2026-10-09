@@ -98,10 +98,10 @@ class HandleInertiaRequests extends Middleware
                 'google_tag_manager_id' => '',
                 'facebook_pixel_id' => '',
             ], SiteSetting::get('seo_settings', [])),
-            'navProducts' => fn () => Product::storefront()
+            'navProducts' => fn () => \Illuminate\Support\Facades\Cache::remember('storefront_nav_products', 3600, fn () => Product::storefront()
                 ->select('id', 'name', 'slug', 'price', 'sale_price', 'images')
                 ->orderBy('id')
-                ->get(),
+                ->get()),
             'header' => SiteSetting::get('header_config', [
                 'announcement_bar' => [
                     'enabled' => true,
