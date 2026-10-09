@@ -43,11 +43,15 @@ function StorefrontContent({ children, meta = {} }) {
         <div className="min-h-screen flex flex-col bg-[#F8FAF8] text-gray-900 font-sans selection:bg-emerald-700 selection:text-white">
             <Head>
                 <title>
-                    {meta.title
-                        ? ((meta.title.includes(siteConfig?.name || 'পুষ্টি কুঞ্জ') || meta.title.includes('Pusti Kunjo'))
-                            ? meta.title
-                            : `${meta.title} — ${siteConfig?.name || 'পুষ্টি কুঞ্জ'}`)
-                        : (seo?.meta_title || `${siteConfig?.name || 'পুষ্টি কুঞ্জ'} — খাঁটি ও প্রাকৃতিক স্বাস্থ্য পণ্য`)}
+                    {(() => {
+                        let t = meta.title || seo?.meta_title || 'পুষ্টি কুঞ্জ — খাঁটি অর্গানিক ফুড ও প্রাকৃতিক স্বাস্থ্য পণ্য | Pusti Kunjo';
+                        if (t.includes('Purity Begins here')) {
+                            t = 'পুষ্টি কুঞ্জ — খাঁটি অর্গানিক ফুড ও প্রাকৃতিক স্বাস্থ্য পণ্য | Pusti Kunjo';
+                        } else if (!t.includes(siteConfig?.name || 'পুষ্টি কুঞ্জ') && !t.includes('Pusti Kunjo')) {
+                            t = `${t} — ${siteConfig?.name || 'পুষ্টি কুঞ্জ'}`;
+                        }
+                        return t;
+                    })()}
                 </title>
                 <meta name="description" content={meta.description || seo?.meta_description || 'পুষ্টি কুঞ্জ বাংলাদেশের শীর্ষস্থানীয় অর্গানিক ও প্রাকৃতিক স্বাস্থ্য পণ্য ব্র্যান্ড।'} />
                 {(meta.keywords || seo?.meta_keywords) && <meta name="keywords" content={meta.keywords || seo?.meta_keywords} />}

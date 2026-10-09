@@ -88,9 +88,9 @@ class HandleInertiaRequests extends Middleware
             ], SiteSetting::get('theme_customizer', []), SiteSetting::get('appearance_settings', [])),
             'seo' => array_merge([
                 'indexing_directive' => 'index, follow',
-                'meta_title' => 'পুষ্টি কুঞ্জ | ১০০% খাঁটি ও প্রাকৃতিক পুষ্টি পণ্য',
-                'meta_description' => '১০০% প্রাকৃতিক ও অর্গানিক পুষ্টি পণ্যের বিশ্বস্ত প্রতিষ্ঠান।',
-                'meta_keywords' => 'পুষ্টি কুঞ্জ, অর্গানিক ফুড, চিয়া সিড, বিটরুট পাউডার, ঘি',
+                'meta_title' => 'পুষ্টি কুঞ্জ — খাঁটি অর্গানিক ফুড ও প্রাকৃতিক স্বাস্থ্য পণ্য | Pusti Kunjo',
+                'meta_description' => 'পুষ্টি কুঞ্জ (Pusti Kunjo) — বাংলাদেশের বিশ্বস্ত অর্গানিক ফুড ব্র্যান্ড। ১০০% খাঁটি রোজেলা চা, বিটরুট পাউডার, মেথি মিক্স ও প্রাকৃতিক স্বাস্থ্য পণ্য। সারা দেশে ক্যাশ অন ডেলিভারি!',
+                'meta_keywords' => 'পুষ্টি কুঞ্জ, Pusti Kunjo, pustikunjo, pustikunjo.com.bd, অর্গানিক ফুড বাংলাদেশ, খাঁটি ভেষজ পণ্য, রোজেলা চা, rosella tea, বিটরুট পাউডার, beetroot powder, মেথি মিক্স, methi mix, চিয়া সিড, chia seeds, প্রাকৃতিক স্বাস্থ্য পণ্য, সুপারফুড',
                 'og_image' => '',
                 'google_site_verification' => '',
                 'bing_site_verification' => '',

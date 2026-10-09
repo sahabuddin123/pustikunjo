@@ -55,10 +55,14 @@
             $resolvedTitle = $pageProduct['name'] . ' — ' . $siteName;
         } elseif (!empty($pagePost['title'])) {
             $resolvedTitle = $pagePost['title'] . ' — ' . $siteName;
-        } elseif (!empty($appSeo['meta_title'])) {
+        } elseif (!empty($appSeo['meta_title']) && !str_contains($appSeo['meta_title'], 'Purity Begins here')) {
             $resolvedTitle = $appSeo['meta_title'];
         } else {
-            $resolvedTitle = $siteName . ' | ১০০% খাঁটি ও প্রাকৃতিক পুষ্টি পণ্য';
+            $resolvedTitle = 'পুষ্টি কুঞ্জ — খাঁটি অর্গানিক ফুড ও প্রাকৃতিক স্বাস্থ্য পণ্য | Pusti Kunjo';
+        }
+
+        if (!empty($resolvedTitle) && str_contains($resolvedTitle, 'Purity Begins here')) {
+            $resolvedTitle = 'পুষ্টি কুঞ্জ — খাঁটি অর্গানিক ফুড ও প্রাকৃতিক স্বাস্থ্য পণ্য | Pusti Kunjo';
         }
 
         // Dynamic Description
