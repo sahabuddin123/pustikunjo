@@ -46,14 +46,18 @@ class SettingController extends Controller
             'facebook_pixel_id' => '',
         ], SiteSetting::get('seo_settings', []));
 
-        $contact = SiteSetting::get('contact_settings', [
+        $footerConfig = SiteSetting::get('footer_config', []);
+        $contact = array_merge([
             'phone' => '01700-000000',
             'whatsapp' => '01700000000',
             'email' => 'info@pustikunjo.com.bd',
             'address' => 'ঢাকা, বাংলাদেশ',
             'hotline_hours' => 'সকাল ৯টা - রাত ১০টা',
             'messenger' => 'https://m.me/pustikunjobd',
-        ]);
+            'facebook' => $footerConfig['social_links']['facebook'] ?? 'https://facebook.com',
+            'youtube' => $footerConfig['social_links']['youtube'] ?? 'https://youtube.com',
+            'instagram' => $footerConfig['social_links']['instagram'] ?? 'https://instagram.com',
+        ], SiteSetting::get('contact_settings', []));
 
         $shippingZones = SiteSetting::get('shipping_zones', [
             ['name' => 'ঢাকার ভিতরে', 'fee' => 60],
@@ -143,7 +147,26 @@ class SettingController extends Controller
             SiteSetting::set('seo_settings', $request->input('seo'), 'seo');
         }
         if ($request->has('contact')) {
-            SiteSetting::set('contact_settings', $request->input('contact'), 'contact');
+            $contactData = $request->input('contact');
+            SiteSetting::set('contact_settings', $contactData, 'contact');
+
+            // Also keep footer_config social_links in sync
+            $footerConfig = SiteSetting::get('footer_config', []);
+            $footerSocial = $footerConfig['social_links'] ?? [];
+            if (!empty($contactData['whatsapp'])) {
+                $footerSocial['whatsapp'] = $contactData['whatsapp'];
+            }
+            if (isset($contactData['facebook'])) {
+                $footerSocial['facebook'] = $contactData['facebook'];
+            }
+            if (isset($contactData['youtube'])) {
+                $footerSocial['youtube'] = $contactData['youtube'];
+            }
+            if (isset($contactData['instagram'])) {
+                $footerSocial['instagram'] = $contactData['instagram'];
+            }
+            $footerConfig['social_links'] = $footerSocial;
+            SiteSetting::set('footer_config', $footerConfig, 'appearance');
         }
         if ($request->has('shippingZones')) {
             SiteSetting::set('shipping_zones', $request->input('shippingZones'), 'shipping');

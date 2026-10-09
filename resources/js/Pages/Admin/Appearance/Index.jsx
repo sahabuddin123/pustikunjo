@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useForm } from '@inertiajs/react';
 import AdminLayout from '@/Layouts/AdminLayout';
-import { Palette, Save, Layout, Sliders, Check, Plus, Trash2 } from 'lucide-react';
+import { Palette, Save, Layout, Sliders, Check, Plus, Trash2, Globe } from 'lucide-react';
 
 export default function Index({ theme = {}, header = {}, footer = {} }) {
     const [activeTab, setActiveTab] = useState('theme'); // theme, header, footer
@@ -20,7 +20,17 @@ export default function Index({ theme = {}, header = {}, footer = {} }) {
 
     const headerFooterForm = useForm({
         header: header,
-        footer: footer,
+        footer: {
+            about_text: footer?.about_text || '',
+            copyright_text: footer?.copyright_text || '',
+            social_links: {
+                facebook: footer?.social_links?.facebook || '',
+                youtube: footer?.social_links?.youtube || '',
+                whatsapp: footer?.social_links?.whatsapp || '',
+                instagram: footer?.social_links?.instagram || '',
+            },
+            payment_icons: footer?.payment_icons || ['bkash', 'cod'],
+        },
     });
 
     const submitTheme = (e) => {
@@ -336,17 +346,20 @@ export default function Index({ theme = {}, header = {}, footer = {} }) {
                 {activeTab === 'footer' && (
                     <form onSubmit={submitHeaderFooter} className="bg-white p-6 rounded-2xl border border-gray-200/80 shadow-xs space-y-6 animate-fade-in">
                         <div className="border-b border-gray-100 pb-3 flex items-center justify-between">
-                            <h2 className="font-bold text-base text-gray-900">ফুটার কনফিগারেশন</h2>
+                            <div>
+                                <h2 className="font-bold text-base text-gray-900">ফুটার ও সোশ্যাল মিডিয়া কনফিগারেশন</h2>
+                                <p className="text-xs text-gray-500">ফুটারের এবাউট টেক্সট, কপিরাইট এবং ফেসবুক, ইউটিউব, হোয়াটসঅ্যাপ ও ইনস্টাগ্রাম লিংক ম্যানেজ করুন।</p>
+                            </div>
                             <button
                                 type="submit"
                                 disabled={headerFooterForm.processing}
-                                className="px-5 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs flex items-center gap-1.5"
+                                className="px-5 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs flex items-center gap-1.5 cursor-pointer shadow-sm transition-all"
                             >
                                 <Save className="w-4 h-4" /> সংরক্ষণ করুন
                             </button>
                         </div>
 
-                        <div className="space-y-4">
+                        <div className="space-y-5">
                             <div>
                                 <label className="text-xs font-bold text-gray-700 block mb-1">
                                     ফুটার এবাউট টেক্সট
@@ -359,7 +372,7 @@ export default function Index({ theme = {}, header = {}, footer = {} }) {
                                         updated.about_text = e.target.value;
                                         headerFooterForm.setData('footer', updated);
                                     }}
-                                    className="w-full px-3 py-2 rounded-xl border border-gray-200 text-sm"
+                                    className="w-full px-3 py-2 rounded-xl border border-gray-200 text-sm focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600"
                                 />
                             </div>
 
@@ -375,8 +388,109 @@ export default function Index({ theme = {}, header = {}, footer = {} }) {
                                         updated.copyright_text = e.target.value;
                                         headerFooterForm.setData('footer', updated);
                                     }}
-                                    className="w-full px-3 py-2 rounded-xl border border-gray-200 text-sm"
+                                    className="w-full px-3 py-2 rounded-xl border border-gray-200 text-sm focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600"
                                 />
+                            </div>
+
+                            {/* Social Media Links Section */}
+                            <div className="pt-4 border-t border-gray-100">
+                                <h3 className="font-bold text-sm text-gray-900 mb-1 flex items-center gap-2">
+                                    <Globe className="w-4 h-4 text-emerald-700" />
+                                    সোশ্যাল মিডিয়া ও চ্যানেল লিংকস (Social Media & Channels)
+                                </h3>
+                                <p className="text-xs text-gray-500 mb-4">
+                                    এখানে দেওয়া লিঙ্কগুলো সরাসরি ওয়েবসাইটের ফুটারে ব্র্যান্ড আইকন হিসেবে প্রদর্শিত হবে।
+                                </p>
+
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    {/* Facebook */}
+                                    <div className="bg-gray-50/70 p-3.5 rounded-xl border border-gray-200">
+                                        <label className="text-xs font-bold text-gray-800 flex items-center gap-2 mb-1.5">
+                                            <span className="w-5 h-5 rounded-full bg-[#1877F2] text-white flex items-center justify-center text-[10px] font-bold">f</span>
+                                            ফেসবুক পেজ লিংক (Facebook Page URL)
+                                        </label>
+                                        <input
+                                            type="url"
+                                            placeholder="https://facebook.com/pustikunjobd"
+                                            value={headerFooterForm.data.footer?.social_links?.facebook || ''}
+                                            onChange={(e) => {
+                                                const updated = { ...headerFooterForm.data.footer };
+                                                updated.social_links = {
+                                                    ...(updated.social_links || {}),
+                                                    facebook: e.target.value
+                                                };
+                                                headerFooterForm.setData('footer', updated);
+                                            }}
+                                            className="w-full px-3 py-2 rounded-lg border border-gray-200 bg-white text-xs sm:text-sm font-mono focus:border-emerald-600"
+                                        />
+                                    </div>
+
+                                    {/* YouTube */}
+                                    <div className="bg-gray-50/70 p-3.5 rounded-xl border border-gray-200">
+                                        <label className="text-xs font-bold text-gray-800 flex items-center gap-2 mb-1.5">
+                                            <span className="w-5 h-5 rounded-full bg-[#FF0000] text-white flex items-center justify-center text-[10px] font-bold">▶</span>
+                                            ইউটিউব চ্যানেল লিংক (YouTube Channel URL)
+                                        </label>
+                                        <input
+                                            type="url"
+                                            placeholder="https://youtube.com/@pustikunjo"
+                                            value={headerFooterForm.data.footer?.social_links?.youtube || ''}
+                                            onChange={(e) => {
+                                                const updated = { ...headerFooterForm.data.footer };
+                                                updated.social_links = {
+                                                    ...(updated.social_links || {}),
+                                                    youtube: e.target.value
+                                                };
+                                                headerFooterForm.setData('footer', updated);
+                                            }}
+                                            className="w-full px-3 py-2 rounded-lg border border-gray-200 bg-white text-xs sm:text-sm font-mono focus:border-emerald-600"
+                                        />
+                                    </div>
+
+                                    {/* WhatsApp */}
+                                    <div className="bg-gray-50/70 p-3.5 rounded-xl border border-gray-200">
+                                        <label className="text-xs font-bold text-gray-800 flex items-center gap-2 mb-1.5">
+                                            <span className="w-5 h-5 rounded-full bg-[#25D366] text-white flex items-center justify-center text-[10px] font-bold">✆</span>
+                                            হোয়াটসঅ্যাপ নম্বর / লিংক (WhatsApp Chat)
+                                        </label>
+                                        <input
+                                            type="text"
+                                            placeholder="+8801762281356 অথবা 01762281356"
+                                            value={headerFooterForm.data.footer?.social_links?.whatsapp || ''}
+                                            onChange={(e) => {
+                                                const updated = { ...headerFooterForm.data.footer };
+                                                updated.social_links = {
+                                                    ...(updated.social_links || {}),
+                                                    whatsapp: e.target.value
+                                                };
+                                                headerFooterForm.setData('footer', updated);
+                                            }}
+                                            className="w-full px-3 py-2 rounded-lg border border-gray-200 bg-white text-xs sm:text-sm font-mono focus:border-emerald-600"
+                                        />
+                                    </div>
+
+                                    {/* Instagram */}
+                                    <div className="bg-gray-50/70 p-3.5 rounded-xl border border-gray-200">
+                                        <label className="text-xs font-bold text-gray-800 flex items-center gap-2 mb-1.5">
+                                            <span className="w-5 h-5 rounded-full bg-gradient-to-tr from-[#F58529] via-[#DD2A7B] to-[#8134AF] text-white flex items-center justify-center text-[10px] font-bold">📸</span>
+                                            ইনস্টাগ্রাম প্রোফাইল লিংক (Instagram URL)
+                                        </label>
+                                        <input
+                                            type="url"
+                                            placeholder="https://instagram.com/pustikunjobd"
+                                            value={headerFooterForm.data.footer?.social_links?.instagram || ''}
+                                            onChange={(e) => {
+                                                const updated = { ...headerFooterForm.data.footer };
+                                                updated.social_links = {
+                                                    ...(updated.social_links || {}),
+                                                    instagram: e.target.value
+                                                };
+                                                headerFooterForm.setData('footer', updated);
+                                            }}
+                                            className="w-full px-3 py-2 rounded-lg border border-gray-200 bg-white text-xs sm:text-sm font-mono focus:border-emerald-600"
+                                        />
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </form>

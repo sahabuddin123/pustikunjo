@@ -42,17 +42,21 @@ class AppearanceController extends Controller
             ],
         ]);
 
-        $footer = SiteSetting::get('footer_config', [
+        $defaultSocial = [
+            'facebook' => 'https://facebook.com',
+            'youtube' => 'https://youtube.com',
+            'instagram' => 'https://instagram.com',
+            'whatsapp' => '01700000000',
+        ];
+
+        $rawFooter = SiteSetting::get('footer_config', []);
+        $footer = array_merge([
             'about_text' => 'পুষ্টি কুঞ্জ একটি নির্ভরযোগ্য স্বাস্থ্য ও অর্গানিক ফুড ব্র্যান্ড। আমাদের লক্ষ্য প্রতিটি পরিবারে খাঁটি পুষ্টি পৌঁছে দেওয়া।',
             'copyright_text' => '© ২০২৬ পুষ্টি কুঞ্জ। সর্বস্বত্ব সংরক্ষিত।',
-            'social_links' => [
-                'facebook' => 'https://facebook.com',
-                'youtube' => 'https://youtube.com',
-                'instagram' => 'https://instagram.com',
-                'whatsapp' => 'https://wa.me/8801700000000',
-            ],
+            'social_links' => $defaultSocial,
             'payment_icons' => ['bkash', 'cod'],
-        ]);
+        ], $rawFooter);
+        $footer['social_links'] = array_merge($defaultSocial, $rawFooter['social_links'] ?? []);
 
         return Inertia::render('Admin/Appearance/Index', [
             'theme' => $theme,
@@ -86,7 +90,27 @@ class AppearanceController extends Controller
             SiteSetting::set('header_config', $request->input('header'), 'appearance');
         }
         if ($request->has('footer')) {
-            SiteSetting::set('footer_config', $request->input('footer'), 'appearance');
+            $footerData = $request->input('footer');
+            SiteSetting::set('footer_config', $footerData, 'appearance');
+
+            // Sync social links to contact_settings as well
+            if (!empty($footerData['social_links']) && is_array($footerData['social_links'])) {
+                $contactSettings = SiteSetting::get('contact_settings', []);
+                $social = $footerData['social_links'];
+                if (!empty($social['whatsapp'])) {
+                    $contactSettings['whatsapp'] = $social['whatsapp'];
+                }
+                if (isset($social['facebook'])) {
+                    $contactSettings['facebook'] = $social['facebook'];
+                }
+                if (isset($social['youtube'])) {
+                    $contactSettings['youtube'] = $social['youtube'];
+                }
+                if (isset($social['instagram'])) {
+                    $contactSettings['instagram'] = $social['instagram'];
+                }
+                SiteSetting::set('contact_settings', $contactSettings, 'contact');
+            }
         }
 
         return back()->with('success', 'হেডার ও ফুটার কনফিগারেশন আপডেট হয়েছে!');

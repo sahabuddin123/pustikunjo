@@ -99,6 +99,9 @@ export default function Index({
             address: contact?.address || 'ঢাকা, বাংলাদেশ',
             hotline_hours: contact?.hotline_hours || 'সকাল ৯টা - রাত ১০টা',
             messenger: contact?.messenger || 'https://m.me/pustikunjobd',
+            facebook: contact?.facebook || '',
+            youtube: contact?.youtube || '',
+            instagram: contact?.instagram || '',
         },
         shippingZones: shippingZones || [
             { name: 'ঢাকার ভিতরে', fee: 60 },
@@ -1921,6 +1924,36 @@ export default function Index({
                                     className="w-full px-3.5 py-2 rounded-xl border border-gray-300 text-sm"
                                 />
                             </div>
+                            <div>
+                                <label className="text-xs font-bold text-gray-700 block mb-1">ফেসবুক পেজ লিংক (Facebook Page URL)</label>
+                                <input
+                                    type="url"
+                                    value={form.data.contact.facebook || ''}
+                                    onChange={(e) => form.setData('contact', { ...form.data.contact, facebook: e.target.value })}
+                                    placeholder="https://facebook.com/pustikunjobd"
+                                    className="w-full px-3.5 py-2 rounded-xl border border-gray-300 text-sm font-mono"
+                                />
+                            </div>
+                            <div>
+                                <label className="text-xs font-bold text-gray-700 block mb-1">ইউটিউব চ্যানেল লিংক (YouTube Channel URL)</label>
+                                <input
+                                    type="url"
+                                    value={form.data.contact.youtube || ''}
+                                    onChange={(e) => form.setData('contact', { ...form.data.contact, youtube: e.target.value })}
+                                    placeholder="https://youtube.com/@pustikunjo"
+                                    className="w-full px-3.5 py-2 rounded-xl border border-gray-300 text-sm font-mono"
+                                />
+                            </div>
+                            <div>
+                                <label className="text-xs font-bold text-gray-700 block mb-1">ইনস্টাগ্রাম প্রোফাইল লিংক (Instagram URL)</label>
+                                <input
+                                    type="url"
+                                    value={form.data.contact.instagram || ''}
+                                    onChange={(e) => form.setData('contact', { ...form.data.contact, instagram: e.target.value })}
+                                    placeholder="https://instagram.com/pustikunjobd"
+                                    className="w-full px-3.5 py-2 rounded-xl border border-gray-300 text-sm font-mono"
+                                />
+                            </div>
                             <div className="sm:col-span-2">
                                 <label className="text-xs font-bold text-gray-700 block mb-1">ফেসবুক পেজ / মেসেঞ্জার লিংক (Facebook Messenger Link)</label>
                                 <input
@@ -1931,7 +1964,7 @@ export default function Index({
                                     className="w-full px-3.5 py-2 rounded-xl border border-gray-300 text-sm font-mono"
                                 />
                                 <p className="text-[11px] text-gray-500 mt-1">
-                                    যোগাযোগ পেজের (/contact) লাইভ চ্যাট সেকশনের "Chat on Messenger" বাটনে এই লিংকটি কাজ করবে (যেমন: https://m.me/আপনার_পেজের_ইউজারনেম)।
+                                    ফুটার এবং যোগাযোগ পেজের (/contact) লাইভ চ্যাট সেকশনে এই লিংকগুলো স্বয়ংক্রিয়ভাবে কাজ করবে।
                                 </p>
                             </div>
                             <div className="sm:col-span-2">

@@ -122,16 +122,17 @@ class HandleInertiaRequests extends Middleware
                     ['label' => 'যোগাযোগ', 'url' => '/contact'],
                 ],
             ]),
-            'footer' => SiteSetting::get('footer_config', [
+            'footer' => array_merge([
                 'about_text' => 'পুষ্টি কুঞ্জ একটি নির্ভরযোগ্য স্বাস্থ্য ও অর্গানিক ফুড ব্র্যান্ড। আমাদের লক্ষ্য প্রতিটি পরিবারে খাঁটি পুষ্টি পৌঁছে দেওয়া।',
                 'copyright_text' => '© ২০২৬ পুষ্টি কুঞ্জ। সর্বস্বত্ব সংরক্ষিত।',
-                'social_links' => [
-                    'facebook' => 'https://facebook.com',
-                    'youtube' => 'https://youtube.com',
-                    'instagram' => 'https://instagram.com',
-                    'whatsapp' => 'https://wa.me/8801700000000',
-                ],
                 'payment_icons' => ['bkash', 'cod'],
+            ], ($rawFooter = SiteSetting::get('footer_config', [])), [
+                'social_links' => array_merge([
+                    'facebook' => $contactSettings['facebook'] ?? 'https://facebook.com',
+                    'youtube' => $contactSettings['youtube'] ?? 'https://youtube.com',
+                    'instagram' => $contactSettings['instagram'] ?? 'https://instagram.com',
+                    'whatsapp' => $contactSettings['whatsapp'] ?? '01700000000',
+                ], $rawFooter['social_links'] ?? []),
             ]),
             'marketing' => [
                 'integrations' => SiteSetting::get('marketing_integrations', []),
