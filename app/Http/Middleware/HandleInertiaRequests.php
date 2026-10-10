@@ -52,6 +52,16 @@ class HandleInertiaRequests extends Middleware
             ? $generalSettings['favicon']
             : (!empty($appearanceSettings['favicon_url']) ? $appearanceSettings['favicon_url'] : '/favicon.ico');
 
+        $sanitizeUrl = function (?string $url): string {
+            if (empty($url)) {
+                return '';
+            }
+            return preg_replace('/^https?:\/\/(?:127\.0\.0\.1|localhost)(?::\d+)?/i', '', $url);
+        };
+
+        $siteLogo = $sanitizeUrl($siteLogo);
+        $siteFavicon = $sanitizeUrl($siteFavicon);
+
         return [
             ...parent::share($request),
             'auth' => [

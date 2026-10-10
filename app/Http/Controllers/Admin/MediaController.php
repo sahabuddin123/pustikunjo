@@ -31,7 +31,7 @@ class MediaController extends Controller
                 @chmod($file->getRealPath(), 0666);
                 $mediaList[] = [
                     'filename' => $filename,
-                    'url' => asset('uploads/' . $filename),
+                    'url' => '/uploads/' . $filename,
                     'size' => round($file->getSize() / 1024, 2) . ' KB',
                     'updated_at' => date('Y-m-d H:i:s', $file->getMTime()),
                 ];
@@ -107,7 +107,7 @@ class MediaController extends Controller
 
         $mediaItem = [
             'filename' => $finalFilename,
-            'url' => asset('uploads/' . $finalFilename),
+            'url' => '/uploads/' . $finalFilename,
             'size' => round(filesize($finalPath) / 1024, 2) . ' KB',
             'updated_at' => date('Y-m-d H:i:s'),
         ];
@@ -160,7 +160,7 @@ class MediaController extends Controller
             'message' => 'ছবি সফলভাবে আপলোড ও WebP ফরম্যাটে সংরক্ষিত হয়েছে!',
             'media' => [
                 'filename' => $finalFilename,
-                'url' => asset('uploads/' . $finalFilename),
+                'url' => '/uploads/' . $finalFilename,
                 'size' => round(filesize($finalPath) / 1024, 2) . ' KB',
                 'updated_at' => date('Y-m-d H:i:s'),
             ],

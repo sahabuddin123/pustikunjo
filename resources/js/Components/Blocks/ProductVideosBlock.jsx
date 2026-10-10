@@ -14,6 +14,11 @@ import {
     ShoppingBag,
 } from 'lucide-react';
 
+const sanitizeImageUrl = (url) => {
+    if (!url || typeof url !== 'string') return '';
+    return url.replace(/^https?:\/\/(?:127\.0\.0\.1|localhost)(?::\d+)?/i, '');
+};
+
 export default function ProductVideosBlock({ data = {} }) {
     const heading = data.heading || 'Product Videos';
     const [activeVideoModal, setActiveVideoModal] = useState(null);
@@ -67,14 +72,16 @@ export default function ProductVideosBlock({ data = {} }) {
         const fallbackPoster = defaultItem.poster;
         const fallbackPromo = defaultItem.promoBanner;
 
-        const poster = item.poster || fallbackPoster;
-        const promoBanner = item.promoBanner || fallbackPromo;
+        const poster = sanitizeImageUrl(item.poster) || fallbackPoster;
+        const promoBanner = sanitizeImageUrl(item.promoBanner) || fallbackPromo;
+        const thumb = sanitizeImageUrl(item.thumb) || promoBanner;
 
         return {
             ...defaultItem,
             ...item,
             poster,
             promoBanner,
+            thumb,
             fallbackPoster,
             fallbackPromo,
         };

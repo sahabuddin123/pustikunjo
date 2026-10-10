@@ -18,7 +18,7 @@
     @php
         $appGeneral = \App\Models\SiteSetting::get('general_settings', []);
         $appAppearance = \App\Models\SiteSetting::get('appearance_settings', []);
-        $appFavicon = $appGeneral['favicon'] ?? '';
+        $appFavicon = preg_replace('/^https?:\/\/(?:127\.0\.0\.1|localhost)(?::\d+)?/i', '', $appGeneral['favicon'] ?? '');
         $primaryColor = $appAppearance['primary_color'] ?? '#0d6838';
         $primaryHover = $appAppearance['primary_hover'] ?? '#0a522c';
         $accentColor = $appAppearance['accent_color'] ?? '#f59e0b';
@@ -118,6 +118,7 @@
         if ($isProduct && !empty($pageProduct['slug'])) {
             $resolvedOgImage = url('/social-image/product/' . $pageProduct['slug'] . '.jpg');
         } elseif (!empty($rawOgImage)) {
+            $rawOgImage = preg_replace('/^https?:\/\/(?:127\.0\.0\.1|localhost)(?::\d+)?/i', '', $rawOgImage);
             $resolvedOgImage = (str_starts_with($rawOgImage, 'http://') || str_starts_with($rawOgImage, 'https://'))
                 ? $rawOgImage
                 : url($rawOgImage);

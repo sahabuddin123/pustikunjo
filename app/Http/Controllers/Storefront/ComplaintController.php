@@ -80,7 +80,7 @@ class ComplaintController extends Controller
                 if ($file && $file->isValid()) {
                     $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
                     $file->move($uploadPath, $filename);
-                    $allPhotos[] = asset('uploads/complaints/' . $filename);
+                    $allPhotos[] = '/uploads/complaints/' . $filename;
                 }
             }
         }

@@ -23,18 +23,26 @@ const DEFAULT_SLIDES = [
     },
 ];
 
+const sanitizeImageUrl = (url) => {
+    if (!url || typeof url !== 'string') return '';
+    return url.replace(/^https?:\/\/(?:127\.0\.0\.1|localhost)(?::\d+)?/i, '');
+};
+
 export default function HeroBlock({ data = {} }) {
     const rawSlides = (data.slides && data.slides.length > 0) ? data.slides : DEFAULT_SLIDES;
 
     const slides = rawSlides.map((slide, idx) => {
         const fallback = DEFAULT_SLIDES[idx % DEFAULT_SLIDES.length];
-        if (typeof slide === 'string') {
-            return { image: slide, url: fallback.url, alt: fallback.alt };
-        }
+        const rawImg = typeof slide === 'string' ? slide : (slide?.image || fallback.image);
+        const cleanImg = sanitizeImageUrl(rawImg) || fallback.image;
+        const targetUrl = (typeof slide === 'object' && slide.url) ? slide.url : fallback.url;
+        const altText = (typeof slide === 'object' && slide.alt) ? slide.alt : fallback.alt;
+
         return {
-            image: slide.image || fallback.image,
-            url: slide.url || fallback.url,
-            alt: slide.alt || fallback.alt,
+            image: cleanImg,
+            fallbackImage: fallback.image,
+            url: targetUrl,
+            alt: altText,
         };
     });
 
