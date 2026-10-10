@@ -222,14 +222,18 @@ class SmsService
         }
 
         // Log SMS in database
-        SmsLog::create([
-            'recipient_phone' => $cleanPhone,
-            'message' => $message,
-            'event_name' => $eventName,
-            'provider' => $provider,
-            'status' => $status,
-            'response_raw' => $responseRaw,
-        ]);
+        try {
+            SmsLog::create([
+                'recipient_phone' => $cleanPhone,
+                'message' => $message,
+                'event_name' => $eventName,
+                'provider' => $provider,
+                'status' => $status,
+                'response_raw' => $responseRaw,
+            ]);
+        } catch (\Throwable $e) {
+            Log::warning('SmsLog create failed: ' . $e->getMessage());
+        }
 
         return [
             'success' => $status === 'sent',
