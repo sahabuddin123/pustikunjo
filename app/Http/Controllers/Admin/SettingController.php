@@ -177,7 +177,17 @@ class SettingController extends Controller
             if (empty($courierData['secret_key']) && !empty($existingCourier['secret_key'])) {
                 $courierData['secret_key'] = $existingCourier['secret_key'];
             }
+            if (!empty($courierData['api_key'])) {
+                $courierData['api_key'] = trim($courierData['api_key']);
+            }
+            if (!empty($courierData['secret_key'])) {
+                $courierData['secret_key'] = trim($courierData['secret_key']);
+            }
+            if (!empty($courierData['base_url'])) {
+                $courierData['base_url'] = rtrim(trim($courierData['base_url']), '/');
+            }
             SiteSetting::set('courier_steadfast', $courierData, 'courier');
+            cache()->forget('sf_balance_' . md5($courierData['api_key'] ?? ''));
         }
         if ($request->has('fraudSettings')) {
             SiteSetting::set('fraud_settings', $request->input('fraudSettings'), 'fraud');

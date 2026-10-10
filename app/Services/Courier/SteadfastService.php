@@ -36,7 +36,39 @@ class SteadfastService
      */
     public function isConfigured(): bool
     {
-        return !empty($this->apiKey) && !empty($this->secretKey);
+        return !empty(trim($this->apiKey)) && !empty(trim($this->secretKey));
+    }
+
+    /**
+     * Build hardened, reliable HTTP client for Steadfast API
+     */
+    protected function client(int $timeout = 8, int $connectTimeout = 4)
+    {
+        $client = Http::timeout($timeout)
+            ->connectTimeout($connectTimeout)
+            ->withOptions([
+                'version' => 1.1,
+                'curl' => [
+                    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                    CURLOPT_IPRESOLVE => CURL_IPRESOLVE_V4,
+                    CURLOPT_FORBID_REUSE => true,
+                    CURLOPT_FRESH_CONNECT => true,
+                    CURLOPT_SSLVERSION => CURL_SSLVERSION_TLSv1_2,
+                ],
+            ])
+            ->withHeaders([
+                'Api-Key' => trim($this->apiKey),
+                'Secret-Key' => trim($this->secretKey),
+                'Content-Type' => 'application/json',
+                'Accept' => 'application/json',
+                'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
+            ]);
+
+        if (app()->isLocal() || !ini_get('curl.cainfo')) {
+            $client->withoutVerifying();
+        }
+
+        return $client;
     }
 
     /**
@@ -82,12 +114,7 @@ class SteadfastService
         // 1. Live API call if credentials exist
         if ($this->isConfigured()) {
             try {
-                $response = Http::timeout(15)
-                    ->withHeaders([
-                        'Api-Key' => $this->apiKey,
-                        'Secret-Key' => $this->secretKey,
-                        'Content-Type' => 'application/json',
-                    ])
+                $response = $this->client(12, 4)
                     ->post($this->baseUrl . '/create_order', $payload);
 
                 $data = $response->json();
@@ -193,12 +220,7 @@ class SteadfastService
                     ? $this->baseUrl . '/status_by_trackingcode/' . $trackingCodeOrCid
                     : $this->baseUrl . '/status_by_cid/' . $trackingCodeOrCid;
 
-                $response = Http::timeout(10)
-                    ->withHeaders([
-                        'Api-Key' => $this->apiKey,
-                        'Secret-Key' => $this->secretKey,
-                    ])
-                    ->get($url);
+                $response = $this->client(8, 3)->get($url);
 
                 if ($response->successful()) {
                     $data = $response->json();
@@ -236,12 +258,7 @@ class SteadfastService
                     ? $this->baseUrl . '/status_by_trackingcode/' . $code
                     : $this->baseUrl . '/status_by_cid/' . $code;
 
-                $response = Http::timeout(10)
-                    ->withHeaders([
-                        'Api-Key' => $this->apiKey,
-                        'Secret-Key' => $this->secretKey,
-                    ])
-                    ->get($url);
+                $response = $this->client(8, 3)->get($url);
 
                 if ($response->successful()) {
                     $data = $response->json();
@@ -277,7 +294,7 @@ class SteadfastService
     /**
      * Get Steadfast Account Balance
      */
-    public function getBalance(): array
+    public function getBalance(bool $forceRefresh = false): array
     {
         if (!$this->isConfigured()) {
             return [
@@ -288,38 +305,43 @@ class SteadfastService
             ];
         }
 
+        $cacheKey = 'sf_balance_' . md5($this->apiKey);
+        if (!$forceRefresh && cache()->has($cacheKey)) {
+            return cache()->get($cacheKey);
+        }
+
         try {
-            $response = Http::timeout(10)
-                ->withHeaders([
-                    'Api-Key' => $this->apiKey,
-                    'Secret-Key' => $this->secretKey,
-                ])
-                ->get($this->baseUrl . '/get_balance');
+            $response = $this->client(6, 3)->get($this->baseUrl . '/get_balance');
 
             if ($response->successful()) {
                 $data = $response->json();
                 $balance = (float) ($data['current_balance'] ?? ($data['balance'] ?? 0));
-                return [
+                $result = [
                     'success' => true,
                     'balance' => $balance,
                     'is_configured' => true,
                     'raw' => $data,
                     'message' => "বর্তমান ব্যালেন্স: ৳ {$balance}",
                 ];
+                cache()->put($cacheKey, $result, now()->addMinutes(2));
+                return $result;
             }
 
             return [
                 'success' => false,
                 'balance' => 0.0,
                 'is_configured' => true,
-                'message' => 'ব্যালেন্স তথ্য আনা সম্ভব হয়নি।',
+                'message' => $response->status() === 401 
+                    ? 'API Credentials ভুল (Unauthorized)।' 
+                    : 'ব্যালেন্স তথ্য আনা সম্ভব হয়নি (Status: ' . $response->status() . ')।',
             ];
         } catch (\Exception $e) {
+            Log::warning('Steadfast getBalance error: ' . $e->getMessage());
             return [
                 'success' => false,
                 'balance' => 0.0,
                 'is_configured' => true,
-                'message' => 'ত্রুটি: ' . $e->getMessage(),
+                'message' => 'কানেকশন টাইমআউট বা ড্রপ হয়েছে।',
             ];
         }
     }
@@ -373,16 +395,16 @@ class SteadfastService
         }
 
         try {
-            $response = Http::timeout(10)
-                ->withHeaders([
-                    'Api-Key' => $this->apiKey,
-                    'Secret-Key' => $this->secretKey,
-                ])
-                ->get($this->baseUrl . '/get_balance');
+            $response = $this->client(7, 3)->get($this->baseUrl . '/get_balance');
 
             if ($response->successful()) {
                 $data = $response->json();
-                $balance = $data['current_balance'] ?? ($data['balance'] ?? 'Active');
+                $balance = $data['current_balance'] ?? ($data['balance'] ?? 0);
+                
+                // Clear balance cache so fresh balance reflects immediately
+                $cacheKey = 'sf_balance_' . md5($this->apiKey);
+                cache()->forget($cacheKey);
+
                 return [
                     'success' => true,
                     'message' => "কানেকশন সফল! বর্তমান ব্যালেন্স: ৳ {$balance}",
@@ -390,14 +412,22 @@ class SteadfastService
                 ];
             }
 
+            if ($response->status() === 401) {
+                return [
+                    'success' => false,
+                    'message' => 'স্টেডফাস্ট সার্ভার রেসপন্স দিয়েছে, কিন্তু API Credentials (Api-Key বা Secret-Key) ভুল। অনুগ্রহ করে সঠিক Key চেক করুন।',
+                ];
+            }
+
             return [
                 'success' => false,
-                'message' => 'স্টেডফাস্ট সার্ভারে সংযোগ ব্যর্থ হয়েছে। অনুগ্রহ করে কি (API Key / Secret Key) চেক করুন।',
+                'message' => 'স্টেডফাস্ট সার্ভারে সংযোগ ব্যর্থ হয়েছে (Status: ' . $response->status() . ')।',
             ];
         } catch (\Exception $e) {
+            Log::error('Steadfast testConnection exception: ' . $e->getMessage());
             return [
                 'success' => false,
-                'message' => 'ত্রুটি: ' . $e->getMessage(),
+                'message' => 'স্টেডফাস্ট সার্ভারে সংযোগ টাইমআউট হয়েছে। অনুগ্রহ করে ইন্টারনেট ও কি চেক করুন।',
             ];
         }
     }
