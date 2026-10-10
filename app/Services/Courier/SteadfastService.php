@@ -306,8 +306,12 @@ class SteadfastService
         }
 
         $cacheKey = 'sf_balance_' . md5($this->apiKey);
-        if (!$forceRefresh && cache()->has($cacheKey)) {
-            return cache()->get($cacheKey);
+        try {
+            if (!$forceRefresh && cache()->has($cacheKey)) {
+                return cache()->get($cacheKey);
+            }
+        } catch (\Throwable $e) {
+            // Fallback if cache driver fails
         }
 
         try {
@@ -323,7 +327,11 @@ class SteadfastService
                     'raw' => $data,
                     'message' => "বর্তমান ব্যালেন্স: ৳ {$balance}",
                 ];
-                cache()->put($cacheKey, $result, now()->addMinutes(2));
+                try {
+                    cache()->put($cacheKey, $result, now()->addMinutes(2));
+                } catch (\Throwable $e) {
+                    // Ignore cache write error
+                }
                 return $result;
             }
 
@@ -335,7 +343,7 @@ class SteadfastService
                     ? 'API Credentials ভুল (Unauthorized)।' 
                     : 'ব্যালেন্স তথ্য আনা সম্ভব হয়নি (Status: ' . $response->status() . ')।',
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             Log::warning('Steadfast getBalance error: ' . $e->getMessage());
             return [
                 'success' => false,
@@ -402,8 +410,12 @@ class SteadfastService
                 $balance = $data['current_balance'] ?? ($data['balance'] ?? 0);
                 
                 // Clear balance cache so fresh balance reflects immediately
-                $cacheKey = 'sf_balance_' . md5($this->apiKey);
-                cache()->forget($cacheKey);
+                try {
+                    $cacheKey = 'sf_balance_' . md5($this->apiKey);
+                    cache()->forget($cacheKey);
+                } catch (\Throwable $e) {
+                    // Ignore cache clear error
+                }
 
                 return [
                     'success' => true,
@@ -423,7 +435,7 @@ class SteadfastService
                 'success' => false,
                 'message' => 'স্টেডফাস্ট সার্ভারে সংযোগ ব্যর্থ হয়েছে (Status: ' . $response->status() . ')।',
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             Log::error('Steadfast testConnection exception: ' . $e->getMessage());
             return [
                 'success' => false,

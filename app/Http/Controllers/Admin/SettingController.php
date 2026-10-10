@@ -187,7 +187,11 @@ class SettingController extends Controller
                 $courierData['base_url'] = rtrim(trim($courierData['base_url']), '/');
             }
             SiteSetting::set('courier_steadfast', $courierData, 'courier');
-            cache()->forget('sf_balance_' . md5($courierData['api_key'] ?? ''));
+            try {
+                cache()->forget('sf_balance_' . md5($courierData['api_key'] ?? ''));
+            } catch (\Throwable $e) {
+                // Ignore cache clearing failure
+            }
         }
         if ($request->has('fraudSettings')) {
             SiteSetting::set('fraud_settings', $request->input('fraudSettings'), 'fraud');
@@ -228,11 +232,16 @@ class SettingController extends Controller
      */
     public function testCourier(Request $request, SteadfastService $steadfast)
     {
-        $result = $steadfast->testConnection();
-        if ($result['success']) {
-            return back()->with('success', $result['message']);
+        try {
+            $result = $steadfast->testConnection();
+            if (!empty($result['success'])) {
+                return back()->with('success', $result['message']);
+            }
+            return back()->with('error', $result['message'] ?? 'কুরিয়ার সার্ভারে সংযোগ স্থাপন করা সম্ভব হয়নি।');
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::error('testCourier error: ' . $e->getMessage());
+            return back()->with('error', 'কুরিয়ার কানেকশন টেস্টে সমস্যা হয়েছে: ' . $e->getMessage());
         }
-        return back()->with('error', $result['message']);
     }
 
     /**
@@ -287,7 +296,7 @@ class SettingController extends Controller
             });
 
             return back()->with('success', "টেস্ট ইমেইল সফলভাবে {$recipient} ঠিকানায় পাঠানো হয়েছে!");
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return back()->with('error', 'ইমেইল পাঠানো ব্যর্থ হয়েছে: ' . $e->getMessage());
         }
     }
@@ -300,12 +309,16 @@ class SettingController extends Controller
         $request->validate(['test_phone' => 'required|string']);
         $phone = $request->input('test_phone');
 
-        $smsOverride = $request->input('sms', []);
-        $result = $smsService->sendSms($phone, 'এটি পুষ্টি কুঞ্জ এডমিন প্যানেল থেকে পাঠানো টেস্ট এসএমএস।', null, $smsOverride);
-        if (!empty($result['success'])) {
-            return back()->with('success', "টেস্ট এসএমএস সফলভাবে {$phone} নম্বরে পাঠানো হয়েছে!");
+        try {
+            $smsOverride = $request->input('sms', []);
+            $result = $smsService->sendSms($phone, 'এটি পুষ্টি কুঞ্জ এডমিন প্যানেল থেকে পাঠানো টেস্ট এসএমএস।', null, $smsOverride);
+            if (!empty($result['success'])) {
+                return back()->with('success', "টেস্ট এসএমএস সফলভাবে {$phone} নম্বরে পাঠানো হয়েছে!");
+            }
+            $errorMsg = $result['response'] ?? ($result['error'] ?? 'এসএমএস গেটওয়ে সেটিংস চেক করুন।');
+            return back()->with('error', 'এসএমএস পাঠানো ব্যর্থ হয়েছে: ' . $errorMsg);
+        } catch (\Throwable $e) {
+            return back()->with('error', 'এসএমএস গেটওয়ে সংযোগ ব্যর্থ: ' . $e->getMessage());
         }
-        $errorMsg = $result['response'] ?? ($result['error'] ?? 'এসএমএস গেটওয়ে সেটিংস চেক করুন।');
-        return back()->with('error', 'এসএমএস পাঠানো ব্যর্থ হয়েছে: ' . $errorMsg);
     }
 }
