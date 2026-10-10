@@ -4,12 +4,12 @@ import { CartProvider, useCart } from '@/Context/CartContext';
 import Header from '@/Components/Storefront/Header';
 import Footer from '@/Components/Storefront/Footer';
 import CartDrawer from '@/Components/Storefront/CartDrawer';
-import { MessageCircle, ShoppingBag, Home, Search, PhoneCall, CheckCircle2, AlertCircle, Truck, ChevronUp } from 'lucide-react';
+import { MessageCircle, ShoppingBag, Home, Search, PhoneCall, CheckCircle2, AlertCircle, Truck, ChevronUp, User } from 'lucide-react';
 import { trackEvent } from '@/Services/Analytics';
 import { formatWhatsAppUrl } from '@/Utils/whatsapp';
 
 function StorefrontContent({ children, meta = {} }) {
-    const { siteConfig, flash, marketing, seo } = usePage().props;
+    const { siteConfig, flash, marketing, seo, auth } = usePage().props;
     const { cartCount, setIsCartOpen, toastMessage } = useCart();
     const [showScrollTop, setShowScrollTop] = useState(false);
 
@@ -43,6 +43,10 @@ function StorefrontContent({ children, meta = {} }) {
     const isHome = url === '/' || url === '';
     const isShop = typeof url === 'string' && (url.startsWith('/shop') || url.startsWith('/product') || url.startsWith('/category'));
     const isTracking = typeof url === 'string' && url.startsWith('/track-order');
+    const isAccount = typeof url === 'string' && (url.startsWith('/my-account') || url.startsWith('/login') || url.startsWith('/register'));
+
+    const isLoggedIn = !!(auth?.user || auth?.customer_identifier);
+    const userInitial = auth?.user?.name ? auth.user.name.charAt(0).toUpperCase() : (auth?.customer_identifier ? 'গ' : null);
 
     return (
         <div className="min-h-screen flex flex-col bg-[#F8FAF8] text-gray-900 font-sans selection:bg-emerald-700 selection:text-white overflow-x-hidden">
@@ -188,13 +192,34 @@ function StorefrontContent({ children, meta = {} }) {
                     <span className="text-[11px] mt-0.5">ট্র্যাকিং</span>
                 </Link>
 
-                <a
-                    href={`tel:${(siteConfig?.phone || '01700000000').replace(/[^0-9+]/g, '')}`}
-                    className="flex flex-col items-center py-0.5 min-w-[54px] text-gray-500 hover:text-emerald-700 font-medium transition-colors"
+                <Link
+                    href={isLoggedIn ? "/my-account" : "/login"}
+                    className={`flex flex-col items-center py-0.5 min-w-[54px] transition-colors ${
+                        isAccount ? 'text-[#0B3E25] font-black' : 'text-gray-500 hover:text-emerald-700 font-medium'
+                    }`}
+                    title={isLoggedIn ? "আমার অ্যাকাউন্ট" : "লগইন"}
+                    aria-label={isLoggedIn ? "আমার অ্যাকাউন্ট" : "লগইন"}
                 >
-                    <PhoneCall className="w-5 h-5 text-[#D48828]" />
-                    <span className="text-[11px] mt-0.5">কল</span>
-                </a>
+                    <div className="relative flex items-center justify-center">
+                        {isLoggedIn ? (
+                            <div className={`w-5.5 h-5.5 rounded-full flex items-center justify-center text-[11px] font-black transition-all ${
+                                isAccount
+                                    ? 'bg-[#0B3E25] text-white ring-2 ring-[#0B3E25]/30 shadow-xs'
+                                    : 'bg-[#0B3E25] text-white shadow-xs'
+                            }`}>
+                                {userInitial || <User className="w-3.5 h-3.5 text-white" />}
+                            </div>
+                        ) : (
+                            <User className={`w-5 h-5 ${isAccount ? 'text-[#0B3E25]' : 'text-gray-500'}`} />
+                        )}
+                        {isAccount && (
+                            <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-[#0B3E25] rounded-full" />
+                        )}
+                    </div>
+                    <span className="text-[11px] mt-0.5">
+                        {isLoggedIn ? 'অ্যাকাউন্ট' : 'লগইন'}
+                    </span>
+                </Link>
             </nav>
         </div>
     );

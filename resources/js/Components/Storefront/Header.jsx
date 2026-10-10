@@ -127,35 +127,37 @@ export default function Header() {
                             </span>
                         </button>
 
-                        {/* User Account / Auth Modal Trigger */}
-                        {isLoggedIn ? (
-                            <Link
-                                href="/my-account"
-                                className="relative flex items-center gap-1.5 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full bg-emerald-700/80 hover:bg-[#D99A26] border border-emerald-500/40 text-white transition-all shadow-xs cursor-pointer group active:scale-95"
-                                title="আমার অ্যাকাউন্ট / ড্যাশবোর্ড"
-                                aria-label="আমার ড্যাশবোর্ড"
-                            >
-                                <div className="w-5 h-5 rounded-full bg-white text-[#0B3E25] flex items-center justify-center text-[11px] font-black shrink-0 shadow-2xs">
-                                    {auth?.user?.name ? auth.user.name.charAt(0).toUpperCase() : <User className="w-3 h-3 text-[#0B3E25]" />}
-                                </div>
-                                <span className="hidden md:inline text-sm font-medium text-white max-w-[85px] truncate">
-                                    {userName ? userName.split(' ')[0] : 'প্রোফাইল'}
-                                </span>
-                            </Link>
-                        ) : (
-                            <button
-                                type="button"
-                                onClick={() => setIsAuthModalOpen(true)}
-                                className="relative flex items-center gap-1.5 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 text-white transition-all shadow-xs cursor-pointer active:scale-95"
-                                title="লগইন বা রেজিস্ট্রেশন করুন"
-                                aria-label="লগইন বা রেজিস্ট্রেশন"
-                            >
-                                <User className="w-4 h-4 text-white" />
-                                <span className="hidden md:inline text-sm font-medium text-white">
-                                    লগইন
-                                </span>
-                            </button>
-                        )}
+                        {/* User Account / Auth Modal Trigger (Desktop/Tablet: visible here; Mobile: moved to sticky bottom navigation bar) */}
+                        <div className="hidden sm:flex items-center">
+                            {isLoggedIn ? (
+                                <Link
+                                    href="/my-account"
+                                    className="relative flex items-center gap-1.5 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full bg-emerald-700/80 hover:bg-[#D99A26] border border-emerald-500/40 text-white transition-all shadow-xs cursor-pointer group active:scale-95"
+                                    title="আমার অ্যাকাউন্ট / ড্যাশবোর্ড"
+                                    aria-label="আমার ড্যাশবোর্ড"
+                                >
+                                    <div className="w-5 h-5 rounded-full bg-white text-[#0B3E25] flex items-center justify-center text-[11px] font-black shrink-0 shadow-2xs">
+                                        {auth?.user?.name ? auth.user.name.charAt(0).toUpperCase() : <User className="w-3 h-3 text-[#0B3E25]" />}
+                                    </div>
+                                    <span className="hidden md:inline text-sm font-medium text-white max-w-[85px] truncate">
+                                        {userName ? userName.split(' ')[0] : 'প্রোফাইল'}
+                                    </span>
+                                </Link>
+                            ) : (
+                                <button
+                                    type="button"
+                                    onClick={() => setIsAuthModalOpen(true)}
+                                    className="relative flex items-center gap-1.5 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 text-white transition-all shadow-xs cursor-pointer active:scale-95"
+                                    title="লগইন বা রেজিস্ট্রেশন করুন"
+                                    aria-label="লগইন বা রেজিস্ট্রেশন"
+                                >
+                                    <User className="w-4 h-4 text-white" />
+                                    <span className="hidden md:inline text-sm font-medium text-white">
+                                        লগইন
+                                    </span>
+                                </button>
+                            )}
+                        </div>
                     </div>
                 </div>
 
