@@ -4,7 +4,7 @@ import { CartProvider, useCart } from '@/Context/CartContext';
 import Header from '@/Components/Storefront/Header';
 import Footer from '@/Components/Storefront/Footer';
 import CartDrawer from '@/Components/Storefront/CartDrawer';
-import { MessageCircle, ShoppingBag, Home, Search, PhoneCall, CheckCircle2, AlertCircle, Truck, ChevronUp, User } from 'lucide-react';
+import { MessageCircle, ShoppingBag, Home, PhoneCall, CheckCircle2, AlertCircle, Truck, ChevronUp, User } from 'lucide-react';
 import { trackEvent } from '@/Services/Analytics';
 import { formatWhatsAppUrl } from '@/Utils/whatsapp';
 
@@ -41,7 +41,6 @@ function StorefrontContent({ children, meta = {} }) {
 
     const { url } = usePage();
     const isHome = url === '/' || url === '';
-    const isShop = typeof url === 'string' && (url.startsWith('/shop') || url.startsWith('/product') || url.startsWith('/category'));
     const isTracking = typeof url === 'string' && url.startsWith('/track-order');
     const isAccount = typeof url === 'string' && (url.startsWith('/my-account') || url.startsWith('/login') || url.startsWith('/register'));
 
@@ -144,21 +143,6 @@ function StorefrontContent({ children, meta = {} }) {
                         )}
                     </div>
                     <span className="text-[11px] mt-0.5">হোম</span>
-                </Link>
-
-                <Link
-                    href="/shop"
-                    className={`flex flex-col items-center py-0.5 min-w-[54px] transition-colors ${
-                        isShop ? 'text-[#0B3E25] font-black' : 'text-gray-500 hover:text-emerald-700 font-medium'
-                    }`}
-                >
-                    <div className="relative">
-                        <Search className={`w-5 h-5 ${isShop ? 'text-[#0B3E25]' : 'text-gray-500'}`} />
-                        {isShop && (
-                            <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-[#0B3E25] rounded-full" />
-                        )}
-                    </div>
-                    <span className="text-[11px] mt-0.5">খুঁজুন</span>
                 </Link>
 
                 <button
