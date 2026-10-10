@@ -101,11 +101,11 @@ export default function ProductVideosBlock({ data = {} }) {
                 {/* Grid of 3 Columns: Video on top, Promotional Card on bottom */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-7">
                     {items.map((item, idx) => (
-                        <div key={item.id} className="flex flex-col gap-6 sm:gap-7">
+                        <div key={item.id} className="flex flex-col gap-4 sm:gap-7">
                             {/* TOP: Vertical Reel Video Card */}
                             <div
                                 onClick={() => setActiveVideoModal(item)}
-                                className="relative aspect-[212/368] w-full rounded-2xl overflow-hidden bg-black shadow-xs hover:shadow-md transition-all duration-300 group cursor-pointer border border-gray-100"
+                                className="relative aspect-[9/13] sm:aspect-[212/368] w-full rounded-2xl overflow-hidden bg-black shadow-xs hover:shadow-md transition-all duration-300 group cursor-pointer border border-gray-100"
                             >
                                 <img
                                     src={item.poster}
@@ -119,10 +119,10 @@ export default function ProductVideosBlock({ data = {} }) {
                                     }}
                                 />
 
-                                {/* Subtle Play Icon Overlay on Hover */}
-                                <div className="absolute inset-0 bg-black/10 group-hover:bg-black/30 transition-colors flex items-center justify-center">
-                                    <div className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-md border border-white/40 flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-all duration-300 transform group-hover:scale-110 shadow-lg">
-                                        <Play className="w-5 h-5 fill-current ml-0.5" />
+                                {/* Play Icon Overlay (visible on mobile so users know it's a video) */}
+                                <div className="absolute inset-0 bg-black/15 group-hover:bg-black/35 transition-colors flex items-center justify-center">
+                                    <div className="w-12 h-12 rounded-full bg-black/40 sm:bg-white/20 backdrop-blur-md border border-white/40 flex items-center justify-center text-white opacity-90 sm:opacity-0 group-hover:opacity-100 transition-all duration-300 transform group-hover:scale-110 shadow-lg">
+                                        <Play className="w-5 h-5 fill-current ml-0.5 text-white" />
                                     </div>
                                 </div>
                             </div>

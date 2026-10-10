@@ -24,32 +24,32 @@ export default function ProductGridBlock({ data = {}, products = [] }) {
 
     // Dynamic Product Count logic matching reference
     let containerClass = 'max-w-5xl mx-auto';
-    let gridColClass = 'grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8';
+    let gridColClass = 'grid-cols-2 md:grid-cols-3 gap-2.5 sm:gap-6 md:gap-8';
 
     if (displayProducts.length <= 3) {
-        // Balanced 3-column presentation with generous whitespace
+        // Balanced 3-column presentation with generous whitespace on desktop, 2-column on mobile
         containerClass = 'max-w-5xl mx-auto';
-        gridColClass = 'grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8';
+        gridColClass = 'grid-cols-2 md:grid-cols-3 gap-2.5 sm:gap-6 md:gap-8';
     } else if (displayProducts.length === 4) {
         // 4-column presentation
         containerClass = 'max-w-6xl mx-auto';
-        gridColClass = 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6';
+        gridColClass = 'grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-6';
     } else {
         // 5+ products: standard catalog grid
         containerClass = 'max-w-7xl mx-auto';
-        gridColClass = 'grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 sm:gap-6';
+        gridColClass = 'grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2.5 sm:gap-6';
     }
 
     return (
-        <section className="w-full bg-white py-8 sm:py-12 border-b border-gray-50">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <section className="w-full bg-white py-6 sm:py-12 border-b border-gray-50 select-none">
+            <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
                 {/* Section Header matching home_dektop.jpg */}
-                <div className="relative flex items-center justify-between mb-8 sm:mb-10">
+                <div className="relative flex items-center justify-between mb-5 sm:mb-10">
                     {/* Centered Heading with green & gold accent underline */}
                     <div className="w-full text-center">
-                        <h2 className="text-xl sm:text-2xl font-black text-gray-900 tracking-wider uppercase inline-block relative">
+                        <h2 className="text-lg sm:text-2xl font-black text-gray-900 tracking-wider uppercase inline-block relative">
                             {heading}
-                            <span className="block w-14 h-1 bg-gradient-to-r from-[#0B3E25] via-[#E5A93B] to-[#0B3E25] mx-auto mt-2.5 rounded-full shadow-2xs" />
+                            <span className="block w-12 sm:w-14 h-0.5 sm:h-1 bg-gradient-to-r from-[#0B3E25] via-[#E5A93B] to-[#0B3E25] mx-auto mt-2 sm:mt-2.5 rounded-full shadow-2xs" />
                         </h2>
                         {subheading && (
                             <p className="text-xs sm:text-sm text-gray-500 mt-1">
@@ -62,7 +62,7 @@ export default function ProductGridBlock({ data = {}, products = [] }) {
                     <div className="absolute right-0 top-1/2 -translate-y-1/2">
                         <Link
                             href={viewAllUrl}
-                            className="text-xs sm:text-sm font-bold text-gray-600 hover:text-[#D99A26] transition-colors"
+                            className="text-xs sm:text-sm font-bold text-[#0B3E25] hover:text-[#D99A26] transition-colors"
                         >
                             View All
                         </Link>

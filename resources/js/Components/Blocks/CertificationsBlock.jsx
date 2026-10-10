@@ -73,30 +73,30 @@ export default function CertificationsBlock({ data = {} }) {
     }, [activeCertModal]);
 
     return (
-        <section className="w-full bg-[#FAFCFA] py-12 sm:py-16 border-y border-gray-100 select-none">
+        <section className="w-full bg-[#FAFCFA] py-8 sm:py-16 border-y border-gray-100 select-none">
             <div className="max-w-6xl mx-auto px-4 sm:px-6">
                 {/* Heading and Subtitle */}
-                <div className="text-center max-w-2xl mx-auto mb-10 sm:mb-12">
-                    <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-[#0B3E25] text-xs font-bold mb-3 shadow-2xs">
+                <div className="text-center max-w-2xl mx-auto mb-6 sm:mb-12">
+                    <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-[#0B3E25] text-xs font-bold mb-2.5 shadow-2xs">
                         <Award className="w-3.5 h-3.5 text-emerald-700" />
                         <span>১০০% ল্যাব টেস্টে পরীক্ষিত ও নিরাপদ</span>
                     </div>
 
-                    <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900 tracking-tight font-sans">
+                    <h2 className="text-xl sm:text-3xl font-extrabold text-gray-900 tracking-tight font-sans">
                         {heading}
                     </h2>
 
                     {subheading && (
-                        <p className="text-xs sm:text-sm text-gray-600 font-medium mt-2 leading-relaxed">
+                        <p className="text-xs sm:text-sm text-gray-600 font-medium mt-1.5 leading-relaxed">
                             {subheading}
                         </p>
                     )}
 
-                    <div className="w-12 h-1 bg-[#0B3E25] mx-auto mt-3 rounded-full" />
+                    <div className="w-12 h-1 bg-[#0B3E25] mx-auto mt-2.5 rounded-full" />
                 </div>
 
                 {/* 3 Certificates Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-8">
                     {items.map((item, idx) => (
                         <div
                             key={idx}

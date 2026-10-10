@@ -98,9 +98,9 @@ export default function HeroBlock({ data = {} }) {
 
     return (
         <section className="w-full bg-white overflow-hidden select-none">
-            {/* 100% Full Width Clean Image Slider - Exact 1920x650 Aspect Ratio */}
+            {/* 100% Full Width Clean Image Slider - Optimized Aspect Ratio for Mobile & Desktop */}
             <div
-                className="group relative w-full aspect-[1920/650] overflow-hidden bg-[#0B3E25]"
+                className="group relative w-full aspect-[16/8] sm:aspect-[1920/650] min-h-[165px] sm:min-h-[220px] md:min-h-[340px] overflow-hidden bg-[#0B3E25]"
                 onMouseEnter={() => setIsPaused(true)}
                 onMouseLeave={() => setIsPaused(false)}
                 onTouchStart={handleTouchStart}
@@ -143,13 +143,13 @@ export default function HeroBlock({ data = {} }) {
                     );
                 })}
 
-                {/* Left & Right Navigation Arrows */}
+                {/* Left & Right Navigation Arrows (Hidden on Mobile for touch swiping, visible on desktop) */}
                 {slides.length > 1 && (
                     <>
                         <button
                             onClick={prevSlide}
                             type="button"
-                            className="absolute left-3 sm:left-6 top-1/2 -translate-y-1/2 z-20 w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-black/40 hover:bg-[#0B3E25] hover:text-[#E5A93B] text-white backdrop-blur-xs flex items-center justify-center transition-all opacity-0 group-hover:opacity-100 focus:opacity-100 cursor-pointer shadow-md"
+                            className="hidden sm:flex absolute left-3 sm:left-6 top-1/2 -translate-y-1/2 z-20 w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-black/40 hover:bg-[#0B3E25] hover:text-[#E5A93B] text-white backdrop-blur-xs items-center justify-center transition-all opacity-0 group-hover:opacity-100 focus:opacity-100 cursor-pointer shadow-md"
                             aria-label="পূর্ববর্তী ব্যানার"
                         >
                             <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6" />
@@ -158,14 +158,14 @@ export default function HeroBlock({ data = {} }) {
                         <button
                             onClick={nextSlide}
                             type="button"
-                            className="absolute right-3 sm:right-6 top-1/2 -translate-y-1/2 z-20 w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-black/40 hover:bg-[#0B3E25] hover:text-[#E5A93B] text-white backdrop-blur-xs flex items-center justify-center transition-all opacity-0 group-hover:opacity-100 focus:opacity-100 cursor-pointer shadow-md"
+                            className="hidden sm:flex absolute right-3 sm:right-6 top-1/2 -translate-y-1/2 z-20 w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-black/40 hover:bg-[#0B3E25] hover:text-[#E5A93B] text-white backdrop-blur-xs items-center justify-center transition-all opacity-0 group-hover:opacity-100 focus:opacity-100 cursor-pointer shadow-md"
                             aria-label="পরবর্তী ব্যানার"
                         >
                             <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6" />
                         </button>
 
                         {/* Indicator Pill Dots */}
-                        <div className="absolute bottom-3 sm:bottom-5 inset-x-0 z-20 flex items-center justify-center gap-1.5 sm:gap-2">
+                        <div className="absolute bottom-2.5 sm:bottom-5 inset-x-0 z-20 flex items-center justify-center gap-1.5 sm:gap-2">
                             {slides.map((_, i) => (
                                 <button
                                     key={i}

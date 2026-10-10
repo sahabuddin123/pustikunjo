@@ -23,28 +23,28 @@ export default function StepCardsBlock({ data = {} }) {
     ];
 
     return (
-        <section className="w-full bg-white py-12 sm:py-16 select-none">
+        <section className="w-full bg-white py-8 sm:py-16 select-none">
             <div className="max-w-6xl mx-auto px-4 sm:px-6">
                 {/* Centered Heading with Golden Accent Bar */}
-                <div className="text-center mb-10 sm:mb-12">
-                    <h2 className="text-xl sm:text-2xl font-bold text-[#0B3E25] tracking-tight font-sans">
+                <div className="text-center mb-6 sm:mb-12">
+                    <h2 className="text-lg sm:text-2xl font-bold text-[#0B3E25] tracking-tight font-sans">
                         {heading}
                     </h2>
                     {subheading && (
-                        <p className="text-sm sm:text-base text-gray-600 mt-1.5 font-medium">
+                        <p className="text-xs sm:text-base text-gray-600 mt-1 font-medium">
                             {subheading}
                         </p>
                     )}
                     {/* Golden horizontal accent bar */}
-                    <div className="w-10 sm:w-12 h-1 bg-[#D48828] mx-auto mt-2.5 rounded-full" />
+                    <div className="w-10 sm:w-12 h-1 bg-[#D48828] mx-auto mt-2 rounded-full" />
                 </div>
 
                 {/* 3 Step Cards (01, 02, 03) */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-7">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5 sm:gap-7">
                     {steps.map((step, idx) => (
                         <div
                             key={idx}
-                            className="bg-[#FAF6EE] rounded-2xl p-6 sm:p-7 border border-[#F2ECE0] shadow-[0_2px_6px_rgba(0,0,0,0.015)] hover:shadow-md transition-all duration-300 flex flex-col justify-start"
+                            className="bg-[#FAF6EE] rounded-xl sm:rounded-2xl p-4 sm:p-7 border border-[#F2ECE0] shadow-[0_2px_6px_rgba(0,0,0,0.015)] hover:shadow-md transition-all duration-300 flex flex-col justify-start"
                         >
                             {/* Golden Number */}
                             <span className="text-2xl sm:text-3xl font-extrabold text-[#D48828] font-sans block mb-2">

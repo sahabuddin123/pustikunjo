@@ -38,13 +38,13 @@ export default function Header() {
     return (
         <header className="w-full bg-[#0B3E25] text-white z-40 relative shadow-sm">
             {/* Main Header Bar matching home_dektop.jpg */}
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="flex items-center justify-between h-18 sm:h-20 gap-4">
+            <div className="max-w-7xl mx-auto px-3.5 sm:px-6 lg:px-8">
+                <div className="flex items-center justify-between h-15 sm:h-20 gap-2.5 sm:gap-4">
                     {/* Mobile Menu Toggle Button */}
                     <div className="flex items-center lg:hidden">
                         <button
                             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                            className="p-2 rounded-lg text-emerald-100 hover:text-white hover:bg-emerald-800 transition-colors"
+                            className="p-1.5 sm:p-2 rounded-lg text-emerald-100 hover:text-white hover:bg-emerald-800 transition-colors active:scale-95"
                             aria-label="মেনু খুলুন"
                         >
                             {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -56,7 +56,7 @@ export default function Header() {
                         <img
                             src={siteConfig?.logo || "/images/logo-white.png"}
                             alt={siteConfig?.name || 'Pusti Kunjo (পুষ্টি কুঞ্জ)'}
-                            className="h-9 sm:h-11 md:h-12 w-auto object-contain max-w-[180px] sm:max-w-[220px]"
+                            className="h-8.5 sm:h-11 md:h-12 w-auto object-contain max-w-[160px] sm:max-w-[220px]"
                             onError={(e) => {
                                 if (e.currentTarget.src !== '/images/logo-white.png' && !e.currentTarget.src.endsWith('/images/logo-white.png')) {
                                     e.currentTarget.src = '/images/logo-white.png';
@@ -86,11 +86,11 @@ export default function Header() {
                     </div>
 
                     {/* Right: Order Tracking & Cart */}
-                    <div className="flex items-center gap-3 sm:gap-4 shrink-0">
+                    <div className="flex items-center gap-1.5 sm:gap-4 shrink-0">
                         {/* Mobile Search Toggle */}
                         <button
                             onClick={() => setIsMobileSearchOpen(!isMobileSearchOpen)}
-                            className="lg:hidden p-2 rounded-lg text-emerald-100 hover:text-[#E5A93B]"
+                            className="lg:hidden p-1.5 sm:p-2 rounded-lg text-emerald-100 hover:text-[#E5A93B] active:scale-95 transition-transform"
                             aria-label="অনুসন্ধান"
                         >
                             <Search className="w-5 h-5" />
@@ -108,7 +108,7 @@ export default function Header() {
                         {/* Cart Trigger */}
                         <button
                             onClick={() => setIsCartOpen(true)}
-                            className="relative flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 text-white transition-all shadow-xs cursor-pointer"
+                            className="relative flex items-center gap-1.5 px-2.5 sm:px-3.5 py-1.5 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 text-white transition-all shadow-xs cursor-pointer active:scale-95"
                             title="শপিং কার্ট"
                             aria-label="শপিং কার্ট"
                         >
@@ -129,7 +129,7 @@ export default function Header() {
                         {isLoggedIn ? (
                             <Link
                                 href="/my-account"
-                                className="relative flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-700/80 hover:bg-[#D99A26] border border-emerald-500/40 text-white transition-all shadow-xs cursor-pointer group"
+                                className="relative flex items-center gap-1.5 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full bg-emerald-700/80 hover:bg-[#D99A26] border border-emerald-500/40 text-white transition-all shadow-xs cursor-pointer group active:scale-95"
                                 title="আমার অ্যাকাউন্ট / ড্যাশবোর্ড"
                                 aria-label="আমার ড্যাশবোর্ড"
                             >
@@ -144,7 +144,7 @@ export default function Header() {
                             <button
                                 type="button"
                                 onClick={() => setIsAuthModalOpen(true)}
-                                className="relative flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 text-white transition-all shadow-xs cursor-pointer"
+                                className="relative flex items-center gap-1.5 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 text-white transition-all shadow-xs cursor-pointer active:scale-95"
                                 title="লগইন বা রেজিস্ট্রেশন করুন"
                                 aria-label="লগইন বা রেজিস্ট্রেশন"
                             >

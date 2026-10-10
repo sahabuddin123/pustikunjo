@@ -39,6 +39,11 @@ function StorefrontContent({ children, meta = {} }) {
 
     const whatsappNumber = siteConfig?.whatsapp || '01700000000';
 
+    const { url } = usePage();
+    const isHome = url === '/' || url === '';
+    const isShop = typeof url === 'string' && (url.startsWith('/shop') || url.startsWith('/product') || url.startsWith('/category'));
+    const isTracking = typeof url === 'string' && url.startsWith('/track-order');
+
     return (
         <div className="min-h-screen flex flex-col bg-[#F8FAF8] text-gray-900 font-sans selection:bg-emerald-700 selection:text-white">
             <Head>
@@ -88,7 +93,7 @@ function StorefrontContent({ children, meta = {} }) {
 
             <Header />
 
-            <main className="flex-1 pb-16 sm:pb-0">
+            <main className="flex-1 pb-22 sm:pb-0">
                 {children}
             </main>
 
@@ -100,11 +105,11 @@ function StorefrontContent({ children, meta = {} }) {
             {showScrollTop && (
                 <button
                     onClick={scrollToTop}
-                    className="fixed bottom-36 sm:bottom-22 right-4 sm:right-6 z-40 w-9 h-9 sm:w-10 sm:h-10 rounded-lg bg-white border border-emerald-600/30 hover:border-emerald-600 text-emerald-700 hover:text-emerald-900 flex items-center justify-center shadow-md hover:shadow-lg transition-all duration-300 cursor-pointer group"
+                    className="fixed bottom-31 sm:bottom-22 right-3.5 sm:right-6 z-40 w-9 h-9 sm:w-10 sm:h-10 rounded-lg bg-white border border-emerald-600/30 hover:border-emerald-600 text-emerald-700 hover:text-emerald-900 flex items-center justify-center shadow-md hover:shadow-lg transition-all duration-300 cursor-pointer group"
                     title="উপরে যান"
                     aria-label="উপরে যান"
                 >
-                    <ChevronUp className="w-5 h-5 group-hover:-translate-y-0.5 transition-transform" />
+                    <ChevronUp className="w-4.5 h-4.5 sm:w-5 sm:h-5 group-hover:-translate-y-0.5 transition-transform" />
                 </button>
             )}
 
@@ -113,54 +118,84 @@ function StorefrontContent({ children, meta = {} }) {
                 href={formatWhatsAppUrl(whatsappNumber, 'হ্যালো পুষ্টি কুঞ্জ! পণ্য সম্পর্কে জানতে চাচ্ছি।')}
                 target="_blank"
                 rel="noreferrer"
-                className="fixed bottom-20 sm:bottom-6 right-4 sm:right-6 z-40 w-13 h-13 rounded-full bg-[#25D366] hover:bg-[#20bd5a] text-white flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
+                className="fixed bottom-18 sm:bottom-6 right-3.5 sm:right-6 z-40 w-11 h-11 sm:w-13 sm:h-13 rounded-full bg-[#25D366] hover:bg-[#20bd5a] text-white flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 active:scale-95"
                 title="WhatsApp এ সরাসরি কথা বলুন"
                 onClick={() => trackEvent('contact_click', { channel: 'whatsapp' })}
             >
-                <MessageCircle className="w-7 h-7 fill-current" />
+                <MessageCircle className="w-6 h-6 sm:w-7 sm:h-7 fill-current" />
             </a>
 
-            {/* Mobile Sticky Bottom Navigation (360px-430px optimized) */}
-            <div className="sm:hidden fixed bottom-0 inset-x-0 bg-white/95 backdrop-blur-md border-t border-gray-200 z-40 py-2 px-3 flex items-center justify-around shadow-2xl">
-                <Link href="/" className="flex flex-col items-center text-gray-600 hover:text-emerald-700 py-0.5 min-w-[50px]">
-                    <Home className="w-5 h-5" />
-                    <span className="text-[10px] font-bold mt-0.5">হোম</span>
+            {/* Mobile Sticky Bottom Navigation (Native App Style with Active States) */}
+            <nav className="sm:hidden fixed bottom-0 inset-x-0 bg-white/95 backdrop-blur-md border-t border-gray-200/80 z-40 py-1.5 px-2 flex items-center justify-around shadow-[0_-4px_20px_rgba(0,0,0,0.06)]">
+                <Link
+                    href="/"
+                    className={`flex flex-col items-center py-0.5 min-w-[54px] transition-colors ${
+                        isHome ? 'text-[#0B3E25] font-black' : 'text-gray-500 hover:text-emerald-700 font-medium'
+                    }`}
+                >
+                    <div className="relative">
+                        <Home className={`w-5 h-5 ${isHome ? 'text-[#0B3E25]' : 'text-gray-500'}`} />
+                        {isHome && (
+                            <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-[#0B3E25] rounded-full" />
+                        )}
+                    </div>
+                    <span className="text-[11px] mt-0.5">হোম</span>
                 </Link>
 
-                <Link href="/shop" className="flex flex-col items-center text-gray-600 hover:text-emerald-700 py-0.5 min-w-[50px]">
-                    <Search className="w-5 h-5" />
-                    <span className="text-[10px] font-bold mt-0.5">খুঁজুন</span>
+                <Link
+                    href="/shop"
+                    className={`flex flex-col items-center py-0.5 min-w-[54px] transition-colors ${
+                        isShop ? 'text-[#0B3E25] font-black' : 'text-gray-500 hover:text-emerald-700 font-medium'
+                    }`}
+                >
+                    <div className="relative">
+                        <Search className={`w-5 h-5 ${isShop ? 'text-[#0B3E25]' : 'text-gray-500'}`} />
+                        {isShop && (
+                            <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-[#0B3E25] rounded-full" />
+                        )}
+                    </div>
+                    <span className="text-[11px] mt-0.5">খুঁজুন</span>
                 </Link>
 
                 <button
                     onClick={() => setIsCartOpen(true)}
-                    className="relative flex flex-col items-center text-gray-700 hover:text-emerald-700 py-0.5 min-w-[50px]"
+                    className="relative flex flex-col items-center py-0.5 min-w-[54px] text-gray-700 hover:text-emerald-800 transition-colors"
                     aria-label="কার্ট"
                 >
                     <div className="relative">
-                        <ShoppingBag className="w-5 h-5 text-emerald-800" />
+                        <ShoppingBag className="w-5 h-5 text-[#0B3E25]" />
                         {cartCount > 0 && (
-                            <span className="absolute -top-1.5 -right-2 bg-rose-600 text-white text-[10px] font-black w-4 h-4 rounded-full flex items-center justify-center shadow-xs">
+                            <span className="absolute -top-1.5 -right-2 bg-gradient-to-r from-[#D99A26] to-[#E5A93B] text-white text-[10px] font-black w-4.5 h-4.5 rounded-full flex items-center justify-center shadow-xs border border-white">
                                 {cartCount}
                             </span>
                         )}
                     </div>
-                    <span className="text-[10px] font-extrabold text-emerald-800 mt-0.5">কার্ট</span>
+                    <span className="text-[11px] font-extrabold text-[#0B3E25] mt-0.5">কার্ট</span>
                 </button>
 
-                <Link href="/track-order" className="flex flex-col items-center text-gray-600 hover:text-emerald-700 py-0.5 min-w-[50px]">
-                    <Truck className="w-5 h-5 text-emerald-700" />
-                    <span className="text-[10px] font-bold mt-0.5">ট্র্যাকিং</span>
+                <Link
+                    href="/track-order"
+                    className={`flex flex-col items-center py-0.5 min-w-[54px] transition-colors ${
+                        isTracking ? 'text-[#0B3E25] font-black' : 'text-gray-500 hover:text-emerald-700 font-medium'
+                    }`}
+                >
+                    <div className="relative">
+                        <Truck className={`w-5 h-5 ${isTracking ? 'text-[#0B3E25]' : 'text-gray-500'}`} />
+                        {isTracking && (
+                            <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-[#0B3E25] rounded-full" />
+                        )}
+                    </div>
+                    <span className="text-[11px] mt-0.5">ট্র্যাকিং</span>
                 </Link>
 
                 <a
                     href={`tel:${(siteConfig?.phone || '01700000000').replace(/[^0-9+]/g, '')}`}
-                    className="flex flex-col items-center text-gray-600 hover:text-emerald-700 py-0.5 min-w-[50px]"
+                    className="flex flex-col items-center py-0.5 min-w-[54px] text-gray-500 hover:text-emerald-700 font-medium transition-colors"
                 >
-                    <PhoneCall className="w-5 h-5 text-amber-600" />
-                    <span className="text-[10px] font-bold mt-0.5">কল</span>
+                    <PhoneCall className="w-5 h-5 text-[#D48828]" />
+                    <span className="text-[11px] mt-0.5">কল</span>
                 </a>
-            </div>
+            </nav>
         </div>
     );
 }
