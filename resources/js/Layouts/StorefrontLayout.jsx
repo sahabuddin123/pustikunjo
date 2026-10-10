@@ -45,7 +45,7 @@ function StorefrontContent({ children, meta = {} }) {
     const isTracking = typeof url === 'string' && url.startsWith('/track-order');
 
     return (
-        <div className="min-h-screen flex flex-col bg-[#F8FAF8] text-gray-900 font-sans selection:bg-emerald-700 selection:text-white">
+        <div className="min-h-screen flex flex-col bg-[#F8FAF8] text-gray-900 font-sans selection:bg-emerald-700 selection:text-white overflow-x-hidden">
             <Head>
                 <title>
                     {(() => {

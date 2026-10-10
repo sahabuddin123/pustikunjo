@@ -38,10 +38,10 @@ export default function Header() {
     return (
         <header className="w-full bg-[#0B3E25] text-white z-40 relative shadow-sm">
             {/* Main Header Bar matching home_dektop.jpg */}
-            <div className="max-w-7xl mx-auto px-3.5 sm:px-6 lg:px-8">
-                <div className="flex items-center justify-between h-15 sm:h-20 gap-2.5 sm:gap-4">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="relative flex items-center justify-between h-15 sm:h-20 gap-2.5 sm:gap-4">
                     {/* Mobile Menu Toggle Button */}
-                    <div className="flex items-center lg:hidden">
+                    <div className="flex items-center lg:hidden z-10">
                         <button
                             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                             className="p-1.5 sm:p-2 rounded-lg text-emerald-100 hover:text-white hover:bg-emerald-800 transition-colors active:scale-95"
@@ -51,19 +51,21 @@ export default function Header() {
                         </button>
                     </div>
 
-                    {/* Left: Brand Official Logo */}
-                    <Link href="/" className="flex items-center shrink-0 hover:opacity-95 transition-opacity py-1">
-                        <img
-                            src={siteConfig?.logo || "/images/logo-white.png"}
-                            alt={siteConfig?.name || 'Pusti Kunjo (পুষ্টি কুঞ্জ)'}
-                            className="h-8.5 sm:h-11 md:h-12 w-auto object-contain max-w-[160px] sm:max-w-[220px]"
-                            onError={(e) => {
-                                if (e.currentTarget.src !== '/images/logo-white.png' && !e.currentTarget.src.endsWith('/images/logo-white.png')) {
-                                    e.currentTarget.src = '/images/logo-white.png';
-                                }
-                            }}
-                        />
-                    </Link>
+                    {/* Brand Official Logo - Perfectly Centered on Mobile, Left-aligned on Desktop */}
+                    <div className="lg:static absolute left-1/2 -translate-x-1/2 lg:translate-x-0 flex items-center justify-center py-1 z-0">
+                        <Link href="/" className="flex items-center shrink-0 hover:opacity-95 transition-opacity">
+                            <img
+                                src={siteConfig?.logo || "/images/logo-white.png"}
+                                alt={siteConfig?.name || 'Pusti Kunjo (পুষ্টি কুঞ্জ)'}
+                                className="h-8 sm:h-11 md:h-12 w-auto object-contain max-w-[140px] sm:max-w-[220px]"
+                                onError={(e) => {
+                                    if (e.currentTarget.src !== '/images/logo-white.png' && !e.currentTarget.src.endsWith('/images/logo-white.png')) {
+                                        e.currentTarget.src = '/images/logo-white.png';
+                                    }
+                                }}
+                            />
+                        </Link>
+                    </div>
 
                     {/* Center: Large White Pill Search Bar */}
                     <div className="hidden lg:flex flex-1 max-w-xl mx-8">
@@ -86,7 +88,7 @@ export default function Header() {
                     </div>
 
                     {/* Right: Order Tracking & Cart */}
-                    <div className="flex items-center gap-1.5 sm:gap-4 shrink-0">
+                    <div className="flex items-center gap-1.5 sm:gap-4 shrink-0 z-10">
                         {/* Mobile Search Toggle */}
                         <button
                             onClick={() => setIsMobileSearchOpen(!isMobileSearchOpen)}

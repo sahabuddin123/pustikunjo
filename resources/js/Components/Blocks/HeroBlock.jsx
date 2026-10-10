@@ -98,9 +98,9 @@ export default function HeroBlock({ data = {} }) {
 
     return (
         <section className="w-full bg-white overflow-hidden select-none">
-            {/* 100% Full Width Clean Image Slider - Optimized Aspect Ratio for Mobile & Desktop */}
+            {/* 100% Full Width Clean Image Slider - Exact 1920x650 Aspect Ratio without any cropping */}
             <div
-                className="group relative w-full aspect-[16/8] sm:aspect-[1920/650] min-h-[165px] sm:min-h-[220px] md:min-h-[340px] overflow-hidden bg-[#0B3E25]"
+                className="group relative w-full aspect-[1920/650] overflow-hidden bg-[#0B3E25]"
                 onMouseEnter={() => setIsPaused(true)}
                 onMouseLeave={() => setIsPaused(false)}
                 onTouchStart={handleTouchStart}
@@ -165,7 +165,7 @@ export default function HeroBlock({ data = {} }) {
                         </button>
 
                         {/* Indicator Pill Dots */}
-                        <div className="absolute bottom-2.5 sm:bottom-5 inset-x-0 z-20 flex items-center justify-center gap-1.5 sm:gap-2">
+                        <div className="absolute bottom-1.5 sm:bottom-4 inset-x-0 z-20 flex items-center justify-center gap-1.5 sm:gap-2">
                             {slides.map((_, i) => (
                                 <button
                                     key={i}
@@ -176,8 +176,8 @@ export default function HeroBlock({ data = {} }) {
                                     type="button"
                                     className={`transition-all duration-300 rounded-full cursor-pointer ${
                                         i === current
-                                            ? 'w-7 sm:w-9 h-2 sm:h-2.5 bg-gradient-to-r from-[#D99A26] to-[#E5A93B] shadow-sm'
-                                            : 'w-2 sm:w-2.5 h-2 sm:h-2.5 bg-white/70 hover:bg-white'
+                                            ? 'w-5 sm:w-8 h-1 sm:h-2 bg-gradient-to-r from-[#D99A26] to-[#E5A93B] shadow-2xs'
+                                            : 'w-1.5 sm:w-2 h-1 sm:h-2 bg-white/75 hover:bg-white'
                                     }`}
                                     aria-label={`স্লাইড ${i + 1}`}
                                 />
